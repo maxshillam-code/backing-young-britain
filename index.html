@@ -965,10 +965,10 @@
         margin-left: -1.5rem;
       }
       .edu-chart .axis-label {
-        font-size: 15px;
+        font-size: 16px;
       }
       .edu-chart .annotation-label {
-        font-size: 13px;
+        font-size: 15px;
       }
       .edu-chart .chart-line {
         stroke-width: 3.5;
@@ -3018,7 +3018,7 @@
         // Mobile-aware dimensions
         var isMobile = window.innerWidth <= 600;
         var cW = 500;
-        var cH = isMobile ? 377 : H;
+        var cH = isMobile ? 407 : H;
         var cPAD = isMobile ? { top: 30, right: 10, bottom: 50, left: 60 } : PAD;
         var cPW = cW - cPAD.left - cPAD.right;
         var cPH = cH - cPAD.top - cPAD.bottom;
@@ -3425,7 +3425,7 @@
           var hlParts = h.text.split('\n');
           var hlEl = svgEl('text', {
             'class':'axis-label chart-value-label',
-            x:hlXPos(h.index), y:dotY+(placeBelow?15:-10),
+            x:hlXPos(h.index), y:dotY+(placeBelow?(isMobile?22:15):(isMobile?-16:-10)),
             'text-anchor': anchor,
             style:'font-weight:600; fill:'+hlColor
           });
