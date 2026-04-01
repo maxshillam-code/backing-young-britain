@@ -959,6 +959,27 @@
     .edu-chart .chart-value-label.revealed {
       opacity: 1;
     }
+    @media (max-width: 600px) {
+      .edu-chart svg {
+        width: calc(100% + 1.5rem);
+        margin-left: -1.5rem;
+      }
+      .edu-chart .axis-label {
+        font-size: 15px;
+      }
+      .edu-chart .annotation-label {
+        font-size: 13px;
+      }
+      .edu-chart .chart-line {
+        stroke-width: 3.5;
+      }
+      .edu-chart .gap-connector {
+        stroke-width: 2.5;
+      }
+      .edu-chart .chart-value-label {
+        font-size: 16px;
+      }
+    }
     /* Local funding section */
     /* Chart tabs + view toggle row */
     .chart-tabs-row {
@@ -1030,9 +1051,110 @@
       border-top: 2px solid #ccc;
       background: #f0f0f0;
     }
+    .mobile-cards-wrapper { display: none; }
+
     @media (max-width: 600px) {
-      .local-institution-table { font-size: 0.72rem; }
+      .local-institution-table { font-size: 0.78rem; }
       .local-institution-table th, .local-institution-table td { padding: 0.3rem 0.25rem; }
+
+      .mobile-cards-hide-table { display: none !important; }
+      .mobile-cards-wrapper { display: block; }
+
+      .mobile-cards-track {
+        position: relative;
+        overflow: hidden;
+        touch-action: pan-y;
+        padding: 0.5rem 0;
+      }
+
+      .mobile-card {
+        border: none;
+        border-radius: 4px;
+        background: #fbfbfb;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.82rem;
+        overflow: hidden;
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .mobile-card.mc-active {
+        position: relative;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+      .mobile-card.mc-exit-left {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+      .mobile-card.mc-exit-right {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      .mobile-card.mc-enter-left {
+        position: relative;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+      .mobile-card.mc-enter-right {
+        position: relative;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .mobile-card-title {
+        font-weight: 600;
+        padding: 0.6rem 0.75rem;
+        border-bottom: none;
+        background: #f4f4f4;
+      }
+
+      .mobile-card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 0.4rem 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .mobile-card-row:last-child { border-bottom: none; }
+
+      .mobile-card-label {
+        font-weight: 600;
+        color: #333;
+        flex-shrink: 0;
+        margin-right: 1rem;
+      }
+
+      .mobile-card--summary {
+        background: #ededee;
+        border: none;
+      }
+      .mobile-card--summary .mobile-card-title {
+        background: #e0e0e0;
+      }
+
+      .mobile-cards-indicators {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 0 5px;
+      }
+      .mobile-cards-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #ccc;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .mobile-cards-dot.active {
+        background: var(--red);
+        transform: scale(1.3);
+      }
     }
     #institutions-map { position: relative; z-index: 0; }
     #institutions-map .leaflet-container { font-family: 'Open Sans', sans-serif; }
@@ -2893,6 +3015,15 @@
         var container = document.getElementById(containerId);
         if (!container) return;
 
+        // Mobile-aware dimensions
+        var isMobile = window.innerWidth <= 600;
+        var cW = 500;
+        var cH = isMobile ? 377 : H;
+        var cPAD = isMobile ? { top: 30, right: 10, bottom: 50, left: 60 } : PAD;
+        var cPW = cW - cPAD.left - cPAD.right;
+        var cPH = cH - cPAD.top - cPAD.bottom;
+        var defaultDotR = isMobile ? 3.5 : 2.5;
+
         // Remove animated class BEFORE building content so new elements stay hidden via CSS
         container.classList.remove('animated');
 
@@ -2906,9 +3037,10 @@
         Array.from(container.children).forEach(function(c) { if (c.tagName !== 'svg') c.remove(); });
         if (svg) {
           svg.innerHTML = '';
+          svg.setAttribute('viewBox', '0 0 '+cW+' '+cH);
         } else {
           container.innerHTML = '';
-          svg = svgEl('svg', { viewBox: '0 0 '+W+' '+H, preserveAspectRatio: 'xMidYMid meet' });
+          svg = svgEl('svg', { viewBox: '0 0 '+cW+' '+cH, preserveAspectRatio: 'xMidYMid meet' });
           container.appendChild(svg);
         }
 
@@ -2919,30 +3051,30 @@
 
         // Dual Y-axis support
         var dualAxis = !!cfg.yAxisRight;
-        var padRight = dualAxis ? 55 : PAD.right;
-        var localPW = W - PAD.left - padRight;
-        function xPos(i) { return n <= 1 ? PAD.left : PAD.left + (i / (n - 1)) * localPW; }
+        var padRight = dualAxis ? 55 : cPAD.right;
+        var localPW = cW - cPAD.left - padRight;
+        function xPos(i) { return n <= 1 ? cPAD.left : cPAD.left + (i / (n - 1)) * localPW; }
         // For iconBar, distribute columns evenly so houses fit within left/right bounds
         if (cfg.type === 'iconBar') {
           var _iconColW = localPW / n;
-          xPos = function(i) { return PAD.left + _iconColW * (i + 0.5); };
+          xPos = function(i) { return cPAD.left + _iconColW * (i + 0.5); };
         }
         function yPos(v, series) {
           if (dualAxis && series && series.axis === 'right') {
             var rMin = cfg.yAxisRight.min, rMax = cfg.yAxisRight.max;
-            return PAD.top + PH - ((v - rMin) / (rMax - rMin)) * PH;
+            return cPAD.top + cPH - ((v - rMin) / (rMax - rMin)) * cPH;
           }
-          return PAD.top + PH - ((v - yMin) / (yMax - yMin)) * PH;
+          return cPAD.top + cPH - ((v - yMin) / (yMax - yMin)) * cPH;
         }
 
         // Grid + Y labels (left axis)
         for (var v = yMin; v <= yMax + yStep * 0.01; v += yStep) {
-          var gy = toY(v, yMin, yMax);
+          var gy = cPAD.top + cPH - ((v - yMin) / (yMax - yMin)) * cPH;
           var isBaseline = Math.abs(v - yMin) < yStep * 0.01;
           if (!isIconBar || isBaseline) {
-            svg.appendChild(svgEl('line', { 'class': isBaseline ? 'axis-line' : 'grid-line', x1:PAD.left, x2:W-padRight, y1:gy, y2:gy }));
+            svg.appendChild(svgEl('line', { 'class': isBaseline ? 'axis-line' : 'grid-line', x1:cPAD.left, x2:cW-padRight, y1:gy, y2:gy }));
           }
-          svg.appendChild(svgEl('text', { 'class':'axis-label', x:PAD.left-5, y:gy+4, 'text-anchor':'end' }, yFmt(v)));
+          svg.appendChild(svgEl('text', { 'class':'axis-label', x:cPAD.left-5, y:gy+4, 'text-anchor':'end' }, yFmt(v)));
         }
 
         // Right Y-axis labels
@@ -2950,8 +3082,8 @@
           var yMinR = cfg.yAxisRight.min, yMaxR = cfg.yAxisRight.max, yStepR = cfg.yAxisRight.step;
           var yFmtR = cfg.yAxisRight.format || function(v) { return String(v); };
           for (var vr = yMinR; vr <= yMaxR + yStepR * 0.01; vr += yStepR) {
-            var gyR = PAD.top + PH - ((vr - yMinR) / (yMaxR - yMinR)) * PH;
-            svg.appendChild(svgEl('text', { 'class':'axis-label axis-label-right', x:W-padRight+5, y:gyR+4, 'text-anchor':'start' }, yFmtR(vr)));
+            var gyR = cPAD.top + cPH - ((vr - yMinR) / (yMaxR - yMinR)) * cPH;
+            svg.appendChild(svgEl('text', { 'class':'axis-label axis-label-right', x:cW-padRight+5, y:gyR+4, 'text-anchor':'start' }, yFmtR(vr)));
           }
         }
 
@@ -2960,7 +3092,7 @@
           var idx, text;
           if (typeof item === 'object' && item !== null) { idx = item.i; text = item.t; }
           else { idx = item; var d = lines[0].data[idx]; text = d ? d.label : ''; }
-          svg.appendChild(svgEl('text', { 'class':'axis-label', x:xPos(idx), y:H-PAD.bottom+18, 'text-anchor':'middle' }, text));
+          svg.appendChild(svgEl('text', { 'class':'axis-label', x:xPos(idx), y:cH-cPAD.bottom+(isMobile?24:18), 'text-anchor':'middle' }, text));
         });
 
         // Lines/bars/icons, gaps, dots
@@ -2981,11 +3113,11 @@
           var totalHouses = Math.round((yMax - yMin) / quantum);
 
           // Size each house to match quantum on the y-axis scale
-          var iconStep = (quantum / (yMax - yMin)) * PH;
+          var iconStep = (quantum / (yMax - yMin)) * cPH;
           var iconGap = Math.min(iconStep * 0.06, 0.8);
           var iconH = iconStep - iconGap;
           var iconW = (localPW / n) * 0.86;
-          var baselineY = PAD.top + PH;
+          var baselineY = cPAD.top + cPH;
 
           // Helper: generate house path in SVG coordinates
           function hPath(x, y, w, h) {
@@ -3111,7 +3243,7 @@
           var barSlot = localPW / n;
           var barW0 = barSlot * 0.65;
           var barInset0 = barW0 / 2;
-          barXPos = function(i) { return n <= 1 ? PAD.left + barInset0 : PAD.left + barInset0 + (i / (n - 1)) * (localPW - barW0); };
+          barXPos = function(i) { return n <= 1 ? cPAD.left + barInset0 : cPAD.left + barInset0 + (i / (n - 1)) * (localPW - barW0); };
         }
         // Position function for highlights — uses bar inset for bar charts, normal xPos otherwise
         var hlXPos = barXPos || xPos;
@@ -3126,16 +3258,16 @@
             ax = annXPos(ann.atIndex);
           }
           if (ax === undefined) return;
-          svg.appendChild(svgEl('line', { 'class':'annotation-line', x1:ax, x2:ax, y1:PAD.top, y2:toY(yMin,yMin,yMax), 'stroke-dasharray':'4,3' }));
+          svg.appendChild(svgEl('line', { 'class':'annotation-line', x1:ax, x2:ax, y1:cPAD.top, y2:yPos(yMin, lines[0]), 'stroke-dasharray':'4,3' }));
           if (ann.label) {
             if (ann.sublabel) {
-              var aLbl = svgEl('text', { 'class':'annotation-label', x:ax, y:PAD.top-18, 'text-anchor':'middle' });
+              var aLbl = svgEl('text', { 'class':'annotation-label', x:ax, y:cPAD.top-18, 'text-anchor':'middle' });
               var ts1 = svgEl('tspan', { x:ax }); ts1.textContent = ann.label;
               var ts2 = svgEl('tspan', { x:ax, dy:'12' }); ts2.textContent = ann.sublabel;
               aLbl.appendChild(ts1); aLbl.appendChild(ts2);
               svg.appendChild(aLbl);
             } else {
-              svg.appendChild(svgEl('text', { 'class':'annotation-label', x:ax, y:PAD.top-8, 'text-anchor':'middle' }, ann.label));
+              svg.appendChild(svgEl('text', { 'class':'annotation-label', x:ax, y:cPAD.top-8, 'text-anchor':'middle' }, ann.label));
             }
           }
         });
@@ -3143,7 +3275,7 @@
         lines.forEach(function(series) {
           if (isIconBar) return; // already handled above
           var data = series.data, color = series.color;
-          var dotR = series.dotRadius || 2.5;
+          var dotR = series.dotRadius || defaultDotR;
           var tfmt = series.tooltipFormat || globalTfmt || function(v) { return String(v); };
 
           if (isBar) {
@@ -3205,7 +3337,7 @@
               var pts = seg.map(function(p) { return xPos(p.i).toFixed(1)+','+yPos(p.v,series).toFixed(1); }).join(' ');
               var pl = svgEl('polyline', {
                 'class':'chart-line', points:pts,
-                fill:'none', stroke:color, 'stroke-width':'2.5',
+                fill:'none', stroke:color,
                 'stroke-linejoin':'round', 'stroke-linecap':'round'
               });
               if (series.dashed) pl.setAttribute('data-dashpattern', '8 4');
@@ -3223,7 +3355,7 @@
                 'class':'gap-connector',
                 x1:xPos(last.i), y1:yPos(last.v,series),
                 x2:xPos(first.i), y2:yPos(first.v,series),
-                stroke:color, 'stroke-width':'2'
+                stroke:color
               });
               svg.appendChild(gc);
               var gcLen = gc.getTotalLength();
@@ -3272,9 +3404,9 @@
             placeBelow = (prevVal !== null && prevVal > val);
 
             // Bounds check: if label above would overflow top, force below
-            if (!placeBelow && (dotY - 10) < PAD.top) placeBelow = true;
+            if (!placeBelow && (dotY - 10) < cPAD.top) placeBelow = true;
             // If label below would overflow bottom, force above
-            if (placeBelow && (dotY + 15) > (H - PAD.bottom)) placeBelow = false;
+            if (placeBelow && (dotY + 15) > (cH - cPAD.bottom)) placeBelow = false;
           }
 
           // Auto-detect anchor: 'start' at left edge, 'end' at right edge, 'middle' otherwise
@@ -3284,8 +3416,8 @@
             anchor = 'middle';
           } else if (!anchor) {
             var dotX = xPos(h.index);
-            if (dotX <= PAD.left + 5) anchor = 'start';
-            else if (dotX >= W - padRight - 5) anchor = 'end';
+            if (dotX <= cPAD.left + 5) anchor = 'start';
+            else if (dotX >= cW - padRight - 5) anchor = 'end';
             else anchor = 'middle';
           }
 
@@ -3596,6 +3728,28 @@
           createChart(ids[i], CHART_DATA[ids[i]]);
         }
       }
+
+      // Re-render charts when crossing the 600px mobile breakpoint
+      var _wasMobile = window.innerWidth <= 600;
+      window.addEventListener('resize', (function() {
+        var timer;
+        return function() {
+          clearTimeout(timer);
+          timer = setTimeout(function() {
+            var nowMobile = window.innerWidth <= 600;
+            if (nowMobile !== _wasMobile) {
+              _wasMobile = nowMobile;
+              Object.keys(CHART_DATA).forEach(function(id) {
+                if (!document.getElementById(id)) return;
+                if (CHART_DATA[id].type === 'houseGrid') return;
+                createChart(id, CHART_DATA[id]);
+                var chart = document.getElementById(id);
+                if (chart) scheduleChartAnimation(chart);
+              });
+            }
+          }, 250);
+        };
+      })());
 
       // ---- House Grid chart (5 rows × 10 cols, filled by built/need %) ----
       function createHouseGrid(containerId, cfg) {
@@ -5369,6 +5523,96 @@
       scheduleChartAnimation(chart);
     }
 
+    // Mobile card carousel: wire up scroll indicators
+    function initMobileCarousel(wrapper) {
+      var track = wrapper.querySelector('.mobile-cards-track');
+      var dots = wrapper.querySelectorAll('.mobile-cards-dot');
+      var counter = wrapper.querySelector('.mobile-cards-counter');
+      var cards = track ? track.querySelectorAll('.mobile-card') : [];
+      if (!track || !cards.length) return;
+      var total = cards.length;
+      var current = 0;
+      var startX = 0, deltaX = 0, swiping = false;
+
+      function show(idx) {
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].className = cards[i].className.replace(/ mc-active| mc-exit-left| mc-exit-right| mc-enter-left| mc-enter-right/g, '');
+          if (i === idx) {
+            cards[i].classList.add('mc-active');
+          }
+        }
+        for (var j = 0; j < dots.length; j++) {
+          dots[j].classList.toggle('active', j === idx);
+        }
+        if (counter) counter.textContent = (idx + 1) + ' / ' + total;
+        current = idx;
+      }
+
+      function goTo(idx, direction) {
+        if (idx < 0 || idx >= total || idx === current) return;
+        var oldCard = cards[current];
+        var newCard = cards[idx];
+        // Remove all state classes
+        oldCard.className = oldCard.className.replace(/ mc-active| mc-exit-left| mc-exit-right/g, '');
+        newCard.className = newCard.className.replace(/ mc-active| mc-exit-left| mc-exit-right/g, '');
+        // Set exit direction on old card
+        oldCard.classList.add(direction === 'left' ? 'mc-exit-left' : 'mc-exit-right');
+        // Show new card
+        newCard.classList.add('mc-active');
+        // Update indicators
+        for (var j = 0; j < dots.length; j++) {
+          dots[j].classList.toggle('active', j === idx);
+        }
+        if (counter) counter.textContent = (idx + 1) + ' / ' + total;
+        current = idx;
+      }
+
+      // Touch handling
+      track.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        deltaX = 0;
+        swiping = true;
+      }, { passive: true });
+
+      track.addEventListener('touchmove', function(e) {
+        if (!swiping) return;
+        deltaX = e.touches[0].clientX - startX;
+        // Live drag feedback on active card
+        cards[current].style.transition = 'none';
+        cards[current].style.transform = 'translateX(' + deltaX + 'px)';
+        cards[current].style.opacity = Math.max(0.4, 1 - Math.abs(deltaX) / 300);
+      }, { passive: true });
+
+      track.addEventListener('touchend', function() {
+        if (!swiping) return;
+        swiping = false;
+        // Reset inline styles
+        cards[current].style.transition = '';
+        cards[current].style.transform = '';
+        cards[current].style.opacity = '';
+        var threshold = 50;
+        if (deltaX < -threshold && current < total - 1) {
+          goTo(current + 1, 'left');
+        } else if (deltaX > threshold && current > 0) {
+          goTo(current - 1, 'right');
+        }
+      }, { passive: true });
+
+      // Measure tallest card and lock track height so content below doesn't shift
+      var maxH = 0;
+      for (var m = 0; m < cards.length; m++) {
+        cards[m].style.position = 'relative';
+        cards[m].style.opacity = '1';
+        var h = cards[m].offsetHeight;
+        if (h > maxH) maxH = h;
+        cards[m].style.position = '';
+        cards[m].style.opacity = '';
+      }
+      track.style.minHeight = maxH + 'px';
+
+      show(0);
+    }
+
     // Build institution table into a given container
     function buildInstitutionTable(containerId, institutions, laName) {
       var container = document.getElementById(containerId);
@@ -5389,7 +5633,8 @@
         return a.distance - b.distance;
       });
 
-      var html = '<div style="overflow-x:auto; margin-top:0.5rem;"><table class="local-institution-table"><thead><tr>';
+      // Desktop table
+      var html = '<div style="overflow-x:auto; margin-top:0.5rem;" class="mobile-cards-hide-table"><table class="local-institution-table"><thead><tr>';
       html += '<th>Institution</th>';
       if (hasDistance) html += '<th>Distance</th>';
       html += '<th>Type</th><th>Funding/Student</th><th>Students</th>';
@@ -5401,7 +5646,34 @@
       });
       var colSpan = hasDistance ? 3 : 2;
       html += '</tbody><tfoot><tr><td colspan="' + colSpan + '">' + laName + ' average</td><td>' + fmtCurrency(avgFunding) + '</td><td>' + totalStudents.toLocaleString('en-GB') + '</td></tr></tfoot></table></div>';
+
+      // Mobile card carousel
+      var totalCards = sorted.length + 1; // +1 for summary card
+      html += '<div class="mobile-cards-wrapper"><div class="mobile-cards-track">';
+      sorted.forEach(function(inst) {
+        html += '<div class="mobile-card">';
+        html += '<div class="mobile-card-title">' + inst.name + '</div>';
+        if (hasDistance) html += '<div class="mobile-card-row"><span class="mobile-card-label">Distance</span><span>' + (inst.distance != null ? inst.distance + ' mi' : '\u2014') + '</span></div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Type</span><span>' + inst.typeLabel + '</span></div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Funding/Student</span><span>' + fmtCurrency(inst.funding) + '</span></div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Students</span><span>' + inst.students.toLocaleString('en-GB') + '</span></div>';
+        html += '</div>';
+      });
+      // Summary card
+      html += '<div class="mobile-card mobile-card--summary">';
+      html += '<div class="mobile-card-title">' + laName + ' average</div>';
+      html += '<div class="mobile-card-row"><span class="mobile-card-label">Funding/Student</span><span>' + fmtCurrency(avgFunding) + '</span></div>';
+      html += '<div class="mobile-card-row"><span class="mobile-card-label">Students</span><span>' + totalStudents.toLocaleString('en-GB') + '</span></div>';
+      html += '</div>';
+      html += '</div>';
+      // Indicators
+      html += '<div class="mobile-cards-indicators">';
+      for (var d = 0; d < totalCards; d++) html += '<div class="mobile-cards-dot' + (d === 0 ? ' active' : '') + '"></div>';
+      html += '</div></div>';
+
       container.innerHTML = html;
+      var wrapper = container.querySelector('.mobile-cards-wrapper');
+      if (wrapper) initMobileCarousel(wrapper);
     }
 
     var INST_MAP = null;
@@ -5628,7 +5900,8 @@
       if (!container) return;
       if (!schools.length) { container.innerHTML = ''; return; }
 
-      var html = '<div style="overflow-x:auto;"><table class="local-institution-table no-sort"><thead><tr>';
+      // Desktop table
+      var html = '<div style="overflow-x:auto;" class="mobile-cards-hide-table"><table class="local-institution-table no-sort"><thead><tr>';
       html += '<th>School</th><th style="text-align:center">Persistent<br>Absentees</th><th style="text-align:center">Severe<br>Absentees</th><th style="text-align:center">Overall<br>Absence</th>';
       html += '</tr></thead><tbody>';
       schools.forEach(function(s) {
@@ -5637,8 +5910,28 @@
         html += '<td style="text-align:center">' + (Math.round(s.severe * 10) / 10) + '%</td>';
         html += '<td style="text-align:center">' + (Math.round(s.overall * 10) / 10) + '%</td></tr>';
       });
-      html += '</tbody></table></div><div style="height:5px"></div>';
+      html += '</tbody></table></div>';
+
+      // Mobile card carousel
+      var totalCards = schools.length;
+      html += '<div class="mobile-cards-wrapper"><div class="mobile-cards-track">';
+      schools.forEach(function(s) {
+        html += '<div class="mobile-card">';
+        html += '<div class="mobile-card-title">' + s.name + '</div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Persistent Absentees</span><span>' + (Math.round(s.persistent * 10) / 10) + '%</span></div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Severe Absentees</span><span>' + (Math.round(s.severe * 10) / 10) + '%</span></div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">Overall Absence</span><span>' + (Math.round(s.overall * 10) / 10) + '%</span></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      // Indicators
+      html += '<div class="mobile-cards-indicators">';
+      for (var d = 0; d < totalCards; d++) html += '<div class="mobile-cards-dot' + (d === 0 ? ' active' : '') + '"></div>';
+      html += '</div></div>';
+
       container.innerHTML = html;
+      var wrapper = container.querySelector('.mobile-cards-wrapper');
+      if (wrapper) initMobileCarousel(wrapper);
     }
 
     function showNearestSchoolsForPanel(panelKey) {
@@ -5698,7 +5991,8 @@
       others.sort(function(a, b) { return a.distance - b.distance; });
       var nearest = others.slice(0, 4);
 
-      var html = '<div style="overflow-x:auto;"><table class="local-institution-table no-sort"><thead><tr>';
+      // Desktop table
+      var html = '<div style="overflow-x:auto;" class="mobile-cards-hide-table"><table class="local-institution-table no-sort"><thead><tr>';
       html += '<th>Constituency</th><th style="text-align:center">16\u201334 year olds living<br>at home (2021)</th>';
       html += '</tr></thead><tbody>';
 
@@ -5712,8 +6006,29 @@
         html += '<td style="text-align:center">' + n.value.toLocaleString('en-GB') + '</td></tr>';
       });
 
-      html += '</tbody></table></div><div style="height:5px"></div>';
+      html += '</tbody></table></div>';
+
+      // Mobile card carousel
+      var allItems = [];
+      if (userValue != null) allItems.push({ name: userConstituency, value: userValue });
+      nearest.forEach(function(n) { allItems.push({ name: n.name, value: n.value }); });
+      var totalCards = allItems.length;
+
+      html += '<div class="mobile-cards-wrapper"><div class="mobile-cards-track">';
+      allItems.forEach(function(item) {
+        html += '<div class="mobile-card">';
+        html += '<div class="mobile-card-title">' + item.name + '</div>';
+        html += '<div class="mobile-card-row"><span class="mobile-card-label">16\u201334 at home (2021)</span><span>' + item.value.toLocaleString('en-GB') + '</span></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '<div class="mobile-cards-indicators">';
+      for (var d = 0; d < totalCards; d++) html += '<div class="mobile-cards-dot' + (d === 0 ? ' active' : '') + '"></div>';
+      html += '</div></div>';
+
       container.innerHTML = html;
+      var wrapper = container.querySelector('.mobile-cards-wrapper');
+      if (wrapper) initMobileCarousel(wrapper);
     }
 
     // === NEET REGIONAL CHART BUILDER ===
