@@ -964,6 +964,23 @@
         width: calc(100% + 1.5rem);
         margin-left: -1.5rem;
       }
+      .chart-tabs-row .chart-view-toggle,
+      .chart-tabs-row .chart-view-toggle.enabled {
+        position: absolute;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .chart-view-toggle-mobile {
+        display: none;
+        gap: 0;
+        margin-bottom: 0.75rem;
+      }
+      .chart-view-toggle-mobile.enabled {
+        display: flex;
+      }
+      .chart-view-toggle-mobile .chart-view-btn {
+        margin-right: 1.5rem;
+      }
       .edu-chart .axis-label {
         font-size: 16px;
       }
@@ -971,13 +988,16 @@
         font-size: 15px;
       }
       .edu-chart .chart-line {
-        stroke-width: 3.5;
+        stroke-width: 4.5;
       }
       .edu-chart .gap-connector {
-        stroke-width: 2.5;
+        stroke-width: 3.5;
       }
       .edu-chart .chart-value-label {
         font-size: 16px;
+      }
+      .chart-tab-desc {
+        font-size: 0.85rem;
       }
     }
     /* Local funding section */
@@ -1052,6 +1072,7 @@
       background: #f0f0f0;
     }
     .mobile-cards-wrapper { display: none; }
+    .chart-view-toggle-mobile { display: none; }
 
     @media (max-width: 600px) {
       .local-institution-table { font-size: 0.78rem; }
@@ -3022,7 +3043,7 @@
         var cPAD = isMobile ? { top: 30, right: 10, bottom: 50, left: 60 } : PAD;
         var cPW = cW - cPAD.left - cPAD.right;
         var cPH = cH - cPAD.top - cPAD.bottom;
-        var defaultDotR = isMobile ? 3.5 : 2.5;
+        var defaultDotR = isMobile ? 4.5 : 2.5;
 
         // Remove animated class BEFORE building content so new elements stay hidden via CSS
         container.classList.remove('animated');
@@ -3730,6 +3751,40 @@
       }
 
       // Re-render charts when crossing the 600px mobile breakpoint
+      // Clone view toggles after chart descriptions for mobile layout
+      document.querySelectorAll('.chart-tabs-row').forEach(function(row) {
+        var toggle = row.querySelector('.chart-view-toggle');
+        if (!toggle) return;
+        var parent = row.parentElement;
+        var desc = parent.querySelector('.chart-tab-desc');
+        var insertAfter = desc || row;
+        var mobileToggle = toggle.cloneNode(true);
+        mobileToggle.removeAttribute('id');
+        mobileToggle.className = 'chart-view-toggle-mobile';
+        // Copy enabled state
+        if (toggle.classList.contains('enabled')) mobileToggle.classList.add('enabled');
+        insertAfter.parentNode.insertBefore(mobileToggle, insertAfter.nextSibling);
+        // Sync clicks: clicking a mobile toggle button triggers the corresponding original button
+        mobileToggle.querySelectorAll('.chart-view-btn').forEach(function(btn, idx) {
+          btn.addEventListener('click', function() {
+            var origBtns = toggle.querySelectorAll('.chart-view-btn');
+            if (origBtns[idx]) origBtns[idx].click();
+            // Sync active state
+            mobileToggle.querySelectorAll('.chart-view-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+          });
+        });
+        // Observe original toggle for class changes (enabled, button active states)
+        var observer = new MutationObserver(function() {
+          mobileToggle.classList.toggle('enabled', toggle.classList.contains('enabled'));
+          toggle.querySelectorAll('.chart-view-btn').forEach(function(origBtn, idx) {
+            var mobBtns = mobileToggle.querySelectorAll('.chart-view-btn');
+            if (mobBtns[idx]) mobBtns[idx].classList.toggle('active', origBtn.classList.contains('active'));
+          });
+        });
+        observer.observe(toggle, { attributes: true, subtree: true, attributeFilter: ['class'] });
+      });
+
       var _wasMobile = window.innerWidth <= 600;
       window.addEventListener('resize', (function() {
         var timer;
