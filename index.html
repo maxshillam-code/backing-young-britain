@@ -1535,7 +1535,7 @@
         gap: 1rem;
       }
       .hero-stats { grid-template-columns: 1fr 1fr; width: 100%; box-sizing: border-box; }
-      .hero { padding-top: 7rem; padding-left: 1.25rem; padding-right: 1.25rem; }
+      .hero { padding-top: 7rem; padding-left: 2rem; padding-right: 2rem; }
       .hero-sub { text-align: center; max-width: 98%; font-size: 1rem; }
       .hero-sub-top {
         display: grid;
@@ -1553,11 +1553,13 @@
         height: auto;
         border-radius: 0;
         object-fit: cover;
+        margin-right: -0.25rem;
       }
       .hero-sub-cta {
         text-align: left;
         margin-top: 1rem;
       }
+      .hero h1 { font-size: clamp(1.95rem, 4.28vw, 3.1rem); margin-left: -0.5rem; margin-right: -0.5rem; }
       .hero h1 .citation { font-size: 0.8rem; }
       .postcode-result { text-align: left; }
       .hero-sub .postcode-form { justify-content: stretch !important; width: 100%; }
