@@ -198,6 +198,7 @@
     .nav-inner {
       max-width: 1200px;
       margin: 0 auto;
+      flex-wrap: nowrap;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -205,7 +206,8 @@
     }
     .nav-logo {
       font-family: 'Lora', serif;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
+      white-space: nowrap;
       letter-spacing: -0.02em;
       color: var(--white);
       text-decoration: none;
@@ -321,7 +323,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 10rem 2rem 2.5rem;
+      padding: 8rem 3rem 2.5rem;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -337,7 +339,7 @@
     .hero h1 {
       font-family: 'Lora', serif;
       font-weight: 400;
-      font-size: clamp(1.88rem, 3.96vw, 2.94rem);
+      font-size: clamp(1.79rem, 3.76vw, 2.65rem);
       line-height: 1.1;
       letter-spacing: -0.03em;
       max-width: 1200px;
@@ -351,12 +353,12 @@
     .hero h1 em.underline-ready {
       background-image: linear-gradient(var(--red), var(--red));
       background-repeat: no-repeat;
-      background-position: left bottom 8px;
-      background-size: 0% 3.5px;
+      background-position: left bottom 0.17em;
+      background-size: 0% 3px;
       padding-bottom: 1px;
     }
     .hero h1 em.underline-animate {
-      background-size: 100% 3.5px;
+      background-size: 100% 3px;
       transition: background-size 0.6s ease;
     }
     .hero h1 .typing-char {
@@ -384,7 +386,7 @@
       grid-template-columns: 45fr 55fr;
       gap: 4rem;
       align-items: center;
-      margin-top: 6rem;
+      margin-top: 5rem;
       width: 100%;
       opacity: 0;
     }
@@ -393,13 +395,13 @@
     }
     .hero-sub {
       font-family: 'Open Sans', sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       color: var(--black);
       font-weight: 400;
       line-height: 1.7;
       letter-spacing: -0.02em;
       text-align: left;
-      max-width: 80%;
+      max-width: 90%;
       margin: 0 auto;
     }
     .campaign-link {
@@ -447,8 +449,8 @@
     }
     .hero-stats.scroll-animate .hero-stat:nth-child(1) { animation-delay: 0.2s; }
     .hero-stats.scroll-animate .hero-stat:nth-child(2) { animation-delay: 0.2s; }
-    .hero-stats.scroll-animate .hero-stat:nth-child(3) { animation-delay: 1.6s; }
-    .hero-stats.scroll-animate .hero-stat:nth-child(4) { animation-delay: 1.6s; }
+    .hero-stats.scroll-animate .hero-stat:nth-child(3) { animation-delay: 0.2s; }
+    .hero-stats.scroll-animate .hero-stat:nth-child(4) { animation-delay: 0.2s; }
     .hero-stat-number {
       font-family: 'Lora', serif;
       font-size: 2.6rem;
@@ -487,7 +489,7 @@
       margin: 0.2rem auto 0;
       color: var(--black);
       text-decoration: none;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       white-space: nowrap;
       font-weight: 400;
     }
@@ -548,7 +550,7 @@
     .postcode-input::placeholder {
       text-transform: none;
       letter-spacing: 0;
-      color: #999;
+      color: var(--black);
     }
     .postcode-btn {
       font-family: 'Open Sans', sans-serif;
@@ -616,7 +618,7 @@
     }
     .pillar-header {
       position: sticky;
-      top: 6rem;
+      top: 2rem;
     }
     .pillar-icon {
       width: 40px;
@@ -638,7 +640,7 @@
     .pillar h2 {
       font-family: 'Lora', serif;
       font-weight: 400;
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       line-height: 1.1;
       letter-spacing: -0.02em;
       margin-bottom: 1.5rem;
@@ -834,7 +836,7 @@
     }
     .chart-section-title {
       font-family: 'Lora', serif;
-      font-size: 1.7rem;
+      font-size: 1.5rem;
       font-weight: 400;
       margin-bottom: 0.15rem;
     }
@@ -1075,6 +1077,73 @@
     .chart-view-toggle-mobile { display: none; }
     .hero-sign-img { display: none; }
     .hero-sub-top { display: contents; }
+    .hero-sub-cta { margin-top: 1rem; }
+    .hero-right {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding-bottom: 3rem;
+    }
+    .hero-right .hero-stats {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex !important;
+      justify-content: space-between;
+      gap: 0;
+      padding: 0 2rem;
+      grid-template-columns: none;
+    }
+    .hero-sign-img-desktop {
+      width: 80%;
+      max-width: 256px;
+      height: auto;
+      border-radius: 0;
+    }
+    .hero-stat--housing,
+    .hero-stat--health { display: none; }
+    .hero-right .hero-stat {
+      width: 170px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+    .hero-right .hero-stat-inner {
+      height: 100%;
+      box-sizing: border-box;
+      background: #f5f5f5;
+      color: var(--black);
+    }
+    .hero-right .hero-stat-number {
+      color: var(--red);
+      font-size: 1.4rem;
+    }
+    .hero-right .hero-stat-label {
+      font-size: 0.8rem;
+      color: var(--black);
+    }
+    .hero-right .hero-stat--emigration .hero-stat-inner {
+      transform: rotate(-5deg);
+      transform-origin: center center;
+    }
+    .hero-right .hero-stat--fees .hero-stat-inner {
+      transform: rotate(5deg);
+      transform-origin: center center;
+    }
+    .hero-right .hero-stat--emigration .stat-source {
+      transform: rotate(-5deg);
+      transform-origin: center -70px;
+    }
+    .hero-right .hero-stat--fees .stat-source {
+      transform: rotate(5deg);
+      transform-origin: center -70px;
+    }
+    .hero-right .stat-source {
+      display: block;
+      text-align: center;
+      width: 100%;
+      margin: 0.2rem 0 0;
+    }
 
     @media (max-width: 600px) {
       .local-institution-table { font-size: 0.78rem; }
@@ -1502,18 +1571,22 @@
       transform: none;
     }
 
+    @media (max-width: 950px) {
+      .nav-section-link { display: none; }
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       .hero h1 .heading-break { display: none; }
-      .hero h1 em.underline-ready { background-position: left bottom 2px; }
-      .hero h1 { font-size: clamp(2.03rem, 4.28vw, 3.1rem); }
+      .hero h1 em.underline-ready { background-position: left bottom 0.17em; }
+      .hero h1 { font-size: clamp(2.03rem, 4.28vw, 2.95rem); }
       .hero-columns { grid-template-columns: 1fr; gap: 2.5rem; }
       .pillar { grid-template-columns: 1fr; gap: 2.5rem; }
       .pillar-header { position: static; }
       .hero-stats { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
-      .nav-logo { font-size: 1.3rem; }
+      .nav-logo { font-size: 1.2rem; }
       .hero-label { font-size: 0.8rem; margin-bottom: 1.93rem; }
       .hero-columns { margin-top: 3rem; }
       .nav-links { display: none; }
@@ -1534,6 +1607,10 @@
         border-bottom: 1px solid var(--grey-light);
         gap: 1rem;
       }
+      .hero-sign-img-desktop { display: none; }
+      .hero-right { display: contents; }
+      .hero-stat--housing,
+      .hero-stat--health { display: flex; }
       .hero-stats { grid-template-columns: 1fr 1fr; width: 100%; box-sizing: border-box; }
       .hero { padding-top: 7rem; padding-left: 2rem; padding-right: 2rem; }
       .hero-sub { text-align: center; max-width: 98%; font-size: 1rem; }
@@ -1642,7 +1719,7 @@
     }
     .floating-cta h3 {
       font-family: 'Lora', serif;
-      font-weight: 600;
+      font-weight: 500;
       font-size: 1.05rem;
       margin: 0;
       white-space: nowrap;
@@ -1662,8 +1739,8 @@
       min-width: 80px;
       min-width: 0;
       padding: 0.45rem 0.75rem;
-      border: 1px solid var(--grey-light);
-      border-radius: 2px;
+      border: 1px solid var(--red);
+      border-radius: 5px;
       font-family: 'Open Sans', sans-serif;
       font-weight: 400;
       font-size: 0.85rem;
@@ -1672,13 +1749,14 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    .floating-cta-form input:focus { border-color: var(--grey-light); }
+    .floating-cta-form input::placeholder { color: var(--black); }
+    .floating-cta-form input:focus { border-color: var(--red); }
     .floating-cta-form input:-webkit-autofill,
     .floating-cta-form input:-webkit-autofill:hover,
     .floating-cta-form input:-webkit-autofill:focus {
       -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
       -webkit-text-fill-color: var(--black);
-      border-color: var(--grey-light);
+      border-color: var(--red);
       transition: background-color 5000s ease-in-out 0s;
     }
     .floating-cta-form button {
@@ -1736,7 +1814,7 @@
     }
     .floating-cta-success p {
       font-family: 'Open Sans', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--black);
       line-height: 1.5;
       margin: 0;
@@ -1745,7 +1823,7 @@
     .floating-cta-success strong {
       font-family: 'Lora', serif;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: var(--red);
     }
     .floating-cta-success-row {
@@ -1771,7 +1849,7 @@
       border: none;
       cursor: pointer;
       font-family: 'Open Sans', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 400;
       color: var(--black);
       padding: 0;
@@ -1808,7 +1886,7 @@
     }
     .floating-cta-confetti.rising {
       z-index: 149;
-      animation: confetti-rise 0.5s ease-out forwards;
+      animation: confetti-rise 0.3s ease-out forwards;
     }
     .floating-cta-confetti.falling {
       z-index: 200;
@@ -1884,10 +1962,10 @@
         <span></span><span></span><span></span>
       </button>
       <div class="nav-links">
-        <a href="#education">Education</a>
-        <a href="#employment">Employment</a>
-        <a href="#housing">Housing</a>
-        <a href="#health">Health</a>
+        <a href="#education" class="nav-section-link">Education</a>
+        <a href="#employment" class="nav-section-link">Employment</a>
+        <a href="#housing" class="nav-section-link">Housing</a>
+        <a href="#health" class="nav-section-link">Health</a>
         <a href="#petition" class="nav-cta">Sign the Petition</a>
         <button class="nav-share" aria-label="Share" id="nav-share-btn">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline class="share-arrow" points="8 8 12 4 16 8"/><line class="share-arrow" x1="12" y1="4" x2="12" y2="14"/></svg>
@@ -1915,36 +1993,39 @@
         </div>
         <div class="postcode-result" id="postcode-result"></div>
       </div>
-      <dl class="hero-stats">
-        <div class="hero-stat">
-          <div class="hero-stat-inner">
-            <dt class="hero-stat-label">Net emigration of 16–34 year olds in 2025.<br><span style="display:inline-block;margin-top:0.5rem">Top destinations:<br>Dubai, Australia, Canada.</span></dt>
-            <dd class="hero-stat-number">111,000</dd>
+      <div class="hero-right">
+        <img src="hero-sign.png" alt="Back Young Britain" class="hero-sign-img-desktop">
+        <dl class="hero-stats">
+          <div class="hero-stat hero-stat--emigration">
+            <div class="hero-stat-inner">
+              <dt class="hero-stat-label">Net emigration of 16–34 year olds in 2025.<br><span style="display:inline-block;margin-top:0.5rem">Top destinations:<br>Dubai, Australia, Canada.</span></dt>
+              <dd class="hero-stat-number">111,000</dd>
+            </div>
+            <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration" target="_blank" rel="noopener noreferrer" class="stat-source">Source: ONS</a>
           </div>
-          <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration" target="_blank" rel="noopener noreferrer" class="stat-source">Source: ONS</a>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-inner">
-            <dt class="hero-stat-label">The house price-to-earnings ratio in England.<br><span style="display:inline-block;margin-top:0.5rem">It was 3.5x in 2000.</span></dt>
-            <dd class="hero-stat-number">7.6x</dd>
+          <div class="hero-stat hero-stat--housing">
+            <div class="hero-stat-inner">
+              <dt class="hero-stat-label">The house price-to-earnings ratio in England.<br><span style="display:inline-block;margin-top:0.5rem">It was 3.5x in 2000.</span></dt>
+              <dd class="hero-stat-number">7.6x</dd>
+            </div>
+            <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/bulletins/housingaffordabilityinenglandandwales/latest" target="_blank" rel="noopener noreferrer" class="stat-source">Source: ONS Housing Affordability</a>
           </div>
-          <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/bulletins/housingaffordabilityinenglandandwales/latest" target="_blank" rel="noopener noreferrer" class="stat-source">Source: ONS Housing Affordability</a>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-inner">
-            <dt class="hero-stat-label">Under-25s with a mental health condition.<br><span style="display:inline-block;margin-top:0.5rem">2x from a generation ago.</span></dt>
-            <dd class="hero-stat-number">1 in 5</dd>
+          <div class="hero-stat hero-stat--health">
+            <div class="hero-stat-inner">
+              <dt class="hero-stat-label">Under-25s with a mental health condition.<br><span style="display:inline-block;margin-top:0.5rem">2x from a generation ago.</span></dt>
+              <dd class="hero-stat-number">1 in 5</dd>
+            </div>
+            <a href="https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-of-children-and-young-people-in-england" target="_blank" rel="noopener noreferrer" class="stat-source">Source: NHS Digital</a>
           </div>
-          <a href="https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-of-children-and-young-people-in-england" target="_blank" rel="noopener noreferrer" class="stat-source">Source: NHS Digital</a>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-inner">
-            <dt class="hero-stat-label">Owed by the average graduate before they earn a penny.<br><span style="display:inline-block;margin-top:0.5rem">Up from £9,000 in 2006.</span></dt>
-            <dd class="hero-stat-number">£53K</dd>
+          <div class="hero-stat hero-stat--fees">
+            <div class="hero-stat-inner">
+              <dt class="hero-stat-label">Owed by the average graduate before they earn a penny.<br><span style="display:inline-block;margin-top:0.5rem">Up from £9,000 in 2006.</span></dt>
+              <dd class="hero-stat-number">£53K</dd>
+            </div>
+            <a href="https://commonslibrary.parliament.uk/research-briefings/sn01079/" target="_blank" rel="noopener noreferrer" class="stat-source">Source: House of Commons Library</a>
           </div>
-          <a href="https://commonslibrary.parliament.uk/research-briefings/sn01079/" target="_blank" rel="noopener noreferrer" class="stat-source">Source: House of Commons Library</a>
-        </div>
-      </dl>
+        </dl>
+      </div>
     </div>
     <div class="hero-scroll"></div>
   </header>
@@ -3043,7 +3124,7 @@
        Single createChart() replaces 12 hardcoded SVG charts
        ============================================================ */
     (function () {
-      var W = 500, H = 280;
+      var W = 500, H = 260;
       var PAD = { top: 30, right: 10, bottom: 50, left: 55 };
       var PW = W - PAD.left - PAD.right;
       var PH = H - PAD.top - PAD.bottom;
@@ -4927,7 +5008,7 @@
     var LOCAL_DATA_LOADING = false;
     var LOCAL_DATA_CALLBACKS = [];
     function theRegion(r) { return (r && r !== 'London') ? 'the ' + r : r; }
-    function boldLocation(loc) { return (loc && loc.indexOf('the ') === 0) ? 'the <b>' + loc.slice(4) + '</b>' : '<b>' + loc + '</b>'; }
+    function boldLocation(loc) { return (loc && loc.indexOf('the ') === 0) ? 'the <b class="loc">' + loc.slice(4) + '</b>' : '<b class="loc">' + loc + '</b>'; }
 
     function loadLocalData(cb) {
       if (LOCAL_DATA_LOADED) { cb(); return; }
@@ -5368,7 +5449,7 @@
           claimDirText = '<b>down ' + claimAbs + '</b>';
         }
         var claimRefYear = ref.year.split(' ').pop();
-        var claimLoc = (location === 'the UK') ? 'the <b>UK</b>' : '<b>' + location + '</b>';
+        var claimLoc = (location === 'the UK') ? 'the <b class="loc">UK</b>' : '<b class="loc">' + location + '</b>';
         return 'In ' + claimLoc + ', there were ' + fmtValue(data.last.value, config.unit) + ' under 24s receiving unemployment benefits in ' + data.last.year + ', ' + claimDirText + ' versus ' + claimRefYear + '.';
       }
       if (panelId === 'panel-apprenticeships' && data.max) {
@@ -7214,11 +7295,11 @@
           { w: 11, h: 11 }
         ];
         var pieces = [
-          { peakX: 10,  peakY: -35, x: 15,  endY: h * 0.5, rot: 200 },
-          { peakX: -10, peakY: -30, x: -15, endY: h * 0.6, rot: 140 },
-          { peakX: 14,  peakY: -25, x: -8,  endY: h * 0.7, rot: 170 },
-          { peakX: -14, peakY: -40, x: -20, endY: h * 0.75, rot: -100 },
-          { peakX: 8,   peakY: -45, x: 12,  endY: h * 0.85, rot: -60 }
+          { peakX: 18,  peakY: -50, x: 25,  endY: h * 0.5, rot: 200 },
+          { peakX: -18, peakY: -45, x: -25, endY: h * 0.6, rot: 140 },
+          { peakX: 22,  peakY: -38, x: -14, endY: h * 0.7, rot: 170 },
+          { peakX: -22, peakY: -55, x: -30, endY: h * 0.75, rot: -100 },
+          { peakX: 14,  peakY: -60, x: 20,  endY: h * 0.85, rot: -60 }
         ];
         pieces.forEach(function(p, i) {
           setTimeout(function() {
@@ -7240,7 +7321,7 @@
               piece.className = 'floating-cta-confetti falling';
               piece.addEventListener('animationend', function() { piece.remove(); });
             });
-          }, 200 + i * 300);
+          }, 200 + i * 30);
         });
       }
 
