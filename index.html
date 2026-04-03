@@ -1607,30 +1607,65 @@
         border-bottom: 1px solid var(--grey-light);
         gap: 1rem;
       }
-      .hero-sign-img-desktop { display: none; }
-      .hero-right { display: contents; }
-      .hero-stat--housing,
-      .hero-stat--health { display: flex; }
-      .hero-stats { grid-template-columns: 1fr 1fr; width: 100%; box-sizing: border-box; }
-      .hero { padding-top: 7rem; padding-left: 2rem; padding-right: 2rem; }
-      .hero-sub { text-align: center; max-width: 98%; font-size: 1rem; }
-      .hero-sub-top {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        align-items: center;
+      .hero-columns { display: flex; flex-direction: column; gap: 1.5rem; }
+      .hero-right {
+        order: -1;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 0;
+        padding-bottom: 0;
       }
+      .hero-sign-img-desktop {
+        display: block;
+        width: 45%;
+        max-width: 180px;
+        height: auto;
+        border-radius: 0;
+        flex-shrink: 0;
+      }
+      .hero-right .hero-stats {
+        display: contents !important;
+      }
+      .hero-right .hero-stat {
+        width: 105px;
+        flex-shrink: 0;
+        margin-bottom: -2rem;
+        z-index: 2;
+        position: relative;
+      }
+      .hero-stats.scroll-animate .hero-stat {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .hero-right .hero-stat--emigration {
+        order: -1;
+        margin-right: -15px;
+      }
+      .hero-right .hero-stat--fees {
+        order: 1;
+        margin-left: -15px;
+      }
+      .hero-right .hero-stat-inner {
+        padding: 0.35rem 0.4rem;
+      }
+      .hero-right .hero-stat-number {
+        font-size: 1rem !important;
+      }
+      .hero-right .hero-stat-label {
+        font-size: 0.58rem !important;
+      }
+      .hero-right .stat-source {
+        font-size: 0.5rem;
+      }
+      .hero-sign-img { display: none !important; }
+      .hero-sub-top { display: contents; }
+      .hero { padding-top: 7rem; padding-left: 2rem; padding-right: 2rem; }
+      .hero-sub { text-align: left; max-width: 100%; font-size: 1rem; }
       .hero-sub-intro {
         text-align: left;
         margin: 0;
-      }
-      .hero-sign-img {
-        display: block;
-        width: 116px;
-        height: auto;
-        border-radius: 0;
-        object-fit: cover;
-        margin-right: -0.25rem;
       }
       .hero-sub-cta {
         text-align: left;
@@ -2956,7 +2991,7 @@
               <button class="chart-view-btn active" data-view="national">National</button>
             </div>
           </div>
-          <div class="chart-tab-desc" id="rent-tab-desc">In the <b>UK</b>, average monthly rent for 1 bedroom in a 2 bed flat (before bills) was &pound;610 in 2025, <b>up 61%</b> versus 2010. This represents 26% of a median 22&ndash;29 year old&rsquo;s take-home pay.</div>
+          <div class="chart-tab-desc" id="rent-tab-desc">In the <b>UK</b>, average monthly rent for 1 bedroom in a 2 bed flat (before bills) was &pound;610 in 2025, <b>up 61%</b> versus 2010. <div style="margin-top:6px">This represents <b>26%</b> of a median 22&ndash;29 year old&rsquo;s take-home pay.</div></div>
           <div class="chart-panels">
             <div class="chart-panel active" id="panel-rent">
               <div class="edu-chart" id="chart-rent"></div>
@@ -5574,7 +5609,7 @@
       var pctLast = pcts[pcts.length - 1];
       var changePct = Math.round((last - first) / first * 100);
       var rentType = is1bed ? '1 bed flat' : '1 bedroom in a 2 bed flat';
-      return 'In ' + location + ', average monthly rent for ' + rentType + ' (before bills) was \u00A3' + last.toLocaleString('en-GB') + ' in 2025, <b>up ' + changePct + '%</b> versus 2010. This represents ' + pctLast + '% of a median 22\u201329 year old\u2019s take-home pay.';
+      return 'In ' + location + ', average monthly rent for ' + rentType + ' (before bills) was \u00A3' + last.toLocaleString('en-GB') + ' in 2025, <b>up ' + changePct + '%</b> versus 2010. <div style="margin-top:6px">This represents <b>' + pctLast + '%</b> of a median 22\u201329 year old\u2019s take-home pay.</div>';
     }
 
     function generateMonthlyDescription(isLocal) {
@@ -7573,10 +7608,18 @@
       var data = LOCAL_HOUSING_DATA.constituencies[name];
       var desc = document.getElementById('housing-purchase-desc');
       if (data) {
+        var taxable = Math.max(data.earnings - 12570, 0);
+        var incomeTax = taxable * 0.20;
+        var ni = taxable * 0.08;
+        var takeHome = data.earnings - incomeTax - ni;
+        var deposit = data.hp * 0.10;
+        var annualSaving = takeHome * 0.10;
+        var yearsToSave = (deposit / annualSaving).toFixed(1);
         desc.innerHTML = 'In <b>' + name + '</b>, the median house price is \u00A3' +
           Math.round(data.hp).toLocaleString('en-GB') + ' against median earnings of \u00A3' +
           Math.round(data.earnings).toLocaleString('en-GB') + ', a ratio of <b>' +
-          data.ratio.toFixed(1) + 'x</b>.';
+          data.ratio.toFixed(1) + 'x</b>.' +
+          '<div style="margin-top:6px">It would take <b>' + yearsToSave + ' years</b> to save for a 10% house deposit, assuming 10% of monthly take-home salary is saved.</div>';
       } else {
         desc.innerHTML = '<b>' + name + '</b> \u2014 no housing data available for this constituency.';
       }
