@@ -1045,6 +1045,80 @@
       .map-share-btn:active { border-color: #E04B2D; }
       .map-share-btn.loading { opacity: 0.5; pointer-events: none; }
       .map-share-btn svg { pointer-events: none; }
+
+      /* Share bottom sheet */
+      .share-sheet-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .share-sheet-overlay.visible { opacity: 1; }
+      .share-sheet {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        background: #fff;
+        border-radius: 16px 16px 0 0;
+        padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+        z-index: 10000;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .share-sheet.visible { transform: translateY(0); }
+      .share-sheet-handle {
+        width: 36px;
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin: 0 auto 14px;
+      }
+      .share-sheet-preview {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        margin-bottom: 20px;
+      }
+      .share-sheet-preview img {
+        width: 100%;
+        display: block;
+        border-radius: 7px;
+      }
+      .share-sheet-actions {
+        display: flex;
+        gap: 12px;
+      }
+      .share-sheet-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 0;
+        border-radius: 12px;
+        border: none;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .share-sheet-btn:active { opacity: 0.7; }
+      .share-sheet-btn svg { flex-shrink: 0; pointer-events: none; }
+      .share-sheet-btn--wa {
+        background: #25D366;
+        color: #fff;
+      }
+      .share-sheet-btn--ig {
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        color: #fff;
+      }
     }
     /* Local funding section */
     /* Chart tabs + view toggle row */
@@ -7806,7 +7880,7 @@
           if (chartEl.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_PRECEDING) bestDesc = d;
         });
         if (bestTitle) ctx.title = bestTitle.textContent.trim();
-        if (bestDesc) ctx.desc = bestDesc.textContent.trim();
+        if (bestDesc) { ctx.desc = bestDesc.textContent.trim(); ctx.descHtml = bestDesc.innerHTML; }
       }
 
       // If we're in a tabbed chart, also note the active tab label
@@ -7850,7 +7924,7 @@
           if (mapEl.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_PRECEDING) bestDesc = d;
         });
         if (bestTitle) ctx.title = bestTitle.textContent.trim();
-        if (bestDesc) ctx.desc = bestDesc.textContent.trim();
+        if (bestDesc) { ctx.desc = bestDesc.textContent.trim(); ctx.descHtml = bestDesc.innerHTML; }
       }
       return ctx;
     }
@@ -7860,19 +7934,18 @@
       var wrapper = document.createElement('div');
       wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:500px;background:#fff;padding:24px 20px 16px;font-family:"Open Sans",sans-serif;box-sizing:border-box;';
 
-      // Title
-      if (ctx.title) {
-        var h = document.createElement('div');
-        h.textContent = ctx.title;
-        h.style.cssText = 'font-family:"Lora",serif;font-size:18px;font-weight:700;color:#000;margin-bottom:6px;';
-        wrapper.appendChild(h);
-      }
+      // Site branding
+      var brand = document.createElement('div');
+      brand.textContent = 'Backing Young Britain';
+      brand.style.cssText = 'font-family:"Lora",serif;font-size:24px;font-weight:400;color:#000;margin-bottom:16px;';
+      wrapper.appendChild(brand);
 
       // Description
       if (ctx.desc) {
         var p = document.createElement('div');
-        p.textContent = ctx.desc;
-        p.style.cssText = 'font-size:12px;color:#333;margin-bottom:12px;line-height:1.5;';
+        p.innerHTML = ctx.descHtml || ctx.desc;
+        p.style.cssText = 'font-size:15px;color:#000;margin-bottom:12px;line-height:1.5;font-weight:400;';
+        p.querySelectorAll('b').forEach(function(b) { b.style.fontWeight = '600'; });
         wrapper.appendChild(p);
       }
 
@@ -7898,10 +7971,10 @@
         wrapper.appendChild(src);
       }
 
-      // Footer branding
+      // Campaign CTA
       var footer = document.createElement('div');
-      footer.textContent = 'backingyoungbritain.org';
-      footer.style.cssText = 'font-size:10px;color:#E04B2D;font-weight:600;margin-top:12px;text-align:right;';
+      footer.textContent = 'Join the campaign and discover your local results at backingyoungbritain.co.uk';
+      footer.style.cssText = 'font-size:11px;color:#E04B2D;font-weight:600;margin-top:14px;line-height:1.4;';
       wrapper.appendChild(footer);
 
       return wrapper;
@@ -7928,29 +8001,131 @@
       });
     }
 
-    // Share or download
-    function shareBlob(blob, text) {
-      var file = new File([blob], 'backing-young-britain.png', { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        return navigator.share({
-          files: [file],
-          title: 'Backing Young Britain'
-        }).catch(function() {});
-      } else if (navigator.share) {
-        return navigator.share({
-          title: 'Backing Young Britain',
-          text: text,
-          url: 'https://backingyoungbritain.org'
-        }).catch(function() {});
-      } else {
-        // Fallback: download
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'backing-young-britain.png';
-        a.click();
-        setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+    // Bottom sheet state
+    var sheetOverlay = null;
+    var sheetEl = null;
+    var currentBlob = null;
+    var currentShareText = '';
+    var currentImageUrl = null;
+
+    function createShareSheet() {
+      if (sheetOverlay) return;
+
+      sheetOverlay = document.createElement('div');
+      sheetOverlay.className = 'share-sheet-overlay';
+      sheetOverlay.addEventListener('click', closeShareSheet);
+
+      sheetEl = document.createElement('div');
+      sheetEl.className = 'share-sheet';
+      sheetEl.innerHTML =
+        '<div class="share-sheet-handle"></div>' +
+        '<div class="share-sheet-preview"><img id="share-sheet-img" alt="Chart preview"></div>' +
+        '<div class="share-sheet-actions">' +
+          '<button class="share-sheet-btn share-sheet-btn--wa" id="share-sheet-wa">' +
+            '<svg width="20" height="20" viewBox="0 0 720 720" fill="#fff"><path d="M360,0C161.18,0,0,161.18,0,360c0,65.41,17.45,126.75,47.94,179.61L0,720l187.02-44.21c51.34,28.18,110.28,44.21,172.98,44.21,198.82,0,360-161.18,360-360S558.82,0,360,0ZM360,655.52c-60.17,0-116.13-17.98-162.82-48.87l-110.49,28.14,30.99-105.61c-33.53-47.93-53.2-106.26-53.2-169.19,0-163.21,132.31-295.52,295.52-295.52s295.52,132.31,295.52,295.52-132.31,295.52-295.52,295.52Z"/><path d="M444.35,407.52l87.1,41.06c4,1.88,6.56,5.94,6.2,10.34-.94,11.46-5.54,34.43-26.13,55.02-58.12,58.12-162.49-7.64-166.74-10.18-25.67-13.79-50.06-32.24-73.19-55.36-23.12-23.12-41.58-47.52-55.37-73.19-2.55-4.24-68.31-108.61-10.18-166.74,20.59-20.59,43.56-25.19,55.02-26.13,4.41-.36,8.46,2.2,10.34,6.2l41.07,87.1c1.94,4.12,1.09,9.02-2.13,12.24l-30.61,30.61c-6.62,6.62-8.56,16.93-4,25.11,11.17,20.03,26.19,39.32,43.59,57.07,17.75,17.4,37.04,32.43,57.07,43.59,8.18,4.56,18.48,2.62,25.11-4l30.61-30.61c3.22-3.22,8.12-4.08,12.24-2.13Z"/></svg>' +
+            'WhatsApp' +
+          '</button>' +
+          '<button class="share-sheet-btn share-sheet-btn--ig" id="share-sheet-ig">' +
+            '<svg width="20" height="20" viewBox="0 0 504 504" fill="#fff"><path d="M252,45.4c67.3,0,75.3.3,101.8,1.5,24.6,1.1,37.9,5.2,46.8,8.7,11.8,4.6,20.2,10,29,18.8s14.3,17.2,18.8,29c3.4,8.9,7.5,22.2,8.7,46.8,1.2,26.5,1.5,34.5,1.5,101.8s-.3,75.3-1.5,101.8c-1.1,24.6-5.2,37.9-8.7,46.8-4.6,11.8-10,20.2-18.8,29s-17.2,14.3-29,18.8c-8.9,3.4-22.2,7.5-46.8,8.7-26.5,1.2-34.5,1.5-101.8,1.5s-75.3-.3-101.8-1.5c-24.6-1.1-37.9-5.2-46.8-8.7-11.8-4.6-20.2-10-29-18.8s-14.3-17.2-18.8-29c-3.4-8.9-7.5-22.2-8.7-46.8-1.2-26.5-1.5-34.5-1.5-101.8s.3-75.3,1.5-101.8c1.1-24.6,5.2-37.9,8.7-46.8,4.6-11.8,10-20.2,18.8-29s17.2-14.3,29-18.8c8.9-3.4,22.2-7.5,46.8-8.7,26.5-1.2,34.5-1.5,101.8-1.5M252,0C183.5,0,175,.3,148.2,1.5,121.5,2.7,103.1,7,87,13c-16.6,6.5-30.7,15.1-44.8,29.2S23.4,70.4,17,87C11,103.1,6.7,121.5,5.5,148.2,4.3,175,4,183.5,4,252s.3,77,1.5,103.8c1.2,26.7,5.5,45.1,11.5,61.2,6.5,16.6,15.1,30.7,29.2,44.8S70.4,480.6,87,487c16.1,6,34.5,10.3,61.2,11.5S183.5,500,252,500s77-.3,103.8-1.5c26.7-1.2,45.1-5.5,61.2-11.5,16.6-6.5,30.7-15.1,44.8-29.2s22.7-28.2,29.2-44.8c6-16.1,10.3-34.5,11.5-61.2s1.5-30.2,1.5-103.8-.3-77-1.5-103.8c-1.2-26.7-5.5-45.1-11.5-61.2-6.5-16.6-15.1-30.7-29.2-44.8S437.6,23.4,421,17c-16.1-6-34.5-10.3-61.2-11.5S320.5,4,252,4Z" transform="translate(-4)"/><path d="M252,122.6A129.4,129.4,0,1,0,381.4,252,129.4,129.4,0,0,0,252,122.6Zm0,213.4A84,84,0,1,1,336,252,84,84,0,0,1,252,336Z" transform="translate(-4)"/><circle cx="382.4" cy="121.6" r="30.2"/></svg>' +
+            'Stories' +
+          '</button>' +
+        '</div>';
+
+      // Stop clicks inside sheet from closing it
+      sheetEl.addEventListener('click', function(e) { e.stopPropagation(); });
+
+      document.body.appendChild(sheetOverlay);
+      document.body.appendChild(sheetEl);
+
+      // WhatsApp button
+      document.getElementById('share-sheet-wa').addEventListener('click', function() {
+        if (!currentBlob) return;
+        var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            files: [file],
+            text: currentShareText
+          }).catch(function() {});
+        } else {
+          window.open('https://wa.me/?text=' + encodeURIComponent(currentShareText), '_blank');
+        }
+        closeShareSheet();
+      });
+
+      // Instagram Stories button
+      document.getElementById('share-sheet-ig').addEventListener('click', function() {
+        if (!currentBlob) return;
+        var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            files: [file],
+            title: 'Backing Young Britain'
+          }).catch(function() {});
+        } else {
+          // Fallback: download the image
+          var url = URL.createObjectURL(currentBlob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = 'backing-young-britain.png';
+          a.click();
+          setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+        }
+        closeShareSheet();
+      });
+    }
+
+    function openShareSheet(blob, shareText) {
+      createShareSheet();
+      currentBlob = blob;
+      currentShareText = shareText;
+      if (currentImageUrl) URL.revokeObjectURL(currentImageUrl);
+      currentImageUrl = URL.createObjectURL(blob);
+      document.getElementById('share-sheet-img').src = currentImageUrl;
+      // Trigger layout then animate in
+      requestAnimationFrame(function() {
+        sheetOverlay.classList.add('visible');
+        sheetEl.classList.add('visible');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeShareSheet() {
+      if (!sheetEl) return;
+      sheetOverlay.classList.remove('visible');
+      sheetEl.classList.remove('visible');
+      document.body.style.overflow = '';
+      if (currentImageUrl) {
+        setTimeout(function() { URL.revokeObjectURL(currentImageUrl); currentImageUrl = null; }, 350);
       }
+      currentBlob = null;
+    }
+
+    // Find the chart element from a share button
+    function findChartFromBtn(btn) {
+      var titleRow = btn.closest('.chart-title-row') || btn.closest('.chart-tabs-row');
+      var container = titleRow ? titleRow.parentElement : null;
+      if (!container) return null;
+
+      // Search within container first
+      var chartEl = container.querySelector('.chart-panel.active .edu-chart') || container.querySelector('.edu-chart');
+
+      // Check next siblings of container
+      if (!chartEl) {
+        var sib = container.nextElementSibling;
+        while (sib && !chartEl) {
+          if (sib.classList.contains('edu-chart')) { chartEl = sib; break; }
+          chartEl = sib.querySelector('.chart-panel.active .edu-chart') || sib.querySelector('.edu-chart');
+          sib = sib.nextElementSibling;
+        }
+      }
+      // Try parent's children
+      if (!chartEl) {
+        var parent = container.parentElement;
+        if (parent) {
+          chartEl = parent.querySelector('.chart-panel.active .edu-chart') || parent.querySelector('.edu-chart');
+        }
+      }
+      return chartEl;
     }
 
     // Delegated click handler for chart share buttons
@@ -7959,56 +8134,20 @@
       if (btn) {
         e.preventDefault();
         btn.classList.add('loading');
-        // Find the associated chart: walk from the title row to find the nearest .edu-chart
-        var titleRow = btn.closest('.chart-title-row') || btn.closest('.chart-tabs-row');
-        var container = titleRow ? titleRow.parentElement : null;
-        var chartEl = null;
-        if (container) {
-          // Search within container first, then walk siblings
-          var activePanel = container.querySelector('.chart-panel.active .edu-chart');
-          if (activePanel) {
-            chartEl = activePanel;
-          } else {
-            chartEl = container.querySelector('.edu-chart');
-          }
-          // If not found inside, check next siblings of container
-          if (!chartEl) {
-            var sib = container.nextElementSibling;
-            while (sib && !chartEl) {
-              if (sib.classList.contains('edu-chart')) { chartEl = sib; break; }
-              var activeInSib = sib.querySelector('.chart-panel.active .edu-chart');
-              if (activeInSib) { chartEl = activeInSib; break; }
-              var anyChart = sib.querySelector('.edu-chart');
-              if (anyChart) { chartEl = anyChart; break; }
-              sib = sib.nextElementSibling;
-            }
-          }
-          // Also try parent's children (for cases where container is nested)
-          if (!chartEl) {
-            var parent = container.parentElement;
-            if (parent) {
-              var ap = parent.querySelector('.chart-panel.active .edu-chart');
-              chartEl = ap || parent.querySelector('.edu-chart');
-            }
-          }
-        }
+        var chartEl = findChartFromBtn(btn);
         if (!chartEl) { btn.classList.remove('loading'); return; }
         var ctx = findChartContext(chartEl);
         var shareText = ctx.title;
         if (ctx.desc) shareText += ': ' + ctx.desc;
-        shareText += '\n\nbackingyoungbritain.org';
+        shareText += '\n\nbackingyoungbritain.co.uk';
 
         var wrapper = buildCaptureCard(chartEl, ctx);
         captureToBlob(wrapper).then(function(blob) {
           btn.classList.remove('loading');
-          return shareBlob(blob, shareText);
+          openShareSheet(blob, shareText);
         }).catch(function(err) {
           btn.classList.remove('loading');
           console.error('Chart share failed:', err);
-          // Fallback to text-only share
-          if (navigator.share) {
-            navigator.share({ title: 'Backing Young Britain', text: shareText, url: 'https://backingyoungbritain.org' }).catch(function() {});
-          }
         });
         return;
       }
@@ -8021,18 +8160,15 @@
         var ctx = findMapContext(mapEl);
         var shareText = ctx.title || 'Map';
         if (ctx.desc) shareText += ': ' + ctx.desc;
-        shareText += '\n\nbackingyoungbritain.org';
+        shareText += '\n\nbackingyoungbritain.co.uk';
 
         var wrapper = buildCaptureCard(mapEl, ctx);
         captureToBlob(wrapper).then(function(blob) {
           mapBtn.classList.remove('loading');
-          return shareBlob(blob, shareText);
+          openShareSheet(blob, shareText);
         }).catch(function(err) {
           mapBtn.classList.remove('loading');
           console.error('Map share failed:', err);
-          if (navigator.share) {
-            navigator.share({ title: 'Backing Young Britain', text: shareText, url: 'https://backingyoungbritain.org' }).catch(function() {});
-          }
         });
       }
     });
