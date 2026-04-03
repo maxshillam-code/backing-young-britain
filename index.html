@@ -1119,6 +1119,16 @@
         background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
         color: #fff;
       }
+      .share-sheet-toast {
+        text-align: center;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.8rem;
+        color: #555;
+        margin-top: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .share-sheet-toast.visible { opacity: 1; }
     }
     /* Local funding section */
     /* Chart tabs + view toggle row */
@@ -8029,7 +8039,8 @@
             '<svg width="20" height="20" viewBox="0 0 504 504" fill="#fff"><path d="M252,45.4c67.3,0,75.3.3,101.8,1.5,24.6,1.1,37.9,5.2,46.8,8.7,11.8,4.6,20.2,10,29,18.8s14.3,17.2,18.8,29c3.4,8.9,7.5,22.2,8.7,46.8,1.2,26.5,1.5,34.5,1.5,101.8s-.3,75.3-1.5,101.8c-1.1,24.6-5.2,37.9-8.7,46.8-4.6,11.8-10,20.2-18.8,29s-17.2,14.3-29,18.8c-8.9,3.4-22.2,7.5-46.8,8.7-26.5,1.2-34.5,1.5-101.8,1.5s-75.3-.3-101.8-1.5c-24.6-1.1-37.9-5.2-46.8-8.7-11.8-4.6-20.2-10-29-18.8s-14.3-17.2-18.8-29c-3.4-8.9-7.5-22.2-8.7-46.8-1.2-26.5-1.5-34.5-1.5-101.8s.3-75.3,1.5-101.8c1.1-24.6,5.2-37.9,8.7-46.8,4.6-11.8,10-20.2,18.8-29s17.2-14.3,29-18.8c8.9-3.4,22.2-7.5,46.8-8.7,26.5-1.2,34.5-1.5,101.8-1.5M252,0C183.5,0,175,.3,148.2,1.5,121.5,2.7,103.1,7,87,13c-16.6,6.5-30.7,15.1-44.8,29.2S23.4,70.4,17,87C11,103.1,6.7,121.5,5.5,148.2,4.3,175,4,183.5,4,252s.3,77,1.5,103.8c1.2,26.7,5.5,45.1,11.5,61.2,6.5,16.6,15.1,30.7,29.2,44.8S70.4,480.6,87,487c16.1,6,34.5,10.3,61.2,11.5S183.5,500,252,500s77-.3,103.8-1.5c26.7-1.2,45.1-5.5,61.2-11.5,16.6-6.5,30.7-15.1,44.8-29.2s22.7-28.2,29.2-44.8c6-16.1,10.3-34.5,11.5-61.2s1.5-30.2,1.5-103.8-.3-77-1.5-103.8c-1.2-26.7-5.5-45.1-11.5-61.2-6.5-16.6-15.1-30.7-29.2-44.8S437.6,23.4,421,17c-16.1-6-34.5-10.3-61.2-11.5S320.5,4,252,4Z" transform="translate(-4)"/><path d="M252,122.6A129.4,129.4,0,1,0,381.4,252,129.4,129.4,0,0,0,252,122.6Zm0,213.4A84,84,0,1,1,336,252,84,84,0,0,1,252,336Z" transform="translate(-4)"/><circle cx="382.4" cy="121.6" r="30.2"/></svg>' +
             'Stories' +
           '</button>' +
-        '</div>';
+        '</div>' +
+        '<div class="share-sheet-toast" id="share-sheet-toast"></div>';
 
       // Stop clicks inside sheet from closing it
       sheetEl.addEventListener('click', function(e) { e.stopPropagation(); });
@@ -8052,25 +8063,51 @@
         closeShareSheet();
       });
 
-      // Instagram Stories button
+      // Instagram Stories button — copy image to clipboard then open Instagram
       document.getElementById('share-sheet-ig').addEventListener('click', function() {
         if (!currentBlob) return;
-        var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({
-            files: [file],
-            title: 'Backing Young Britain'
-          }).catch(function() {});
+        var toast = document.getElementById('share-sheet-toast');
+
+        // Try to copy image to clipboard, then open Instagram Stories camera
+        if (navigator.clipboard && window.ClipboardItem) {
+          navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': currentBlob })
+          ]).then(function() {
+            toast.textContent = 'Image copied — paste it into your Story';
+            toast.classList.add('visible');
+            setTimeout(function() {
+              window.location.href = 'instagram-stories://share';
+              // Fallback if deep link doesn't work (no app installed)
+              setTimeout(function() {
+                window.location.href = 'instagram://story-camera';
+              }, 500);
+              setTimeout(function() {
+                // If neither deep link worked, we're still here — that's fine,
+                // the image is on the clipboard and the toast is showing
+              }, 1200);
+            }, 400);
+          }).catch(function() {
+            // Clipboard write failed — fall back to download
+            var url = URL.createObjectURL(currentBlob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'backing-young-britain.png';
+            a.click();
+            setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+            toast.textContent = 'Image saved — open Instagram and add it to your Story';
+            toast.classList.add('visible');
+          });
         } else {
-          // Fallback: download the image
+          // No clipboard API — download the image
           var url = URL.createObjectURL(currentBlob);
           var a = document.createElement('a');
           a.href = url;
           a.download = 'backing-young-britain.png';
           a.click();
           setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+          toast.textContent = 'Image saved — open Instagram and add it to your Story';
+          toast.classList.add('visible');
         }
-        closeShareSheet();
       });
     }
 
@@ -8094,6 +8131,8 @@
       sheetOverlay.classList.remove('visible');
       sheetEl.classList.remove('visible');
       document.body.style.overflow = '';
+      var toast = document.getElementById('share-sheet-toast');
+      if (toast) { toast.classList.remove('visible'); toast.textContent = ''; }
       if (currentImageUrl) {
         setTimeout(function() { URL.revokeObjectURL(currentImageUrl); currentImageUrl = null; }, 350);
       }
