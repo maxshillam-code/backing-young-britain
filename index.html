@@ -1053,31 +1053,26 @@
         background: rgba(0,0,0,0.45);
         z-index: 9999;
         opacity: 0;
+        pointer-events: none;
         transition: opacity 0.25s ease;
         -webkit-tap-highlight-color: transparent;
       }
-      .share-sheet-overlay.visible { opacity: 1; }
+      .share-sheet-overlay.visible { opacity: 1; pointer-events: auto; }
       .share-sheet {
         position: fixed;
         left: 0; right: 0; bottom: 0;
-        background: #fff;
+        background: #f5f5f5;
         border-radius: 16px 16px 0 0;
         padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
         z-index: 10000;
         transform: translateY(100%);
+        pointer-events: none;
         transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
         height: 70vh;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
-      .share-sheet.visible { transform: translateY(0); }
-      .share-sheet-handle {
-        width: 36px;
-        height: 4px;
-        background: #ddd;
-        border-radius: 2px;
-        margin: 0 auto 14px;
-      }
+      .share-sheet.visible { transform: translateY(0); pointer-events: auto; }
       .share-sheet-preview {
         width: 100%;
         border-radius: 8px;
@@ -7939,76 +7934,200 @@
       return ctx;
     }
 
-    // Build off-screen card for capture
-    function buildCaptureCard(cloneTarget, ctx) {
-      var wrapper = document.createElement('div');
-      wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:500px;background:#fff;padding:24px 20px 16px;font-family:"Open Sans",sans-serif;box-sizing:border-box;';
+    // Capture chart by serializing SVG to image, then composite with canvas
+    function captureChartToBlob(targetEl, ctx) {
+      return document.fonts.ready.then(function() {
+        var svg = targetEl.querySelector('svg');
+        if (!svg) throw new Error('No SVG found');
 
-      // Site branding
-      var brand = document.createElement('div');
-      brand.textContent = 'Backing Young Britain';
-      brand.style.cssText = 'font-family:"Lora",serif;font-size:24px;font-weight:400;color:#000;margin-bottom:16px;';
-      wrapper.appendChild(brand);
-
-      // Description
-      if (ctx.desc) {
-        var p = document.createElement('div');
-        p.innerHTML = ctx.descHtml || ctx.desc;
-        p.style.cssText = 'font-size:15px;color:#000;margin-bottom:12px;line-height:1.5;font-weight:400;';
-        p.querySelectorAll('b').forEach(function(b) { b.style.fontWeight = '600'; });
-        wrapper.appendChild(p);
-      }
-
-      // Clone the chart/map
-      var clone = cloneTarget.cloneNode(true);
-      // Remove share buttons from clone
-      clone.querySelectorAll('.chart-share-btn, .map-share-btn').forEach(function(b) { b.remove(); });
-      // Reset mobile SVG offset
-      var svg = clone.querySelector('svg');
-      if (svg) {
-        svg.style.width = '100%';
-        svg.style.marginLeft = '0';
-      }
-      clone.style.position = 'static';
-      clone.style.width = '100%';
-      wrapper.appendChild(clone);
-
-      // Source
-      if (ctx.sourceText) {
-        var src = document.createElement('div');
-        src.textContent = ctx.sourceText;
-        src.style.cssText = 'font-size:9px;color:#888;text-transform:uppercase;margin-top:8px;letter-spacing:0.03em;';
-        wrapper.appendChild(src);
-      }
-
-      // Campaign CTA
-      var footer = document.createElement('div');
-      footer.textContent = 'Join the campaign and discover your local results at backingyoungbritain.co.uk';
-      footer.style.cssText = 'font-size:11px;color:#E04B2D;font-weight:600;margin-top:14px;line-height:1.4;';
-      wrapper.appendChild(footer);
-
-      return wrapper;
-    }
-
-    // Capture element to blob
-    function captureToBlob(wrapper) {
-      return loadHtml2Canvas().then(function() {
-        return document.fonts.ready;
-      }).then(function() {
-        document.body.appendChild(wrapper);
-        return html2canvas(wrapper, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          logging: false
+        // Clone SVG and inline all computed styles so it renders standalone
+        var clone = svg.cloneNode(true);
+        var allOrig = svg.querySelectorAll('*');
+        var allClone = clone.querySelectorAll('*');
+        allClone.forEach(function(el, i) {
+          var computed = window.getComputedStyle(allOrig[i]);
+          // Copy all visual SVG properties
+          var props = ['font-family','font-size','font-weight','font-style',
+                       'fill','fill-opacity','stroke','stroke-width','stroke-linecap',
+                       'stroke-linejoin','stroke-dasharray','stroke-opacity',
+                       'opacity','text-anchor','dominant-baseline','letter-spacing',
+                       'color','visibility','display'];
+          props.forEach(function(p) {
+            var v = computed.getPropertyValue(p);
+            if (v !== '') {
+              el.style.setProperty(p, v);
+            }
+          });
         });
-      }).then(function(canvas) {
-        document.body.removeChild(wrapper);
+
+        // Remove share buttons from clone
+        clone.querySelectorAll('.chart-share-btn, .map-share-btn').forEach(function(b) { b.remove(); });
+
+        // Force all animated elements to their fully revealed state
+        clone.querySelectorAll('.chart-line, .gap-connector').forEach(function(el) {
+          el.style.opacity = '1';
+        });
+        clone.querySelectorAll('.chart-dots circle').forEach(function(el) {
+          el.style.opacity = '1';
+        });
+        clone.querySelectorAll('.chart-value-label').forEach(function(el) {
+          el.style.opacity = '1';
+        });
+        clone.querySelectorAll('.chart-bar').forEach(function(el) {
+          el.style.opacity = '1';
+        });
+
+        // Set explicit size — render at 2x for crisp output
+        var scale = 2;
+        var vb = svg.viewBox.baseVal;
+        // Add extra space for text that overflows the viewBox
+        var extraLeft = 10;
+        var extraRight = 20;
+        var extraTop = 5;
+        var extraBottom = 25;
+        var newVBX = vb.x - extraLeft;
+        var newVBY = vb.y - extraTop;
+        var newVBW = vb.width + extraLeft + extraRight;
+        var newVBH = vb.height + extraTop + extraBottom;
+        clone.setAttribute('viewBox', newVBX + ' ' + newVBY + ' ' + newVBW + ' ' + newVBH);
+        var svgW = newVBW * scale;
+        var svgH = newVBH * scale;
+        clone.setAttribute('width', svgW);
+        clone.setAttribute('height', svgH);
+        clone.removeAttribute('preserveAspectRatio');
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        clone.style.overflow = 'visible';
+
+        // Serialize to blob URL and load as image
+        var svgStr = new XMLSerializer().serializeToString(clone);
+        var svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        var url = URL.createObjectURL(svgBlob);
+
+        return new Promise(function(resolve, reject) {
+          var img = new Image();
+          img.onload = function() {
+            URL.revokeObjectURL(url);
+            resolve({ img: img, w: svgW, h: svgH });
+          };
+          img.onerror = function() {
+            URL.revokeObjectURL(url);
+            reject(new Error('SVG render failed'));
+          };
+          img.src = url;
+        });
+      }).then(function(chart) {
+        var scale = 2;
+        var pad = 24 * scale;
+        var chartW = chart.w;
+        var chartH = chart.h;
+        var contentW = chartW + pad * 2;
+        var maxTextW = contentW - pad * 2;
+
+        var measure = document.createElement('canvas').getContext('2d');
+
+        // Brand
+        var brandFontSize = 24 * scale;
+        measure.font = '400 ' + brandFontSize + 'px Lora, serif';
+        var brandText = 'Backing Young Britain';
+        var brandH = brandFontSize * 1.3;
+
+        // Description
+        var descFontSize = 15 * scale;
+        var descLineH = descFontSize * 1.5;
+        measure.font = '400 ' + descFontSize + 'px "Open Sans", sans-serif';
+        var descLines = ctx.desc ? wrapText(measure, ctx.desc, maxTextW) : [];
+        var descH = descLines.length * descLineH;
+
+        // Source
+        var srcFontSize = 9 * scale;
+        var srcLineH = srcFontSize * 1.6;
+        measure.font = '600 ' + srcFontSize + 'px "Open Sans", sans-serif';
+        var srcLines = ctx.sourceText ? wrapText(measure, ctx.sourceText.toUpperCase(), maxTextW) : [];
+        var srcH = srcLines.length * srcLineH;
+
+        // CTA
+        var ctaFontSize = 11 * scale;
+        var ctaLineH = ctaFontSize * 1.4;
+        measure.font = '600 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        var ctaText = 'Join the campaign and discover your local results at backingyoungbritain.co.uk';
+        var ctaLines = wrapText(measure, ctaText, maxTextW);
+        var ctaH = ctaLines.length * ctaLineH;
+
+        // Compose
+        var gap = 12 * scale;
+        var totalH = pad + brandH + gap + descH + gap + chartH + gap + srcH + gap + ctaH + pad;
+        var finalCanvas = document.createElement('canvas');
+        finalCanvas.width = contentW;
+        finalCanvas.height = totalH;
+        var c = finalCanvas.getContext('2d');
+
+        c.fillStyle = '#ffffff';
+        c.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+        var y = pad;
+
+        // Brand
+        c.font = '400 ' + brandFontSize + 'px Lora, serif';
+        c.fillStyle = '#000';
+        c.fillText(brandText, pad, y + brandFontSize);
+        y += brandH + gap;
+
+        // Description
+        if (descLines.length) {
+          c.font = '400 ' + descFontSize + 'px "Open Sans", sans-serif';
+          c.fillStyle = '#000';
+          descLines.forEach(function(line) {
+            c.fillText(line, pad, y + descFontSize);
+            y += descLineH;
+          });
+          y += gap;
+        }
+
+        // Chart image — flush left to align with text padding
+        c.drawImage(chart.img, 0, y, chartW, chartH);
+        y += chartH + gap;
+
+        // Source
+        if (srcLines.length) {
+          c.font = '600 ' + srcFontSize + 'px "Open Sans", sans-serif';
+          c.fillStyle = '#888';
+          srcLines.forEach(function(line) {
+            c.fillText(line, pad, y + srcFontSize);
+            y += srcLineH;
+          });
+          y += gap;
+        }
+
+        // CTA
+        c.font = '600 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        c.fillStyle = '#E04B2D';
+        ctaLines.forEach(function(line) {
+          c.fillText(line, pad, y + ctaFontSize);
+          y += ctaLineH;
+        });
+
         return new Promise(function(resolve) {
-          canvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
+          finalCanvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
         });
       });
+    }
+
+    // Word-wrap helper
+    function wrapText(ctx, text, maxWidth) {
+      var words = text.split(' ');
+      var lines = [];
+      var current = '';
+      words.forEach(function(word) {
+        var test = current ? current + ' ' + word : word;
+        if (ctx.measureText(test).width > maxWidth && current) {
+          lines.push(current);
+          current = word;
+        } else {
+          current = test;
+        }
+      });
+      if (current) lines.push(current);
+      return lines;
     }
 
     // Bottom sheet state
@@ -8028,7 +8147,8 @@
       sheetEl = document.createElement('div');
       sheetEl.className = 'share-sheet';
       sheetEl.innerHTML =
-        '<div class="share-sheet-handle"></div>' +
+        '<button id="share-sheet-close" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.5rem;line-height:1;color:#888;cursor:pointer;padding:4px 8px;-webkit-tap-highlight-color:transparent;">&times;</button>' +
+        '<div style="font-family:Lora,serif;font-size:1.4rem;font-weight:400;margin-bottom:14px;text-align:center;">Share</div>' +
         '<div class="share-sheet-preview"><img id="share-sheet-img" alt="Chart preview"></div>' +
         '<div class="share-sheet-actions">' +
           '<button class="share-sheet-btn share-sheet-btn--wa" id="share-sheet-wa">' +
@@ -8048,6 +8168,8 @@
       document.body.appendChild(sheetOverlay);
       document.body.appendChild(sheetEl);
 
+      document.getElementById('share-sheet-close').addEventListener('click', closeShareSheet);
+
       // WhatsApp button
       document.getElementById('share-sheet-wa').addEventListener('click', function() {
         if (!currentBlob) return;
@@ -8063,51 +8185,28 @@
         closeShareSheet();
       });
 
-      // Instagram Stories button — copy image to clipboard then open Instagram
+      // Instagram Stories button — share image via system share sheet
       document.getElementById('share-sheet-ig').addEventListener('click', function() {
         if (!currentBlob) return;
-        var toast = document.getElementById('share-sheet-toast');
-
-        // Try to copy image to clipboard, then open Instagram Stories camera
-        if (navigator.clipboard && window.ClipboardItem) {
-          navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': currentBlob })
-          ]).then(function() {
-            toast.textContent = 'Image copied — paste it into your Story';
-            toast.classList.add('visible');
-            setTimeout(function() {
-              window.location.href = 'instagram-stories://share';
-              // Fallback if deep link doesn't work (no app installed)
-              setTimeout(function() {
-                window.location.href = 'instagram://story-camera';
-              }, 500);
-              setTimeout(function() {
-                // If neither deep link worked, we're still here — that's fine,
-                // the image is on the clipboard and the toast is showing
-              }, 1200);
-            }, 400);
-          }).catch(function() {
-            // Clipboard write failed — fall back to download
-            var url = URL.createObjectURL(currentBlob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'backing-young-britain.png';
-            a.click();
-            setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
-            toast.textContent = 'Image saved — open Instagram and add it to your Story';
-            toast.classList.add('visible');
-          });
+        var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            files: [file],
+            title: 'Backing Young Britain'
+          }).catch(function() {});
         } else {
-          // No clipboard API — download the image
+          // Fallback: download the image
           var url = URL.createObjectURL(currentBlob);
           var a = document.createElement('a');
           a.href = url;
           a.download = 'backing-young-britain.png';
           a.click();
           setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+          var toast = document.getElementById('share-sheet-toast');
           toast.textContent = 'Image saved — open Instagram and add it to your Story';
           toast.classList.add('visible');
         }
+        closeShareSheet();
       });
     }
 
@@ -8180,8 +8279,7 @@
         if (ctx.desc) shareText += ': ' + ctx.desc;
         shareText += '\n\nbackingyoungbritain.co.uk';
 
-        var wrapper = buildCaptureCard(chartEl, ctx);
-        captureToBlob(wrapper).then(function(blob) {
+        captureChartToBlob(chartEl, ctx).then(function(blob) {
           btn.classList.remove('loading');
           openShareSheet(blob, shareText);
         }).catch(function(err) {
@@ -8201,8 +8299,7 @@
         if (ctx.desc) shareText += ': ' + ctx.desc;
         shareText += '\n\nbackingyoungbritain.co.uk';
 
-        var wrapper = buildCaptureCard(mapEl, ctx);
-        captureToBlob(wrapper).then(function(blob) {
+        captureChartToBlob(mapEl, ctx).then(function(blob) {
           mapBtn.classList.remove('loading');
           openShareSheet(blob, shareText);
         }).catch(function(err) {
