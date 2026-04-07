@@ -1,0 +1,614 @@
+[
+  {
+    "Local Authority": "Barking and Dagenham",
+    "perHead": 62.66
+  },
+  {
+    "Local Authority": "Barnet",
+    "perHead": 5.42
+  },
+  {
+    "Local Authority": "Barnsley",
+    "perHead": 49.29
+  },
+  {
+    "Local Authority": "Bath and North East Somerset",
+    "perHead": 20.02
+  },
+  {
+    "Local Authority": "Bedford",
+    "perHead": 50.07
+  },
+  {
+    "Local Authority": "Bexley",
+    "perHead": 19.22
+  },
+  {
+    "Local Authority": "Birmingham",
+    "perHead": 45.02
+  },
+  {
+    "Local Authority": "Blackburn with Darwen",
+    "perHead": 35.9
+  },
+  {
+    "Local Authority": "Blackpool",
+    "perHead": 88.77
+  },
+  {
+    "Local Authority": "Bolton",
+    "perHead": 52.1
+  },
+  {
+    "Local Authority": "Bournemouth, Christchurch and Poole",
+    "perHead": 42.26
+  },
+  {
+    "Local Authority": "Bracknell Forest",
+    "perHead": 54.93
+  },
+  {
+    "Local Authority": "Bradford",
+    "perHead": 40.17
+  },
+  {
+    "Local Authority": "Brent",
+    "perHead": 30.13
+  },
+  {
+    "Local Authority": "Brighton and Hove",
+    "perHead": 36.78
+  },
+  {
+    "Local Authority": "Bristol, City of",
+    "perHead": 47.53
+  },
+  {
+    "Local Authority": "Bromley",
+    "perHead": 13.7
+  },
+  {
+    "Local Authority": "Buckinghamshire",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Bury",
+    "perHead": 34.83
+  },
+  {
+    "Local Authority": "Calderdale",
+    "perHead": 29.0
+  },
+  {
+    "Local Authority": "Cambridgeshire",
+    "perHead": 7.16
+  },
+  {
+    "Local Authority": "Camden",
+    "perHead": 224.74
+  },
+  {
+    "Local Authority": "Central Bedfordshire",
+    "perHead": 42.74
+  },
+  {
+    "Local Authority": "Cheshire East",
+    "perHead": 29.58
+  },
+  {
+    "Local Authority": "Cheshire West and Chester",
+    "perHead": 29.37
+  },
+  {
+    "Local Authority": "City of London",
+    "perHead": 259.89
+  },
+  {
+    "Local Authority": "Cornwall",
+    "perHead": 66.71
+  },
+  {
+    "Local Authority": "County Durham",
+    "perHead": 15.5
+  },
+  {
+    "Local Authority": "Coventry",
+    "perHead": 16.43
+  },
+  {
+    "Local Authority": "Croydon",
+    "perHead": 63.43
+  },
+  {
+    "Local Authority": "Cumberland",
+    "perHead": 33.01
+  },
+  {
+    "Local Authority": "Darlington",
+    "perHead": 42.74
+  },
+  {
+    "Local Authority": "Derby",
+    "perHead": 31.29
+  },
+  {
+    "Local Authority": "Derbyshire",
+    "perHead": 55.43
+  },
+  {
+    "Local Authority": "Devon",
+    "perHead": 47.97
+  },
+  {
+    "Local Authority": "Doncaster",
+    "perHead": 93.11
+  },
+  {
+    "Local Authority": "Dorset",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Dudley",
+    "perHead": 21.43
+  },
+  {
+    "Local Authority": "Ealing",
+    "perHead": 47.77
+  },
+  {
+    "Local Authority": "East Riding of Yorkshire",
+    "perHead": 21.77
+  },
+  {
+    "Local Authority": "East Sussex",
+    "perHead": 50.94
+  },
+  {
+    "Local Authority": "Enfield",
+    "perHead": 20.79
+  },
+  {
+    "Local Authority": "Essex",
+    "perHead": 20.07
+  },
+  {
+    "Local Authority": "Gateshead",
+    "perHead": 17.69
+  },
+  {
+    "Local Authority": "Gloucestershire",
+    "perHead": 43.57
+  },
+  {
+    "Local Authority": "Greenwich",
+    "perHead": 44.2
+  },
+  {
+    "Local Authority": "Hackney",
+    "perHead": 96.54
+  },
+  {
+    "Local Authority": "Halton",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Hammersmith and Fulham",
+    "perHead": 27.5
+  },
+  {
+    "Local Authority": "Hampshire",
+    "perHead": 14.04
+  },
+  {
+    "Local Authority": "Haringey",
+    "perHead": 71.94
+  },
+  {
+    "Local Authority": "Harrow",
+    "perHead": 27.39
+  },
+  {
+    "Local Authority": "Hartlepool",
+    "perHead": 65.62
+  },
+  {
+    "Local Authority": "Havering",
+    "perHead": 24.31
+  },
+  {
+    "Local Authority": "Herefordshire, County of",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Hertfordshire",
+    "perHead": 38.63
+  },
+  {
+    "Local Authority": "Hillingdon",
+    "perHead": 71.45
+  },
+  {
+    "Local Authority": "Hounslow",
+    "perHead": 25.39
+  },
+  {
+    "Local Authority": "Isle of Wight",
+    "perHead": 40.49
+  },
+  {
+    "Local Authority": "Isles of Scilly",
+    "perHead": 64.49
+  },
+  {
+    "Local Authority": "Islington",
+    "perHead": 126.4
+  },
+  {
+    "Local Authority": "Kensington and Chelsea",
+    "perHead": 81.77
+  },
+  {
+    "Local Authority": "Kent",
+    "perHead": 9.15
+  },
+  {
+    "Local Authority": "Kingston upon Hull, City of",
+    "perHead": 120.04
+  },
+  {
+    "Local Authority": "Kingston upon Thames",
+    "perHead": 137.36
+  },
+  {
+    "Local Authority": "Kirklees",
+    "perHead": 24.87
+  },
+  {
+    "Local Authority": "Knowsley",
+    "perHead": 34.27
+  },
+  {
+    "Local Authority": "Lambeth",
+    "perHead": 63.83
+  },
+  {
+    "Local Authority": "Lancashire",
+    "perHead": 15.86
+  },
+  {
+    "Local Authority": "Leeds",
+    "perHead": 28.69
+  },
+  {
+    "Local Authority": "Leicester",
+    "perHead": 25.55
+  },
+  {
+    "Local Authority": "Leicestershire",
+    "perHead": 41.71
+  },
+  {
+    "Local Authority": "Lewisham",
+    "perHead": 45.89
+  },
+  {
+    "Local Authority": "Lincolnshire",
+    "perHead": 105.55
+  },
+  {
+    "Local Authority": "Liverpool",
+    "perHead": 29.12
+  },
+  {
+    "Local Authority": "Luton",
+    "perHead": 30.83
+  },
+  {
+    "Local Authority": "Manchester",
+    "perHead": 46.19
+  },
+  {
+    "Local Authority": "Medway",
+    "perHead": 77.03
+  },
+  {
+    "Local Authority": "Merton",
+    "perHead": 67.3
+  },
+  {
+    "Local Authority": "Middlesbrough",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Milton Keynes",
+    "perHead": 35.01
+  },
+  {
+    "Local Authority": "Newcastle upon Tyne",
+    "perHead": 26.52
+  },
+  {
+    "Local Authority": "Newham",
+    "perHead": 96.05
+  },
+  {
+    "Local Authority": "Norfolk",
+    "perHead": 15.84
+  },
+  {
+    "Local Authority": "North East Lincolnshire",
+    "perHead": 68.17
+  },
+  {
+    "Local Authority": "North Lincolnshire",
+    "perHead": 79.53
+  },
+  {
+    "Local Authority": "North Northamptonshire",
+    "perHead": 7.04
+  },
+  {
+    "Local Authority": "North Somerset",
+    "perHead": 22.28
+  },
+  {
+    "Local Authority": "North Tyneside",
+    "perHead": 55.59
+  },
+  {
+    "Local Authority": "North Yorkshire",
+    "perHead": 59.63
+  },
+  {
+    "Local Authority": "Northumberland",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Nottingham",
+    "perHead": 7.84
+  },
+  {
+    "Local Authority": "Nottinghamshire",
+    "perHead": 74.32
+  },
+  {
+    "Local Authority": "Oldham",
+    "perHead": 45.58
+  },
+  {
+    "Local Authority": "Oxfordshire",
+    "perHead": 32.79
+  },
+  {
+    "Local Authority": "Peterborough",
+    "perHead": 24.72
+  },
+  {
+    "Local Authority": "Plymouth",
+    "perHead": 21.58
+  },
+  {
+    "Local Authority": "Portsmouth",
+    "perHead": 45.37
+  },
+  {
+    "Local Authority": "Reading",
+    "perHead": 17.18
+  },
+  {
+    "Local Authority": "Redbridge",
+    "perHead": 21.67
+  },
+  {
+    "Local Authority": "Redcar and Cleveland",
+    "perHead": 94.72
+  },
+  {
+    "Local Authority": "Richmond upon Thames",
+    "perHead": 116.6
+  },
+  {
+    "Local Authority": "Rochdale",
+    "perHead": 22.09
+  },
+  {
+    "Local Authority": "Rotherham",
+    "perHead": 51.57
+  },
+  {
+    "Local Authority": "Rutland",
+    "perHead": 57.16
+  },
+  {
+    "Local Authority": "Salford",
+    "perHead": 37.16
+  },
+  {
+    "Local Authority": "Sandwell",
+    "perHead": 40.27
+  },
+  {
+    "Local Authority": "Sefton",
+    "perHead": 24.49
+  },
+  {
+    "Local Authority": "Sheffield",
+    "perHead": 59.02
+  },
+  {
+    "Local Authority": "Shropshire",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Slough",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Solihull",
+    "perHead": 6.57
+  },
+  {
+    "Local Authority": "Somerset",
+    "perHead": null
+  },
+  {
+    "Local Authority": "South Gloucestershire",
+    "perHead": 20.78
+  },
+  {
+    "Local Authority": "South Tyneside",
+    "perHead": 63.42
+  },
+  {
+    "Local Authority": "Southampton",
+    "perHead": 34.83
+  },
+  {
+    "Local Authority": "Southend-on-Sea",
+    "perHead": 87.11
+  },
+  {
+    "Local Authority": "Southwark",
+    "perHead": 57.62
+  },
+  {
+    "Local Authority": "St. Helens",
+    "perHead": 22.24
+  },
+  {
+    "Local Authority": "Staffordshire",
+    "perHead": 12.64
+  },
+  {
+    "Local Authority": "Stockport",
+    "perHead": 49.98
+  },
+  {
+    "Local Authority": "Stockton-on-Tees",
+    "perHead": 12.52
+  },
+  {
+    "Local Authority": "Stoke-on-Trent",
+    "perHead": 15.03
+  },
+  {
+    "Local Authority": "Suffolk",
+    "perHead": 42.34
+  },
+  {
+    "Local Authority": "Sunderland",
+    "perHead": 67.29
+  },
+  {
+    "Local Authority": "Surrey",
+    "perHead": 63.0
+  },
+  {
+    "Local Authority": "Sutton",
+    "perHead": 5.07
+  },
+  {
+    "Local Authority": "Swindon",
+    "perHead": 5.88
+  },
+  {
+    "Local Authority": "Tameside",
+    "perHead": 76.02
+  },
+  {
+    "Local Authority": "Telford and Wrekin",
+    "perHead": 43.8
+  },
+  {
+    "Local Authority": "Thurrock",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Torbay",
+    "perHead": 51.38
+  },
+  {
+    "Local Authority": "Tower Hamlets",
+    "perHead": 71.65
+  },
+  {
+    "Local Authority": "Trafford",
+    "perHead": 38.39
+  },
+  {
+    "Local Authority": "Wakefield",
+    "perHead": 55.94
+  },
+  {
+    "Local Authority": "Walsall",
+    "perHead": 7.44
+  },
+  {
+    "Local Authority": "Waltham Forest",
+    "perHead": 63.66
+  },
+  {
+    "Local Authority": "Wandsworth",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Warrington",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Warwickshire",
+    "perHead": 17.18
+  },
+  {
+    "Local Authority": "West Berkshire",
+    "perHead": 5.55
+  },
+  {
+    "Local Authority": "West Northamptonshire",
+    "perHead": 7.4
+  },
+  {
+    "Local Authority": "West Sussex",
+    "perHead": 34.83
+  },
+  {
+    "Local Authority": "Westminster",
+    "perHead": 61.44
+  },
+  {
+    "Local Authority": "Westmorland and Furness",
+    "perHead": 37.33
+  },
+  {
+    "Local Authority": "Wigan",
+    "perHead": 28.54
+  },
+  {
+    "Local Authority": "Wiltshire",
+    "perHead": 37.56
+  },
+  {
+    "Local Authority": "Windsor and Maidenhead",
+    "perHead": 15.48
+  },
+  {
+    "Local Authority": "Wirral",
+    "perHead": 65.74
+  },
+  {
+    "Local Authority": "Wokingham",
+    "perHead": null
+  },
+  {
+    "Local Authority": "Wolverhampton",
+    "perHead": 72.95
+  },
+  {
+    "Local Authority": "Worcestershire",
+    "perHead": 7.48
+  },
+  {
+    "Local Authority": "York",
+    "perHead": 10.07
+  }
+]

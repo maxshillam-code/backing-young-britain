@@ -1413,8 +1413,16 @@
     #institutions-map .leaflet-popup-content-wrapper { border-radius: 5px; }
     #institutions-map .leaflet-control-attribution { font-size: 0.6rem; }
     .leaflet-top { z-index: 999 !important; }
+    #mh-trust-map { position: relative; z-index: 0; }
+    #mh-trust-map .leaflet-container { font-family: 'Open Sans', sans-serif; }
+    #mh-trust-map .leaflet-tile-pane { filter: grayscale(1); }
+    #mh-trust-map .leaflet-popup-content { margin: 10px 14px; font-size: 0.82rem; line-height: 1.5; text-align: center; }
+    #mh-trust-map .leaflet-popup-close-button { display: none; }
+    #mh-trust-map .leaflet-popup-content-wrapper { border-radius: 5px; }
+    #mh-trust-map .leaflet-control-attribution { font-size: 0.6rem; }
     @media (max-width: 600px) {
       #institutions-map-leaflet { height: 300px !important; }
+      #mh-trust-map-leaflet { height: 300px !important; }
     }
     .edu-chart-legend {
       display: none;
@@ -1535,6 +1543,9 @@
     #housing-map { border-radius: 3px; position: relative; z-index: 0; }
     #housing-map .leaflet-tile-pane { filter: grayscale(1); }
     #housing-map .leaflet-control-attribution { font-size: 0.6rem; }
+    #youth-funding-map { border-radius: 3px; position: relative; z-index: 0; }
+    #youth-funding-map .leaflet-tile-pane { filter: grayscale(1); }
+    #youth-funding-map .leaflet-control-attribution { font-size: 0.6rem; }
     .housing-map-legend {
       display: flex;
       align-items: center;
@@ -2101,7 +2112,7 @@
       position: absolute;
       top: -2.4rem;
       right: 0.5rem;
-      background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%, rgba(255,255,255,0) 85%);
+      background: none;
       border-radius: 3px;
       padding: 0.3rem 1.5rem;
       opacity: 0;
@@ -2116,15 +2127,15 @@
     }
     #floating-cta-social-proof-text {
       font-family: 'Lora', serif;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: var(--black);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--red);
     }
     .floating-cta-social-proof-time {
       font-family: 'Open Sans', sans-serif;
       font-size: 0.85rem;
       font-weight: 400;
-      color: var(--black);
+      color: #888;
     }
   </style>
 
@@ -3216,23 +3227,24 @@
         </div>
         <div style="margin-top: 2.5rem">
           <div class="chart-section-title">Referrals to Completions</div>
-          <div class="chart-tab-desc">In <b>England</b>, 1.81 million children and young people were referred for mental health support in 2024-25, but only <b>670,419</b> finished a course of treatment &mdash; just <b>37%</b>.</div>
+          <div class="chart-tab-desc">In <b>England</b>, 1.81 million people were referred for mental health support in 2024-25, with 670K successfully completing treatment, a gap of <b>1.14 million people</b>.</div>
           <div class="edu-chart" id="chart-mh-referrals"></div>
+          <div id="mh-trust-map" style="display:none;"></div>
         </div>
-        <div class="data-card">
-          <div class="data-card-stat">12 months+</div>
-          <div class="data-card-context">Average NHS wait time for mental health treatment for young people. A year of suffering before help arrives — if it arrives. Many give up and fall through the cracks entirely.</div>
-          <div class="data-card-source">NHS Digital / Mind, 2025</div>
-        </div>
-        <div class="data-card">
-          <div class="data-card-stat">25.8%</div>
-          <div class="data-card-context">Of 7–24 year olds with a probable mental health disorder in 2023, up from 17.5% in 2017. Not a blip. Not a phase. A structural crisis in the mental health of an entire generation.</div>
-          <div class="data-card-source">NHS Digital</div>
-        </div>
-        <div class="data-card">
-          <div class="data-card-stat">£2.9 trillion</div>
-          <div class="data-card-context">UK national debt. Who inherits this debt? The generation already carrying £500 billion in student loans, locked out of housing, and waiting a year for mental health support.</div>
-          <div class="data-card-source">ONS Public Sector Finances, 2026</div>
+        <div style="margin-top: 2.5rem">
+          <div class="chart-section-title">Youth Services Funding</div>
+          <div class="chart-tab-desc">In <b>England</b>, local authority spending on youth services per young person has fallen from <b>£71.55</b> in 2012-13 to <b>£37.43</b> in 2024-25 — a cut of nearly <b>half</b>.</div>
+          <div class="edu-chart" id="chart-youth-funding"></div>
+          <div id="youth-funding-local" style="display:none;">
+            <div class="chart-tab-desc" id="youth-funding-desc"></div>
+            <div id="youth-funding-map" style="width:100%; height:400px; border-radius:3px; background:var(--cream);"></div>
+            <div class="housing-map-legend">
+              <span>More per head</span>
+              <div class="housing-map-legend-bar"></div>
+              <span>Less per head</span>
+            </div>
+            <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://www.gov.uk/government/collections/section-251-materials" target="_blank" rel="noopener">Section 251 outturn data, DLUHC</a></div>
+          </div>
         </div>
       </div>
     </article>
@@ -3379,6 +3391,10 @@
           svg = svgEl('svg', { viewBox: '0 0 '+cW+' '+cH, preserveAspectRatio: 'xMidYMid meet' });
           container.appendChild(svg);
         }
+
+        // Store plot area bounds for tooltip guide line
+        svg.setAttribute('data-plot-top', cPAD.top);
+        svg.setAttribute('data-plot-bottom', cPAD.top + cPH);
 
         var lines = cfg.lines;
         var yMin = cfg.yAxis.min, yMax = cfg.yAxis.max, yStep = cfg.yAxis.step;
@@ -3734,15 +3750,34 @@
             var prevVal = null, nextVal = null;
             for (var pi = h.index - 1; pi >= 0; pi--) { if (seriesData[pi] !== null) { prevVal = seriesData[pi].value; break; } }
             for (var ni = h.index + 1; ni < seriesData.length; ni++) { if (seriesData[ni] !== null) { nextVal = seriesData[ni].value; break; } }
-            // Place below if the line arrives from above (previous point is higher),
-            // which means the incoming line segment would cross through an above-placed label.
-            // Place above otherwise (ascending, peak, or first point).
-            placeBelow = (prevVal !== null && prevVal > val);
+            // Charts excluded from neighbor-average logic (multi-series, manual placement preferred)
+            var skipSmartPlacement = ['chart-price-earnings','chart-rent','chart-rent-1bed','chart-housebuilding','chart-mh-referrals'].indexOf(containerId) >= 0;
 
-            // Bounds check: if label above would overflow top, force below
-            if (!placeBelow && (dotY - 10) < cPAD.top) placeBelow = true;
-            // If label below would overflow bottom, force above
-            if (placeBelow && (dotY + 15) > (cH - cPAD.bottom)) placeBelow = false;
+            if (!skipSmartPlacement) {
+              // Place label on the side with more clearance from the line.
+              // Compare current value to average of neighbors:
+              // above neighbors (peak) → label above; below neighbors (trough) → label below.
+              var avgNeighbor = 0, neighborCount = 0;
+              if (prevVal !== null) { avgNeighbor += prevVal; neighborCount++; }
+              if (nextVal !== null) { avgNeighbor += nextVal; neighborCount++; }
+              if (neighborCount > 0) {
+                avgNeighbor /= neighborCount;
+                placeBelow = val < avgNeighbor;
+              } else {
+                placeBelow = false;
+              }
+
+              // Bounds check — only override if it won't push the label into the line
+              var isPeak = (prevVal === null || val >= prevVal) && (nextVal === null || val >= nextVal);
+              var isTrough = (prevVal === null || val <= prevVal) && (nextVal === null || val <= nextVal);
+              if (!placeBelow && (dotY - 10) < cPAD.top && !isPeak) placeBelow = true;
+              if (placeBelow && (dotY + 15) > (cH - cPAD.bottom) && !isTrough) placeBelow = false;
+            } else {
+              // Original logic: place below if line arrives from above
+              placeBelow = (prevVal !== null && prevVal > val);
+              if (!placeBelow && (dotY - 10) < cPAD.top) placeBelow = true;
+              if (placeBelow && (dotY + 15) > (cH - cPAD.bottom)) placeBelow = false;
+            }
           }
 
           // Auto-detect anchor: 'start' at left edge, 'end' at right edge, 'middle' otherwise
@@ -3812,7 +3847,7 @@
             x:lx, y:midY,
             'text-anchor': anchor,
             'dominant-baseline': 'central',
-            style:'font-weight:600; font-size:11px; fill:'+(gl.color || '#000')
+            style:'font-weight:600; fill:'+(gl.color || '#000')
           }, gl.text);
           svg.appendChild(label);
         });
@@ -3986,15 +4021,16 @@
         },
         'chart-apprenticeships': {
           lines: [{color:'#E04B2D', data:[
-            {label:'2015/16',value:313400},{label:'2016/17',value:267600},{label:'2017/18',value:221700},
-            {label:'2018/19',value:213700},{label:'2019/20',value:171200},{label:'2020/21',value:159700},
-            {label:'2021/22',value:183200},{label:'2022/23',value:176520},{label:'2023/24',value:168230},
-            {label:'2024/25',value:172190}
+            {label:'2010/11',value:275100},{label:'2011/12',value:291300},{label:'2012/13',value:279900},
+            {label:'2013/14',value:278900},{label:'2014/15',value:286030},{label:'2015/16',value:285280},
+            {label:'2016/17',value:264940},{label:'2017/18',value:220280},{label:'2018/19',value:213700},
+            {label:'2019/20',value:171560},{label:'2020/21',value:159760},{label:'2021/22',value:183850},
+            {label:'2022/23',value:176520},{label:'2023/24',value:175060},{label:'2024/25',value:172230}
           ]}],
-          yAxis: {min:100000, max:350000, step:50000, format:function(v){return (v/1000).toFixed(0)+'K';}},
-          xLabels: [{i:0,t:'2015/16'},{i:3,t:'2018/19'},{i:6,t:'2021/22'},{i:9,t:'2024/25'}],
-          annotations: [{atIndex:4,label:'COVID'}],
-          highlights: [{index:0,text:'313.4K'},{index:5,text:'159.7K'},{index:9,text:'172.2K'}],
+          yAxis: {min:100000, max:300000, step:50000, format:function(v){return (v/1000).toFixed(0)+'K';}},
+          xLabels: [{i:0,t:'2010/11'},{i:2,t:'2012/13'},{i:4,t:'2014/15'},{i:6,t:'2016/17'},{i:8,t:'2018/19'},{i:10,t:'2020/21'},{i:12,t:'2022/23'},{i:14,t:'2024/25'}],
+          annotations: [{atIndex:9,label:'COVID'}],
+          highlights: [{index:1,text:'291.3K'},{index:10,text:'159.8K'},{index:14,text:'172.2K'}],
           legend: [{color:'#E04B2D', label:'Apprenticeship starts (aged 16\u201324)'}],
           source: {text:'Department for Education, Apprenticeships and traineeships statistics', url:'https://explore-education-statistics.service.gov.uk/data-catalogue/data-set/94854da2-4de1-4b48-b2be-f2e828f57658'},
           tooltipFormat: function(v){return Math.round(v).toLocaleString('en-GB');}
@@ -4077,6 +4113,24 @@
           gapLabels: [{index:0, text:'755K'},{index:5, text:'998K'},{index:11, text:'1.14M'}],
           legend: [{color:'#E04B2D', label:'Referrals received'},{color:'#777', label:'Finished course of treatment'}],
           source: {text:'NHS Digital, Mental Health Services Dataset', url:'https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-services-monthly-statistics'}
+        },
+        'chart-youth-funding': {
+          lines: [
+            {color:'#E04B2D', dotRadius:2.5,
+              data: [
+                {label:'2012-13',value:71.55},{label:'2013-14',value:62.13},{label:'2014-15',value:54.36},
+                {label:'2015-16',value:45.54},{label:'2016-17',value:38.34},{label:'2017-18',value:35.50},
+                {label:'2018-19',value:33.85},{label:'2019-20',value:31.56},{label:'2020-21',value:32.18},
+                {label:'2021-22',value:34.73},{label:'2022-23',value:37.66},{label:'2023-24',value:39.33},
+                {label:'2024-25',value:37.43}
+              ],
+              tooltipFormat: function(v){return '£'+v.toFixed(2)+' per head';}}
+          ],
+          yAxis: {min:0, max:80, step:20, format:function(v){return v===0?'£0':'£'+v;}},
+          xLabels: [{i:0,t:'2012-13'},{i:2,t:'2014-15'},{i:4,t:'2016-17'},{i:6,t:'2018-19'},{i:8,t:'2020-21'},{i:10,t:'2022-23'},{i:12,t:'2024-25'}],
+          highlights: [{index:0, series:0, text:'£71.55', color:'#E04B2D'},{index:12, series:0, text:'£37.43', color:'#E04B2D', below:true}],
+          legend: [{color:'#E04B2D', label:'Expenditure per young person (0-17)'}],
+          source: {text:'Section 251 outturn data, DLUHC', url:'https://www.gov.uk/government/collections/section-251-materials'}
         }
       };
 
@@ -4219,6 +4273,8 @@
 
         // Sweep clip — two rects: one for completed rows, one for the current row sweep
         var sweepClipId = containerId + '-sweep';
+        var fullRows = Math.floor(filledCount / gridCols);
+        var partialFrac = (filledCount - fullRows * gridCols) / gridCols; // 0 to <1
         var filledRows = Math.ceil(filledCount / gridCols);
         var sweepClip = svgEl('clipPath', { id: sweepClipId });
         var completedRect = svgEl('rect', {
@@ -4228,21 +4284,45 @@
         });
         var currentRect = svgEl('rect', {
           x: gridX.toFixed(1), y: '0',
-          width: '0', height: cellH.toFixed(1),
+          width: gridW.toFixed(1), height: '0',
           'class': 'house-grid-current',
           'data-grid-x': gridX.toFixed(1),
           'data-grid-y': gridY.toFixed(1),
           'data-grid-w': gridW.toFixed(1),
           'data-cell-h': cellH.toFixed(1),
           'data-grid-rows': gridRows,
-          'data-filled-rows': filledRows
+          'data-filled-rows': filledRows,
+          'data-partial-frac': partialFrac.toFixed(4),
+          'data-house-off-y': houseOffY.toFixed(1),
+          'data-house-h': houseH.toFixed(1)
         });
         sweepClip.appendChild(completedRect);
         sweepClip.appendChild(currentRect);
         defs.appendChild(sweepClip);
 
         // Red fill layer: clipped by the sweep rect
+        // Full rows: all houses solid red. Partial row: all houses red but height-clipped.
         var fillsG = svgEl('g', { 'clip-path': 'url(#' + sweepClipId + ')' });
+
+        // Clip for partial row — limits red fill to bottom fraction of each house shape
+        var partialClipId = null;
+        if (partialFrac > 0) {
+          partialClipId = containerId + '-partial-row';
+          var partialRowIdx = gridRows - 1 - fullRows; // row index from top
+          var partialRowY = gridY + partialRowIdx * cellH;
+          var houseBottomInRow = partialRowY + houseOffY + houseH;
+          var partialH = partialFrac * houseH;
+          var partialClip = svgEl('clipPath', { id: partialClipId });
+          partialClip.appendChild(svgEl('rect', {
+            x: gridX.toFixed(1),
+            y: (houseBottomInRow - partialH).toFixed(1),
+            width: gridW.toFixed(1),
+            height: partialH.toFixed(1)
+          }));
+          defs.appendChild(partialClip);
+        }
+
+        var partialG = partialFrac > 0 ? svgEl('g', { 'clip-path': 'url(#' + partialClipId + ')' }) : null;
         var houseIdx = 0;
         for (var row2 = gridRows - 1; row2 >= 0; row2--) {
           for (var col2 = 0; col2 < gridCols; col2++) {
@@ -4250,27 +4330,23 @@
             var cy2 = gridY + row2 * cellH + houseOffY;
             var pathD = hPath(cx2, cy2, houseW, houseH);
 
-            if (houseIdx < Math.floor(filledCount)) {
-              // Fully filled house — solid red
+            var isFullRow = houseIdx < fullRows * gridCols;
+            var isPartialRow = partialG && houseIdx >= fullRows * gridCols && houseIdx < (fullRows + 1) * gridCols;
+
+            if (isFullRow) {
               fillsG.appendChild(svgEl('path', {
                 d: pathD, fill: builtColor, stroke: 'none'
               }));
-            } else if (houseIdx < Math.ceil(filledCount) && filledCount % 1 > 0) {
-              // Partial house — only the left half is red
-              var midX = cx2 + houseW / 2;
-              var clipIdL = containerId + '-hgl-' + houseIdx;
-              var clipL = svgEl('clipPath', { id: clipIdL });
-              clipL.appendChild(svgEl('rect', { x: cx2.toFixed(1), y: cy2.toFixed(1), width: (midX - cx2).toFixed(1), height: houseH.toFixed(1) }));
-              defs.appendChild(clipL);
-              fillsG.appendChild(svgEl('path', {
-                d: pathD, fill: builtColor, stroke: 'none',
-                'clip-path': 'url(#' + clipIdL + ')'
+            } else if (isPartialRow) {
+              partialG.appendChild(svgEl('path', {
+                d: pathD, fill: builtColor, stroke: 'none'
               }));
             }
 
             houseIdx++;
           }
         }
+        if (partialG) fillsG.appendChild(partialG);
 
         gridG.appendChild(fillsG);
         svg.appendChild(gridG);
@@ -4479,16 +4555,20 @@
         var ch = parseFloat(sweepCurrent.getAttribute('data-cell-h'));
         var gr = parseInt(sweepCurrent.getAttribute('data-grid-rows'));
         var fr = parseInt(sweepCurrent.getAttribute('data-filled-rows'));
+        var pf = parseFloat(sweepCurrent.getAttribute('data-partial-frac'));
+        var hOffY = parseFloat(sweepCurrent.getAttribute('data-house-off-y'));
+        var hH = parseFloat(sweepCurrent.getAttribute('data-house-h'));
 
         // Reset
         sweepCompleted.setAttribute('height', '0');
-        sweepCurrent.setAttribute('width', '0');
+        sweepCurrent.setAttribute('width', gw.toFixed(1)); // always full width
+        sweepCurrent.setAttribute('height', '0');
 
         chart.getBoundingClientRect();
         chart.classList.add('animated');
 
-        // 1 second per row, only animate rows that have fills
-        var rowDuration = 2500;
+        // Duration per row, only animate rows that have fills
+        var rowDuration = 1800;
         var totalDuration = fr * rowDuration;
         var startTime = null;
 
@@ -4498,41 +4578,45 @@
           var elapsed = now - startTime;
           var t = Math.min(elapsed / totalDuration, 1);
 
-          // Which row are we on? (0 = bottom row first)
+          // Continuous upward fill — grow within each row's house area, snap between rows
+          var bottomY = gy + gr * ch;
           var rowProgress = t * fr;
           var currentRow = Math.min(Math.floor(rowProgress), fr - 1);
           var rowT = t >= 1 ? 1 : rowProgress - currentRow;
-          // Completed rows: full-width rect covering all finished rows from bottom
-          var completedCount = currentRow;
-          if (completedCount > 0) {
-            var compY = gy + (gr - completedCount) * ch;
-            sweepCompleted.setAttribute('y', compY.toFixed(1));
-            sweepCompleted.setAttribute('height', (completedCount * ch).toFixed(1));
+          var isLastRow = currentRow === fr - 1;
+
+          // Completed rows: snap to cover full cells (no gap between rows)
+          if (currentRow > 0) {
+            var compH = currentRow * ch;
+            sweepCompleted.setAttribute('y', (bottomY - compH).toFixed(1));
+            sweepCompleted.setAttribute('height', compH.toFixed(1));
           } else {
             sweepCompleted.setAttribute('height', '0');
           }
 
-          // Current row: sweep left to right
-          var curRowY = gy + (gr - 1 - currentRow) * ch;
-          sweepCurrent.setAttribute('y', curRowY.toFixed(1));
-          // Decelerate over the last 20% of the row — matches linear speed at transition, slows to stop
-          var eased;
-          if (rowT < 0.8) {
-            eased = rowT;
-          } else {
-            var t2 = (rowT - 0.8) / 0.2;
-            eased = 0.8 + 0.2 * (-t2*t2*t2 + t2*t2 + t2);
-          }
-          sweepCurrent.setAttribute('width', (eased * gw).toFixed(1));
+          // Current row: grow upward only across the house shape (skip cell padding)
+          // House bottom = cell top + houseOffY + houseH, house top = cell top + houseOffY
+          var cellTopY = gy + (gr - 1 - currentRow) * ch;
+          var houseBottomY = cellTopY + hOffY + hH;
+          var growH = (isLastRow && pf > 0) ? pf * hH : hH;
+          var revealH = rowT * growH;
+          // Position current rect to reveal from house bottom upward
+          sweepCurrent.setAttribute('y', (houseBottomY - revealH).toFixed(1));
+          sweepCurrent.setAttribute('height', revealH.toFixed(1));
 
           if (t < 1) {
             requestAnimationFrame(houseGridTick);
           } else {
-            // Final state: completed rect covers all filled rows
-            var finalY = gy + (gr - fr) * ch;
-            sweepCompleted.setAttribute('y', finalY.toFixed(1));
-            sweepCompleted.setAttribute('height', (fr * ch).toFixed(1));
-            sweepCurrent.setAttribute('width', gw.toFixed(1));
+            // Final state: completed covers all full rows, current covers last row's house area
+            var fullRowCount = pf > 0 ? fr - 1 : fr;
+            var compH = fullRowCount * ch;
+            sweepCompleted.setAttribute('y', (bottomY - compH).toFixed(1));
+            sweepCompleted.setAttribute('height', compH.toFixed(1));
+            var lastCellTopY = gy + (gr - 1 - (fr - 1)) * ch;
+            var lastHouseBottomY = lastCellTopY + hOffY + hH;
+            var lastGrowH = pf > 0 ? pf * hH : hH;
+            sweepCurrent.setAttribute('y', (lastHouseBottomY - lastGrowH).toFixed(1));
+            sweepCurrent.setAttribute('height', lastGrowH.toFixed(1));
           }
         }
 
@@ -4884,6 +4968,31 @@
       }
 
       requestAnimationFrame(tick);
+
+      // Safety net: force-reveal all dots/labels after animation duration
+      // in case the rAF loop was interrupted by a gen bump
+      setTimeout(function() {
+        if (parseInt(chart.dataset.animGen) !== gen) return;
+        chart.querySelectorAll('.chart-dots circle').forEach(function(d) {
+          d.style.opacity = '';
+          d.classList.add('revealed');
+          var tr = d.getAttribute('data-r');
+          if (tr) d.setAttribute('r', tr);
+        });
+        chart.querySelectorAll('.chart-value-label').forEach(function(l) {
+          l.classList.add('revealed');
+        });
+        chart.querySelectorAll('.gap-label-el').forEach(function(el) {
+          el.style.opacity = '';
+        });
+        lines.forEach(function(line) {
+          line.style.strokeDashoffset = '0';
+          var dp = line.getAttribute('data-dashpattern');
+          if (dp) {
+            line.style.strokeDasharray = dp;
+          }
+        });
+      }, DRAW_DURATION + 200);
     }
 
     const chartObserver = new IntersectionObserver((entries) => {
@@ -5179,8 +5288,10 @@
             guideLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             guideLine.setAttribute('stroke', '#ccc');
             guideLine.setAttribute('stroke-width', '1');
-            guideLine.setAttribute('y1', '30');
-            guideLine.setAttribute('y2', '230');
+            var plotTop = svg.getAttribute('data-plot-top') || '30';
+            var plotBottom = svg.getAttribute('data-plot-bottom') || '210';
+            guideLine.setAttribute('y1', plotTop);
+            guideLine.setAttribute('y2', plotBottom);
             guideLine.style.opacity = '0';
             guideLine.style.transition = 'opacity 0.15s ease';
             guideLine.style.pointerEvents = 'none';
@@ -5410,6 +5521,7 @@
     var LOCAL_HOUSEBUILDING_DATA = null;
     var LOCAL_RENT_DATA = null;
     var LOCAL_U34_DATA = null;
+    var LOCAL_MH_TRUST_DATA = null;
     // Mapping from 2024 constituency names (returned by postcodes.io) to pre-2024 names (used in u34 census data)
     var CONSTITUENCY_NEW_TO_OLD = {"Aberafan Maesteg":"Aberavon","Alyn and Deeside":"Delyn","Bangor Aberconwy":"Aberconwy","Barnsley North":"Barnsley East","Barnsley South":"Barnsley Central","Beckenham and Penge":"Beckenham","Bethnal Green and Stepney":"Bethnal Green and Bow","Birkenhead":"Wirral South","Birmingham Edgbaston":"Birmingham, Edgbaston","Birmingham Hall Green and Moseley":"Birmingham, Hall Green","Birmingham Perry Barr":"Birmingham, Perry Barr","Birmingham Yardley":"Birmingham, Yardley","Blackpool North and Fleetwood":"Blackpool North and Cleveleys","Blaenau Gwent and Rhymney":"Blaenau Gwent","Blaydon and Consett":"Blaydon","Blyth and Ashington":"Blyth Valley","Brent East":"Brent Central","Brent West":"Brent North","Brigg and Immingham":"Brigg and Goole","Brighton Kemptown and Peacehaven":"Brighton, Kemptown","Brighton Pavilion":"Brighton, Pavilion","Bristol Central":"Bristol West","Broadland and Fakenham":"Broadland","Bromley and Biggin Hill":"Bromley and Chislehurst","Buckingham and Bletchley":"Buckingham","Bury St Edmunds and Stowmarket":"Bury St Edmunds","Caerfyrddin":"Carmarthen East and Dinefwr","Cardiff East":"Cardiff Central","Ceredigion Preseli":"Ceredigion","Chester North and Neston":"City of Chester","Chippenham":"North Wiltshire","Clwyd East":"Clwyd South","Clwyd North":"Vale of Clwyd","Corby and East Northamptonshire":"Corby","Coventry East":"Coventry North East","Croydon East":"Croydon Central","Dewsbury and Batley":"Batley and Spen","Didcot and Wantage":"Wantage","Doncaster Central":"Don Valley","Dorking and Horley":"Mole Valley","Dover and Deal":"Dover","Ealing Southall":"Ealing, Southall","East Grinstead and Uckfield":"Wealden","East Hampshire":"Meon Valley","East Thanet":"North Thanet","Edmonton and Winchmore Hill":"Edmonton","Ellesmere Port and Bromborough":"Ellesmere Port and Neston","Eltham and Chislehurst":"Eltham","Ely and East Cambridgeshire":"South East Cambridgeshire","Exmouth and Exeter East":"East Devon","Fareham and Waterlooville":"Fareham","Farnham and Bordon":"South West Surrey","Folkestone and Hythe":"South Thanet","Gateshead Central and Whickham":"Gateshead","Glastonbury and Somerton":"Somerton and Frome","Goole and Pocklington":"East Yorkshire","Gorton and Denton":"Manchester, Gorton","Grantham and Bourne":"Grantham and Stamford","Great Grimsby and Cleethorpes":"Great Grimsby","Halesowen":"Halesowen and Rowley Regis","Hammersmith and Chiswick":"Hammersmith","Hampstead and Highgate":"Hampstead and Kilburn","Harborough, Oadby and Wigston":"Harborough","Harpenden and Berkhamsted":"Hitchin and Harpenden","Henley and Thame":"Henley","Heywood and Middleton North":"Heywood and Middleton","Hinckley and Bosworth":"Bosworth","Hornsey and Friern Barnet":"Hornsey and Wood Green","Hove and Portslade":"Hove","Isle of Wight East":"Isle of Wight","Jarrow and Gateshead East":"Jarrow","Keighley and Ilkley":"Keighley","Kensington and Bayswater":"Kensington","Kingston upon Hull North and Cottingham":"Kingston upon Hull North","Kingston upon Hull West and Haltemprice":"Haltemprice and Howden","Lancaster and Wyre":"Lancaster and Fleetwood","Leeds Central and Headingley":"Leeds Central","Leeds South West and Morley":"Morley and Outwood","Leeds West and Pudsey":"Pudsey","Leigh and Atherton":"Leigh","Lewisham North":"Lewisham, Deptford","Liverpool Riverside":"Liverpool, Riverside","Liverpool Walton":"Liverpool, Walton","Liverpool West Derby":"Liverpool, West Derby","Loughborough":"Charnwood","Luton South and South Bedfordshire":"Luton South","Maidstone and Malling":"Maidstone and The Weald","Manchester Withington":"Manchester, Withington","Melksham and Devizes":"Devizes","Meriden and Solihull East":"Meriden","Merthyr Tydfil and Aberdare":"Merthyr Tydfil and Rhymney","Mid Bedfordshire":"North East Bedfordshire","Mid Cheshire":"Weaver Vale","Mid and South Pembrokeshire":"Carmarthen West and South Pembrokeshire","Middlesbrough and Thornaby East":"Middlesbrough","Milton Keynes Central":"Milton Keynes South","Monmouthshire":"Monmouth","Newcastle upon Tyne East and Wallsend":"Newcastle upon Tyne East","Newport West and Islwyn":"Islwyn","Newton Aycliffe and Spennymoor":"Sedgefield","Normanton and Hemsworth":"Hemsworth","North Cotswolds":"The Cotswolds","North Durham":"North West Durham","North East Somerset and Hanham":"Kingswood","North Shropshire":"Ludlow","North Warwickshire and Bedworth":"North Warwickshire","North West Essex":"Saffron Walden","Nottingham North and Kimberley":"Nottingham North","Oldham West, Chadderton and Royton":"Oldham West and Royton","Peckham":"Camberwell and Peckham","Penrith and Solway":"Penrith and The Border","Pontefract, Castleford and Knottingley":"Normanton, Pontefract and Castleford","Queen's Park and Maida Vale":"Westminster North","Rawmarsh and Conisbrough":"Wentworth and Dearne","Reading Central":"Reading West","Reading West and Mid Berkshire":"Reading East","Rhondda and Ogmore":"Ogmore","Richmond and Northallerton":"Richmond (Yorks)","Rutland and Stamford":"Rutland and Melton","Selby":"Selby and Ainsty","Sheffield Brightside and Hillsborough":"Sheffield, Brightside and Hillsborough","Sheffield Hallam":"Sheffield, Hallam","Sheffield Heeley":"Sheffield, Heeley","Sherwood Forest":"Sherwood","Shrewsbury":"Shrewsbury and Atcham","Smethwick":"Warley","Solihull West and Shirley":"Solihull","South Devon":"Totnes","Southampton Itchen":"Southampton, Itchen","Southampton Test":"Southampton, Test","Southend East and Rochford":"Rochford and Southend East","Southend West and Leigh":"Southend West","Stockton West":"Stockton South","Stone, Great Wyrley and Penkridge":"South Staffordshire","Stratford and Bow":"West Ham","Streatham and Croydon North":"Croydon North","Swansea West":"Swansea East","Swindon North":"North Swindon","Tiverton and Minehead":"Tiverton and Honiton","Torridge and Tavistock":"Torridge and West Devon","Vauxhall and Camberwell Green":"Vauxhall","Wakefield and Rothwell":"Elmet and Rothwell","Walsall and Bloxwich":"Walsall South","Washington and Gateshead South":"Washington and Sunderland West","Wells and Mendip Hills":"Wells","West Bromwich":"West Bromwich East","Weston-super-Mare":"Weston-Super-Mare","Widnes and Halewood":"Garston and Halewood","Wolverhampton West":"Wolverhampton South West","Worsley and Eccles":"Salford and Eccles"};
     var LOCAL_DATA_LOADED = false;
@@ -5434,7 +5546,8 @@
         apprenticeship: 'data/apprenticeship-regions.json',
         housebuilding: 'data/housebuilding-regions.json',
         rent: 'data/rent-regions.json',
-        u34: 'data/u34-constituencies.json'
+        u34: 'data/u34-constituencies.json',
+        mhTrusts: 'data/mh-trusts.json'
       };
       Promise.all(
         Object.keys(files).map(function(key) {
@@ -5453,6 +5566,7 @@
           if (r.key === 'housebuilding') LOCAL_HOUSEBUILDING_DATA = r.data;
           if (r.key === 'rent') LOCAL_RENT_DATA = r.data;
           if (r.key === 'u34') LOCAL_U34_DATA = r.data;
+          if (r.key === 'mhTrusts') LOCAL_MH_TRUST_DATA = r.data;
         });
         LOCAL_DATA_LOADED = true;
         LOCAL_DATA_CALLBACKS.forEach(function(fn) { fn(); });
@@ -5572,6 +5686,31 @@
         })
         .sort(function(a, b) { return a.distance - b.distance; })
         .slice(0, count || 5);
+    }
+
+    function getNearestMHTrusts(lat, lng, count) {
+      if (!LOCAL_MH_TRUST_DATA || lat == null || lng == null) return [];
+      return LOCAL_MH_TRUST_DATA
+        .filter(function(t) {
+          return t['Latitude'] && t['Longitude'] &&
+                 t['Latitude'] !== '' && t['Longitude'] !== '';
+        })
+        .map(function(t) {
+          var tLat = parseFloat(t['Latitude']);
+          var tLng = parseFloat(t['Longitude']);
+          var distance = Math.round(haversineMiles(lat, lng, tLat, tLng) * 10) / 10;
+          return {
+            name: t['Provider Name'],
+            referrals: t['Referrals Received'] || '—',
+            entered: t['Entered Treatment'] || '—',
+            finished: t['Finished Course'] || '—',
+            distance: distance,
+            lat: tLat,
+            lng: tLng
+          };
+        })
+        .sort(function(a, b) { return a.distance - b.distance; })
+        .slice(0, count || 10);
     }
 
     function fmtCurrency(v) { return '\u00A3' + v.toLocaleString('en-GB'); }
@@ -6337,6 +6476,110 @@
         radius: 7, color: '#E04B2D', fillColor: '#E04B2D', fillOpacity: 0.85, weight: 1.5
       }).addTo(map).bindPopup(popupHtml, { closeButton: false, minWidth: 180, maxWidth: 180 });
       INST_MAP_PLOTTED[inst.name] = true;
+      return marker;
+    }
+
+    // === MH TRUST MAP ===
+    var MH_TRUST_MAP = null;
+    var MH_TRUST_MAP_PLOTTED = {};
+
+    function buildMHTrustMap(trusts, userLat, userLng) {
+      var container = document.getElementById('mh-trust-map');
+      if (!container) return;
+
+      if (MH_TRUST_MAP) {
+        MH_TRUST_MAP.remove();
+        MH_TRUST_MAP = null;
+      }
+      MH_TRUST_MAP_PLOTTED = {};
+
+      if (!trusts.length) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = '';
+      container.innerHTML = '<div id="mh-trust-map-leaflet" style="width:100%;height:370px;border-radius:3px;background:var(--cream);"></div>' +
+        '<div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://digital.nhs.uk/data-and-information/publications/statistical/psychological-therapies-annual-reports-on-the-use-of-iapt-services" target="_blank" rel="noopener">NHS England, Talking Therapies data, 2024-25</a></div>';
+
+      var map = L.map('mh-trust-map-leaflet', {
+        zoomControl: true,
+        attributionControl: true,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
+
+      var bounds = L.latLngBounds([[userLat, userLng]]);
+      var firstMarker = null;
+      trusts.forEach(function(t, i) {
+        var marker = addMHTrustMarker(map, t);
+        if (i === 0 && marker) firstMarker = marker;
+        bounds.extend([t.lat, t.lng]);
+      });
+
+      var nearBounds = L.latLngBounds([[userLat, userLng]]);
+      for (var z = 0; z < Math.min(5, trusts.length); z++) {
+        nearBounds.extend([trusts[z].lat, trusts[z].lng]);
+      }
+      map.fitBounds(nearBounds.pad(0.1), { maxZoom: 12 });
+      if (firstMarker) firstMarker.openPopup();
+      MH_TRUST_MAP = map;
+
+      map.on('moveend', function() {
+        if (!LOCAL_MH_TRUST_DATA) return;
+        var mapBounds = map.getBounds();
+        LOCAL_MH_TRUST_DATA.forEach(function(t) {
+          if (!t['Latitude'] || !t['Longitude'] || t['Latitude'] === '' || t['Longitude'] === '') return;
+          var name = t['Provider Name'];
+          if (MH_TRUST_MAP_PLOTTED[name]) return;
+          var tLat = parseFloat(t['Latitude']);
+          var tLng = parseFloat(t['Longitude']);
+          if (isNaN(tLat) || isNaN(tLng)) return;
+          if (!mapBounds.contains([tLat, tLng])) return;
+          addMHTrustMarker(map, {
+            name: name,
+            referrals: t['Referrals Received'] || '—',
+            entered: t['Entered Treatment'] || '—',
+            finished: t['Finished Course'] || '—',
+            lat: tLat,
+            lng: tLng
+          });
+        });
+      });
+    }
+
+    function titleCaseTrust(s) {
+      if (!s) return s;
+      var lower = ['and','of','the','in','for','a','an','at','by','to','or','on','with','ltd','cic'];
+      return s.toLowerCase().replace(/(?:^|\s)\S/g, function(m) { return m.toUpperCase(); })
+        .replace(/\b(Nhs|Iapt|Hq|Cic|Ltd|Pts|Llr)\b/gi, function(m) { return m.toUpperCase(); })
+        .replace(/\(([a-z])/gi, function(m, c) { return '(' + c.toUpperCase(); });
+    }
+
+    function addMHTrustMarker(map, t) {
+      if (MH_TRUST_MAP_PLOTTED[t.name]) return null;
+      var displayName = titleCaseTrust(t.name);
+      var refNum = parseInt((t.referrals || '0').replace(/,/g, ''), 10) || 0;
+      var entNum = parseInt((t.entered || '0').replace(/,/g, ''), 10) || 0;
+      var finNum = parseInt((t.finished || '0').replace(/,/g, ''), 10) || 0;
+      var entPct = refNum ? Math.round(entNum / refNum * 100) + '%' : '—';
+      var finPct = refNum ? Math.round(finNum / refNum * 100) + '%' : '—';
+      var popupHtml = '<div style="font-family:\'Open Sans\',sans-serif;font-size:0.82rem;line-height:1.6;">' +
+        '<b style="display:block;margin-bottom:4px;">' + displayName + '</b>' +
+        '<div style="text-align:center">' +
+        'Referrals: ' + t.referrals + '<br>' +
+        'Entered treatment: ' + t.entered + ' (' + entPct + ')<br>' +
+        'Finished course: ' + t.finished + ' (' + finPct + ')' +
+        '</div></div>';
+      var marker = L.circleMarker([t.lat, t.lng], {
+        radius: 7, color: '#E04B2D', fillColor: '#E04B2D', fillOpacity: 0.85, weight: 1.5
+      }).addTo(map).bindPopup(popupHtml, { closeButton: false, minWidth: 220, maxWidth: 260 });
+      MH_TRUST_MAP_PLOTTED[t.name] = true;
       return marker;
     }
 
@@ -7369,6 +7612,14 @@
           }, 100);
         }
       }
+      // Show youth funding local map below national chart
+      if (CURRENT_LA_NAME) {
+        var youthEl = document.getElementById('youth-funding-local');
+        if (youthEl) youthEl.style.display = 'block';
+        if (window.initYouthFundingMap) {
+          window.initYouthFundingMap(CURRENT_LA_NAME);
+        }
+      }
     }
 
     // Postcode lookup
@@ -7409,6 +7660,15 @@
                   buildLocalChartInPanel('sixth-form', laName);
                   buildLocalChartInPanel('colleges', laName);
                 }
+              }
+
+              // MH Trust provider map
+              if (LOCAL_MH_TRUST_DATA && USER_LAT != null) {
+                foundAny = true;
+                var nearTrusts = getNearestMHTrusts(USER_LAT, USER_LNG, 10);
+                buildMHTrustMap(nearTrusts, USER_LAT, USER_LNG);
+                var mhSrc = document.querySelector('#chart-mh-referrals .edu-chart-source');
+                if (mhSrc) mhSrc.style.display = 'none';
               }
 
               // Absence local data — rebuild ALL panels
@@ -7840,7 +8100,7 @@
           if (!floatingCta.classList.contains('visible')) return;
           if (floatingForm.style.display === 'none') return;
 
-          socialProofText.innerHTML = getRandomName() + ' signed — <span class="floating-cta-social-proof-time">' + getRandomTime() + '</span>';
+          socialProofText.innerHTML = getRandomName() + ' signed <span class="floating-cta-social-proof-time">— ' + getRandomTime() + '</span>';
           socialProofEl.classList.add('visible');
 
           setTimeout(function() {
@@ -7849,7 +8109,7 @@
         }
 
         function scheduleNext() {
-          var delay = 8000 + Math.floor(Math.random() * 7000);
+          var delay = 4000 + Math.floor(Math.random() * 3000);
           setTimeout(function() {
             showNotification();
             scheduleNext();
@@ -8024,6 +8284,175 @@
   })();
   </script>
 
+  <!-- Youth Services Funding map -->
+  <script>
+  (function() {
+    var YOUTH_FUNDING_LOCAL = null;
+    var LA_TOPO = null;
+    var YOUTH_MAP = null;
+    var YOUTH_GEO_LAYER = null;
+    var YOUTH_MAP_LOADED = false;
+    var YOUTH_MAP_CALLBACKS = [];
+    var YOUTH_FUNDING_LOOKUP = {};
+    var youthCurrentSelected = null;
+
+    // District councils -> county council (two-tier areas where funding is reported at county level)
+    var DISTRICT_TO_COUNTY = {
+      "Cambridge":"Cambridgeshire","East Cambridgeshire":"Cambridgeshire","Fenland":"Cambridgeshire","Huntingdonshire":"Cambridgeshire","South Cambridgeshire":"Cambridgeshire",
+      "Amber Valley":"Derbyshire","Bolsover":"Derbyshire","Chesterfield":"Derbyshire","Derbyshire Dales":"Derbyshire","Erewash":"Derbyshire","High Peak":"Derbyshire","North East Derbyshire":"Derbyshire","South Derbyshire":"Derbyshire",
+      "East Devon":"Devon","Exeter":"Devon","Mid Devon":"Devon","North Devon":"Devon","South Hams":"Devon","Teignbridge":"Devon","Torridge":"Devon","West Devon":"Devon",
+      "Eastbourne":"East Sussex","Hastings":"East Sussex","Lewes":"East Sussex","Rother":"East Sussex","Wealden":"East Sussex",
+      "Basildon":"Essex","Braintree":"Essex","Brentwood":"Essex","Castle Point":"Essex","Chelmsford":"Essex","Colchester":"Essex","Epping Forest":"Essex","Harlow":"Essex","Maldon":"Essex","Rochford":"Essex","Tendring":"Essex","Uttlesford":"Essex",
+      "Cheltenham":"Gloucestershire","Cotswold":"Gloucestershire","Forest of Dean":"Gloucestershire","Gloucester":"Gloucestershire","Stroud":"Gloucestershire","Tewkesbury":"Gloucestershire",
+      "Basingstoke and Deane":"Hampshire","East Hampshire":"Hampshire","Eastleigh":"Hampshire","Fareham":"Hampshire","Gosport":"Hampshire","Hart":"Hampshire","Havant":"Hampshire","New Forest":"Hampshire","Rushmoor":"Hampshire","Test Valley":"Hampshire","Winchester":"Hampshire",
+      "Broxbourne":"Hertfordshire","Dacorum":"Hertfordshire","East Hertfordshire":"Hertfordshire","Hertsmere":"Hertfordshire","North Hertfordshire":"Hertfordshire","St Albans":"Hertfordshire","Stevenage":"Hertfordshire","Three Rivers":"Hertfordshire","Watford":"Hertfordshire","Welwyn Hatfield":"Hertfordshire",
+      "Ashford":"Kent","Canterbury":"Kent","Dartford":"Kent","Dover":"Kent","Folkestone and Hythe":"Kent","Gravesham":"Kent","Maidstone":"Kent","Sevenoaks":"Kent","Swale":"Kent","Thanet":"Kent","Tonbridge and Malling":"Kent","Tunbridge Wells":"Kent",
+      "Burnley":"Lancashire","Chorley":"Lancashire","Fylde":"Lancashire","Hyndburn":"Lancashire","Lancaster":"Lancashire","Pendle":"Lancashire","Preston":"Lancashire","Ribble Valley":"Lancashire","Rossendale":"Lancashire","South Ribble":"Lancashire","West Lancashire":"Lancashire","Wyre":"Lancashire",
+      "Blaby":"Leicestershire","Charnwood":"Leicestershire","Harborough":"Leicestershire","Hinckley and Bosworth":"Leicestershire","Melton":"Leicestershire","North West Leicestershire":"Leicestershire","Oadby and Wigston":"Leicestershire",
+      "Boston":"Lincolnshire","East Lindsey":"Lincolnshire","Lincoln":"Lincolnshire","North Kesteven":"Lincolnshire","South Holland":"Lincolnshire","South Kesteven":"Lincolnshire","West Lindsey":"Lincolnshire",
+      "Breckland":"Norfolk","Broadland":"Norfolk","Great Yarmouth":"Norfolk","King's Lynn and West Norfolk":"Norfolk","North Norfolk":"Norfolk","Norwich":"Norfolk","South Norfolk":"Norfolk",
+      "Ashfield":"Nottinghamshire","Bassetlaw":"Nottinghamshire","Broxtowe":"Nottinghamshire","Gedling":"Nottinghamshire","Mansfield":"Nottinghamshire","Newark and Sherwood":"Nottinghamshire","Rushcliffe":"Nottinghamshire",
+      "Cherwell":"Oxfordshire","Oxford":"Oxfordshire","South Oxfordshire":"Oxfordshire","Vale of White Horse":"Oxfordshire","West Oxfordshire":"Oxfordshire",
+      "Cannock Chase":"Staffordshire","East Staffordshire":"Staffordshire","Lichfield":"Staffordshire","Newcastle-under-Lyme":"Staffordshire","South Staffordshire":"Staffordshire","Stafford":"Staffordshire","Staffordshire Moorlands":"Staffordshire","Tamworth":"Staffordshire",
+      "Babergh":"Suffolk","East Suffolk":"Suffolk","Ipswich":"Suffolk","Mid Suffolk":"Suffolk","West Suffolk":"Suffolk",
+      "Elmbridge":"Surrey","Epsom and Ewell":"Surrey","Guildford":"Surrey","Mole Valley":"Surrey","Reigate and Banstead":"Surrey","Runnymede":"Surrey","Spelthorne":"Surrey","Surrey Heath":"Surrey","Tandridge":"Surrey","Waverley":"Surrey","Woking":"Surrey",
+      "North Warwickshire":"Warwickshire","Nuneaton and Bedworth":"Warwickshire","Rugby":"Warwickshire","Stratford-on-Avon":"Warwickshire","Warwick":"Warwickshire",
+      "Adur":"West Sussex","Arun":"West Sussex","Chichester":"West Sussex","Crawley":"West Sussex","Horsham":"West Sussex","Mid Sussex":"West Sussex","Worthing":"West Sussex",
+      "Bromsgrove":"Worcestershire","Malvern Hills":"Worcestershire","Redditch":"Worcestershire","Worcester":"Worcestershire","Wychavon":"Worcestershire","Wyre Forest":"Worcestershire"
+    };
+
+    function loadYouthFundingMapData(cb) {
+      if (YOUTH_MAP_LOADED) { cb(); return; }
+      YOUTH_MAP_CALLBACKS.push(cb);
+      if (YOUTH_MAP_CALLBACKS.length > 1) return;
+      Promise.all([
+        fetch('data/youth-funding-local.json').then(function(r) { return r.json(); }),
+        fetch('data/la-boundaries-topo.json').then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        YOUTH_FUNDING_LOCAL = results[0];
+        LA_TOPO = results[1];
+        // Build lookup from per-head data
+        YOUTH_FUNDING_LOCAL.forEach(function(la) {
+          var name = la['Local Authority'];
+          var ph = la.perHead;
+          if (ph !== null && ph !== undefined) {
+            YOUTH_FUNDING_LOOKUP[name] = { perHead: ph };
+          }
+        });
+        // Populate district names pointing to their county's data
+        Object.keys(DISTRICT_TO_COUNTY).forEach(function(district) {
+          var county = DISTRICT_TO_COUNTY[district];
+          if (YOUTH_FUNDING_LOOKUP[county]) {
+            YOUTH_FUNDING_LOOKUP[district] = YOUTH_FUNDING_LOOKUP[county];
+          }
+        });
+        YOUTH_MAP_LOADED = true;
+        YOUTH_MAP_CALLBACKS.forEach(function(fn) { fn(); });
+        YOUTH_MAP_CALLBACKS = [];
+      });
+    }
+
+    // Colour scale: per-head funding -> red intensity (lower = darker red)
+    var MIN_PH = 0, MAX_PH = 100;
+    function youthFundingColor(perHead) {
+      if (perHead === null || perHead === undefined) return '#ccc';
+      // Higher per-head = lighter (less concern), lower = darker red
+      var t = Math.min(1, Math.max(0, perHead / MAX_PH));
+      // Invert: t=0 (£0) -> darkest, t=1 (£100+) -> lightest
+      return 'rgba(224,75,45,' + (1.0 - t * 0.7).toFixed(2) + ')';
+    }
+
+    function initYouthFundingMap(laName) {
+      loadYouthFundingMapData(function() {
+        var objectKey = Object.keys(LA_TOPO.objects)[0];
+        var geojson = topojson.feature(LA_TOPO, LA_TOPO.objects[objectKey]);
+
+        if (!YOUTH_MAP) {
+          YOUTH_MAP = L.map('youth-funding-map', {
+            zoomControl: true,
+            attributionControl: true,
+            scrollWheelZoom: false
+          });
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(YOUTH_MAP);
+          YOUTH_MAP.setView([52.5, -1.5], 7);
+        } else {
+          YOUTH_MAP.invalidateSize();
+        }
+
+        if (YOUTH_GEO_LAYER) YOUTH_MAP.removeLayer(YOUTH_GEO_LAYER);
+
+        YOUTH_GEO_LAYER = L.geoJSON(geojson, {
+          style: function(feature) {
+            var name = feature.properties.LAD25NM;
+            var data = YOUTH_FUNDING_LOOKUP[name];
+            var isSelected = name === laName;
+            return {
+              fillColor: data ? youthFundingColor(data.perHead) : '#ccc',
+              fillOpacity: data ? 0.85 : 0.15,
+              weight: isSelected ? 3.5 : 0.5,
+              color: '#fff',
+              opacity: 1
+            };
+          },
+          onEachFeature: function(feature, layer) {
+            layer.on('click', function() {
+              selectYouthFundingLA(feature.properties.LAD25NM);
+            });
+          }
+        }).addTo(YOUTH_MAP);
+
+        youthCurrentSelected = laName;
+        YOUTH_GEO_LAYER.eachLayer(function(layer) {
+          if (layer.feature.properties.LAD25NM === laName) layer.bringToFront();
+        });
+        zoomToYouthLA(laName);
+        selectYouthFundingLA(laName);
+      });
+    }
+
+    function selectYouthFundingLA(name) {
+      var data = YOUTH_FUNDING_LOOKUP[name];
+      var desc = document.getElementById('youth-funding-desc');
+      var county = DISTRICT_TO_COUNTY[name];
+      var displayName = county ? name + '</b> (' + county + ')' : name + '</b>';
+      if (data) {
+        var natAvg = 37.43;
+        var diff = data.perHead - natAvg;
+        var comparison = diff >= 0
+          ? '<b>\u00A3' + Math.abs(diff).toFixed(2) + ' above</b> the national average'
+          : '<b>\u00A3' + Math.abs(diff).toFixed(2) + ' below</b> the national average';
+        desc.innerHTML = 'In <b>' + displayName + ', spending on youth services is <b>\u00A3' +
+          data.perHead.toFixed(2) + '</b> per young person in 2024-25 \u2014 ' + comparison + ' of \u00A3' + natAvg.toFixed(2) + '.';
+      } else {
+        desc.innerHTML = '<b>' + name + '</b> \u2014 no youth services funding data available.';
+      }
+      var prev = youthCurrentSelected;
+      youthCurrentSelected = name;
+      YOUTH_GEO_LAYER.eachLayer(function(layer) {
+        var ln = layer.feature.properties.LAD25NM;
+        if (ln === name || ln === prev) {
+          layer.setStyle({ weight: ln === name ? 3.5 : 0.5 });
+          if (ln === name) layer.bringToFront();
+        }
+      });
+    }
+
+    function zoomToYouthLA(name) {
+      YOUTH_GEO_LAYER.eachLayer(function(layer) {
+        if (layer.feature.properties.LAD25NM === name) {
+          YOUTH_MAP.fitBounds(layer.getBounds(), { padding: [20, 20], maxZoom: 12 });
+        }
+      });
+    }
+
+    window.initYouthFundingMap = initYouthFundingMap;
+  })();
+  </script>
+
   <!-- Chart share buttons (mobile) -->
   <script>
   (function() {
@@ -8074,7 +8503,7 @@
         mutations.forEach(function(m) {
           m.addedNodes.forEach(function(node) {
             if (node.nodeType !== 1) return;
-            var mapEl = node.querySelector ? node.querySelector('#institutions-map-leaflet, #housing-map') : null;
+            var mapEl = node.querySelector ? node.querySelector('#institutions-map-leaflet, #housing-map, #mh-trust-map-leaflet') : null;
             if (mapEl && !mapEl.querySelector('.map-share-btn')) {
               mapEl.style.position = 'relative';
               var btn = document.createElement('button');
@@ -8089,7 +8518,7 @@
       mapObserver.observe(document.body, { childList: true, subtree: true });
 
       // Also check if maps already exist
-      ['#institutions-map-leaflet', '#housing-map'].forEach(function(sel) {
+      ['#institutions-map-leaflet', '#housing-map', '#mh-trust-map-leaflet'].forEach(function(sel) {
         var mapEl = document.querySelector(sel);
         if (mapEl && !mapEl.querySelector('.map-share-btn')) {
           mapEl.style.position = 'relative';
