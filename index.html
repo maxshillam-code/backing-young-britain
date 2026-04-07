@@ -339,7 +339,7 @@
     .hero h1 {
       font-family: 'Lora', serif;
       font-weight: 400;
-      font-size: clamp(1.79rem, 3.76vw, 2.65rem);
+      font-size: clamp(1.70rem, 3.57vw, 2.52rem);
       line-height: 1.1;
       letter-spacing: -0.03em;
       max-width: 1200px;
@@ -737,6 +737,40 @@
       font-weight: 600;
       color: var(--white);
       white-space: nowrap;
+    }
+
+    /* Classroom pictogram */
+    .classroom-pictogram {
+      background: #fff;
+      padding: 0;
+      border-radius: 3px;
+      color: #000;
+    }
+    .classroom-svg-wrap {
+      width: 100%;
+    }
+    .classroom-svg-wrap svg {
+      width: 100%;
+      display: block;
+    }
+    .classroom-steps {
+      flex: 1;
+      min-width: 0;
+    }
+    .classroom-steps {
+      display: none;
+    }
+    .classroom-pictogram-source {
+      font-size: 0.68rem;
+      color: #000;
+      margin-top: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .classroom-svg-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     /* Education chart */
@@ -3167,19 +3201,23 @@
 
 
         <h2>In health</h2>
-        <p class="pillar-lead">One in five children and young people now has a diagnosable mental health condition. Referrals have surged. Wait times have ballooned. And the safety net — overstretched, underfunded — was designed for a different era.</p>
+        <p class="pillar-lead" style="color:#000">One in five children and young people now has a diagnosable mental health condition. Referrals have surged. Wait times have ballooned. And the safety net — overstretched, underfunded — was designed for a different era.</p>
       </div>
       <div class="data-cards">
-        <div class="bar-chart">
-          <div class="bar-chart-title">Mental health condition prevalence (age 7–24)</div>
-          <div class="bar-row">
-            <div class="bar-label">2017</div>
-            <div class="bar-track"><div class="bar-fill" style="--w: 44%"><span class="bar-value">17.5%</span></div></div>
+        <div style="margin-top: 0">
+          <div class="chart-tabs-row">
+            <div class="chart-section-title" style="margin-bottom:0">Mental Health Condition</div>
           </div>
-          <div class="bar-row">
-            <div class="bar-label">2023</div>
-            <div class="bar-track"><div class="bar-fill" style="--w: 65%"><span class="bar-value">25.8%</span></div></div>
-          </div>
+          <div class="chart-tab-desc">In England, 6 in 30 children had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
+        </div>
+        <div class="classroom-pictogram" id="classroom-pictogram">
+          <div class="classroom-svg-wrap" id="classroom-svg-wrap"></div>
+          <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-of-children-and-young-people-in-england" target="_blank" rel="noopener">NHS Digital, Mental Health of Children and Young People surveys</a></div>
+        </div>
+        <div style="margin-top: 2.5rem">
+          <div class="chart-section-title">Referrals to Completions</div>
+          <div class="chart-tab-desc">In <b>England</b>, 1.81 million children and young people were referred for mental health support in 2024-25, but only <b>670,419</b> finished a course of treatment &mdash; just <b>37%</b>.</div>
+          <div class="edu-chart" id="chart-mh-referrals"></div>
         </div>
         <div class="data-card">
           <div class="data-card-stat">12 months+</div>
@@ -4013,6 +4051,32 @@
           legend: [{color:'#E04B2D', label:'16\u201334 year olds living with parents (thousands)'}],
           source: {text:'ONS Young adults living with their parents', url:'https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/families/datasets/youngadultslivingwiththeirparents'},
           tooltipFormat: function(v){return (v/1000).toFixed(1).replace(/\.0$/,'')+'M';}
+        },
+        'chart-mh-referrals': {
+          lines: [
+            {color:'#E04B2D', dotRadius:2.5,
+              data: [
+                {label:'2013-14',value:1118990},{label:'2014-15',value:1267193},{label:'2015-16',value:1399088},
+                {label:'2016-17',value:1391360},{label:'2017-18',value:1440000},{label:'2018-19',value:1604000},
+                {label:'2019-20',value:1694740},{label:'2020-21',value:1410000},{label:'2021-22',value:1810000},
+                {label:'2022-23',value:1760000},{label:'2023-24',value:1830000},{label:'2024-25',value:1810000}
+              ],
+              tooltipFormat: function(v){return 'Referrals: '+Math.round(v).toLocaleString('en-GB');}},
+            {color:'#777', dotRadius:2.5,
+              data: [
+                {label:'2013-14',value:364343},{label:'2014-15',value:468881},{label:'2015-16',value:537131},
+                {label:'2016-17',value:567106},{label:'2017-18',value:580000},{label:'2018-19',value:606000},
+                {label:'2019-20',value:606000},{label:'2020-21',value:520000},{label:'2021-22',value:688000},
+                {label:'2022-23',value:672000},{label:'2023-24',value:671648},{label:'2024-25',value:670419}
+              ],
+              tooltipFormat: function(v){return 'Finished: '+Math.round(v).toLocaleString('en-GB');}}
+          ],
+          yAxis: {min:0, max:2000000, step:500000, format:function(v){return v===0?'0':(v/1000000).toFixed(1).replace(/\.0$/,'')+'M';}},
+          xLabels: [{i:0,t:'2013-14'},{i:3,t:'2016-17'},{i:6,t:'2019-20'},{i:9,t:'2022-23'},{i:11,t:'2024-25'}],
+          highlights: [{index:0, series:0, text:'1.1M', color:'#E04B2D'},{index:11, series:0, text:'1.8M', color:'#E04B2D'},{index:0, series:1, text:'364K', color:'#777', below:true},{index:11, series:1, text:'670K', color:'#777', below:true}],
+          gapLabels: [{index:0, text:'755K'},{index:5, text:'998K'},{index:11, text:'1.14M'}],
+          legend: [{color:'#E04B2D', label:'Referrals received'},{color:'#777', label:'Finished course of treatment'}],
+          source: {text:'NHS Digital, Mental Health Services Dataset', url:'https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-services-monthly-statistics'}
         }
       };
 
@@ -4218,6 +4282,160 @@
           container.appendChild(sd);
         }
       }
+
+      // ── Classroom of 30 pictogram ──
+      function createClassroomPictogram() {
+        var svgWrap = document.getElementById('classroom-svg-wrap');
+        if (!svgWrap) return;
+        svgWrap.innerHTML = '';
+
+        var years = [
+          { year: '2017', shaded: 4, pct: '12.5%' },
+          { year: '2020', shaded: 5, pct: '17.1%' },
+          { year: '2021', shaded: 5, pct: '17.7%' },
+          { year: '2022', shaded: 6, pct: '19.0%' },
+          { year: '2023', shaded: 6, pct: '20.3%' }
+        ];
+        var maxShaded = 6; // max across all years
+
+        var COLS = 10, ROWS = 3;
+        var ICON_W = 15.9, ICON_H = 18.9;
+        var PAD_X = 6, PAD_Y = 1.5;
+        var cellW = ICON_W + PAD_X;
+        var cellH = ICON_H + PAD_Y;
+        var gridW = COLS * cellW - PAD_X;
+        var gridOffX = 4;
+
+        // Whiteboard dimensions
+        var boardMargin = 5.6;
+        var boardH = 27.1;
+        var boardY = 2;
+        var boardW = (gridW + gridOffX * 2) * 0.29;
+        var gridY = boardY + boardH + boardMargin;
+
+        var fullW = gridW + gridOffX * 2;
+        var svgW = fullW;
+        var boardX = (fullW - boardW) / 2;
+        var svgH = gridY + ROWS * cellH - PAD_Y;
+
+        // Seated-at-desk person: head + torso + desk surface
+        function personPath(x, y, w, h) {
+          var cx = x + w / 2;
+          var r = w * 0.16;
+          var headCY = y + r;
+          var gap = h * 0.04;
+          var torsoTop = y + r * 2 + gap;
+          var torsoBot = y + h * 0.54;
+          var sw = w * 0.26;
+          var sr = w * 0.1; // shoulder rounding radius
+          // Desk
+          var deskY = torsoBot + h * 0.04;
+          var deskH = h * 0.06;
+          var deskL = x + w * 0.05;
+          var deskR = x + w * 0.95;
+          // Table legs (at desk edges, same width as desk thickness)
+          var legTop = deskY + deskH;
+          var legBot = legTop + (y + h - legTop) * 0.6;
+          var legW = deskH; // same thickness as desk
+
+          return (
+            // Head
+            'M' + cx + ',' + (headCY - r) +
+            'a' + r + ',' + r + ',0,1,0,.01,0Z' +
+            // Torso with rounded shoulders
+            'M' + (cx - sw + sr) + ',' + torsoTop +
+            'Q' + (cx - sw) + ',' + torsoTop + ' ' + (cx - sw) + ',' + (torsoTop + sr) +
+            'L' + (cx - sw) + ',' + torsoBot +
+            'L' + (cx + sw) + ',' + torsoBot +
+            'L' + (cx + sw) + ',' + (torsoTop + sr) +
+            'Q' + (cx + sw) + ',' + torsoTop + ' ' + (cx + sw - sr) + ',' + torsoTop + 'Z' +
+            // Desk
+            'M' + deskL + ',' + deskY +
+            'L' + deskR + ',' + deskY +
+            'L' + deskR + ',' + (deskY + deskH) +
+            'L' + deskL + ',' + (deskY + deskH) + 'Z' +
+            // Left leg (at left edge of desk)
+            'M' + deskL + ',' + legTop +
+            'L' + (deskL + legW) + ',' + legTop +
+            'L' + (deskL + legW) + ',' + legBot +
+            'L' + deskL + ',' + legBot + 'Z' +
+            // Right leg (at right edge of desk)
+            'M' + (deskR - legW) + ',' + legTop +
+            'L' + deskR + ',' + legTop +
+            'L' + deskR + ',' + legBot +
+            'L' + (deskR - legW) + ',' + legBot + 'Z'
+          );
+        }
+
+        var fillColor = '#E04B2D';
+        var greyColor = '#ebebeb';
+
+        // Build SVG
+        var svg = svgEl('svg', {
+          viewBox: '0 0 ' + svgW + ' ' + svgH,
+          preserveAspectRatio: 'xMidYMid meet',
+          'aria-label': 'Classroom of 30 children showing mental health prevalence'
+        });
+
+        // Whiteboard — filled border matching desk weight
+        var borderW = ICON_H * 0.06; // match desk thickness
+        svg.appendChild(svgEl('rect', {
+          x: boardX + '', y: boardY + '',
+          width: boardW + '', height: boardH + '',
+          rx: '0.8', ry: '0.8',
+          fill: '#ebebeb'
+        }));
+        svg.appendChild(svgEl('rect', {
+          x: (boardX + borderW) + '', y: (boardY + borderW) + '',
+          width: (boardW - borderW * 2) + '', height: (boardH - borderW * 2) + '',
+          rx: '0.5', ry: '0.5',
+          fill: '#fff'
+        }));
+        // Whiteboard tray (centered on bottom edge)
+        var trayH = 2.2;
+        var trayY = boardY + boardH - trayH / 2;
+        svg.appendChild(svgEl('rect', {
+          x: (boardX + boardW * 0.15) + '', y: trayY + '',
+          width: (boardW * 0.7) + '', height: trayH + '',
+          rx: '0.3', ry: '0.3',
+          fill: '#ebebeb'
+        }));
+        // Whiteboard rubber (small block sitting on tray)
+        var rubberW = boardW * 0.08;
+        var rubberH = 2.8;
+        var rubberX = boardX + boardW * 0.72;
+        var rubberY = trayY - rubberH;
+        svg.appendChild(svgEl('rect', {
+          x: rubberX + '', y: rubberY + '',
+          width: rubberW + '', height: rubberH + '',
+          rx: '0.2', ry: '0.2',
+          fill: '#ebebeb'
+        }));
+
+        // All 30 seated icons
+        var icons = [];
+        for (var row = 0; row < ROWS; row++) {
+          for (var c = 0; c < COLS; c++) {
+            var path = svgEl('path', {
+              d: personPath(gridOffX + c * cellW, gridY + row * cellH, ICON_W, ICON_H),
+              fill: greyColor,
+              'class': 'classroom-icon'
+            });
+            path.style.transition = 'fill 0.5s ease';
+            svg.appendChild(path);
+            icons.push(path);
+          }
+        }
+        svgWrap.appendChild(svg);
+
+        // Store references for animation
+        svgWrap._icons = icons;
+        svgWrap._years = years;
+        svgWrap._fillColor = fillColor;
+        svgWrap._greyColor = greyColor;
+      }
+
+      createClassroomPictogram();
 
       // Expose globally for dynamic rebuilds and local/national toggle
       window.createChart = createChart;
@@ -4693,6 +4911,36 @@
       } else {
         chartObserver.observe(c);
       }
+    });
+
+    // Classroom pictogram observer — same threshold as other charts
+    const pictogramObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          var pic = e.target;
+          if (pic.classList.contains('animated')) return;
+          pic.classList.add('animated');
+          var wrap = pic.querySelector('#classroom-svg-wrap');
+          if (!wrap || !wrap._icons) return;
+          var icons = wrap._icons;
+          var years = wrap._years;
+          var fill = wrap._fillColor;
+          var maxShaded = years[years.length - 1].shaded;
+
+          for (var k = 0; k < maxShaded; k++) {
+            (function (idx) {
+              setTimeout(function () {
+                icons[idx].setAttribute('fill', fill);
+              }, idx * 400);
+            })(k);
+          }
+          pictogramObserver.unobserve(pic);
+        }
+      });
+    }, { threshold: 0.75 });
+
+    document.querySelectorAll('.classroom-pictogram').forEach(c => {
+      pictogramObserver.observe(c);
     });
 
     // Re-observe a chart so the IntersectionObserver will trigger its animation
@@ -7323,12 +7571,9 @@
       updateDescription(id, false);
     });
 
-    // Hide/show nav on scroll
-    let lastScroll = 0;
+    // Hide/show nav on scroll — only visible at top of page
     window.addEventListener('scroll', () => {
-      const current = window.scrollY;
-      document.getElementById('nav').classList.toggle('hidden', current > lastScroll && current > 100);
-      lastScroll = current;
+      document.getElementById('nav').classList.toggle('hidden', window.scrollY > 100);
     });
 
     // Petition form
