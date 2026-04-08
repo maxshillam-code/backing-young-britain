@@ -317,13 +317,13 @@
 
     /* ===== HERO ===== */
     .hero {
-      min-height: 100vh;
+      min-height: min(100vh, 900px);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       text-align: center;
-      padding: 8rem 3rem 2.5rem;
+      padding: clamp(8rem, 12vh, 10rem) 3rem 1.5rem;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -381,12 +381,25 @@
     .hero h1 .citation.visible {
       opacity: 1;
     }
+    .hero h1 .citation a {
+      color: inherit;
+      text-decoration: none;
+      background-image: linear-gradient(var(--black), var(--black));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.5px;
+      transition: background-size 0.35s ease;
+      padding-bottom: 1px;
+    }
+    .hero h1 .citation a:hover {
+      background-size: 100% 1.5px;
+    }
     .hero-columns {
       display: grid;
       grid-template-columns: 45fr 55fr;
       gap: 4rem;
       align-items: center;
-      margin-top: 5rem;
+      margin-top: 4rem;
       width: 100%;
       opacity: 0;
     }
@@ -645,12 +658,19 @@
       letter-spacing: -0.02em;
       margin-bottom: 1.5rem;
     }
+    .pillar h2 em {
+      color: var(--black);
+      font-style: italic;
+    }
     .pillar-lead {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       color: var(--grey);
       line-height: 1.7;
       font-weight: 300;
       max-width: 95%;
+    }
+    .pillar-lead a:hover {
+      color: var(--red) !important;
     }
 
     /* Data cards */
@@ -819,7 +839,8 @@
       font-size: 10px;
       fill: #777;
     }
-    .edu-chart .chart-line {
+    .edu-chart .chart-line,
+    .edu-chart .gap-connector {
       fill: none;
       stroke-width: 2.5;
       stroke-linecap: round;
@@ -945,10 +966,14 @@
       position: relative;
       pointer-events: auto;
     }
-    .edu-chart svg {
+    .edu-chart svg,
+    .edu-chart .edu-chart-legend,
+    .edu-chart .edu-chart-source {
       transition: opacity 0.25s ease;
     }
-    .edu-chart.fading svg {
+    .edu-chart.fading svg,
+    .edu-chart.fading .edu-chart-legend,
+    .edu-chart.fading .edu-chart-source {
       opacity: 0;
     }
     #chart-housebuilding.fading svg {
@@ -1031,11 +1056,9 @@
       .edu-chart .annotation-label {
         font-size: 15px;
       }
-      .edu-chart .chart-line {
-        stroke-width: 4.5;
-      }
+      .edu-chart .chart-line,
       .edu-chart .gap-connector {
-        stroke-width: 3.5;
+        stroke-width: 4.5;
       }
       .edu-chart .chart-value-label {
         font-size: 16px;
@@ -1232,7 +1255,7 @@
     }
     .mobile-cards-wrapper { display: none; }
     .chart-view-toggle-mobile { display: none; }
-    .hero-sign-img { display: none; }
+    .hero-sign-img { display: none; border-radius: 3px; }
     .hero-sub-top { display: contents; }
     .hero-sub-cta { margin-top: 1rem; }
     .hero-right {
@@ -1256,7 +1279,7 @@
       width: 80%;
       max-width: 256px;
       height: auto;
-      border-radius: 0;
+      border-radius: 3px;
     }
     .hero-stat--housing,
     .hero-stat--health { display: none; }
@@ -1427,7 +1450,8 @@
     .edu-chart-legend {
       display: none;
       gap: 1.5rem;
-      margin-top: 0.25rem;
+      margin-top: 0;
+      margin-bottom: 15px;
       flex-wrap: wrap;
     }
     .edu-chart-legend.multi-line {
@@ -1467,6 +1491,9 @@
     }
     .edu-chart-source a:hover {
       background-size: 100% 1px;
+    }
+    .local-institution-container + .edu-chart-source {
+      padding-top: 8px;
     }
 
     /* Colour accents per pillar */
@@ -1543,6 +1570,7 @@
     #housing-map { border-radius: 3px; position: relative; z-index: 0; }
     #housing-map .leaflet-tile-pane { filter: grayscale(1); }
     #housing-map .leaflet-control-attribution { font-size: 0.6rem; }
+    #u34athome-local { margin-top: -1.1rem; }
     #youth-funding-map { border-radius: 3px; position: relative; z-index: 0; }
     #youth-funding-map .leaflet-tile-pane { filter: grayscale(1); }
     #youth-funding-map .leaflet-control-attribution { font-size: 0.6rem; }
@@ -1588,10 +1616,22 @@
 
     /* ===== PETITION ===== */
     .petition {
-      padding: 6rem 2rem;
-      max-width: 680px;
+      background: var(--black);
+      color: var(--white);
+      padding: 6rem 0;
+    }
+    .petition-grid {
+      display: grid;
+      grid-template-columns: 40fr 60fr;
+      gap: 4rem;
+      align-items: start;
+      max-width: 1200px;
       margin: 0 auto;
-      text-align: center;
+      padding: 0 2rem;
+    }
+    .petition-text {
+      position: sticky;
+      top: 2rem;
     }
     .petition h2 {
       font-family: 'Lora', serif;
@@ -1600,12 +1640,27 @@
       line-height: 1.1;
       letter-spacing: -0.02em;
       margin-bottom: 1rem;
+      color: var(--white);
+    }
+    .petition-heading {
+      font-family: 'Lora', serif;
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
     }
     .petition p {
-      color: var(--grey);
-      font-weight: 300;
+      color: var(--white);
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 200;
+      font-size: 1.1rem;
       line-height: 1.7;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0.625rem;
+    }
+    .petition p strong {
+      font-weight: 700;
     }
     .petition-form {
       display: grid;
@@ -1613,25 +1668,27 @@
       gap: 0.75rem;
     }
     .petition-form input {
-      padding: 1rem 1.2rem;
-      border: 1px solid var(--grey-light);
-      border-radius: 2px;
-      font-family: 'Lora', serif;
-      font-size: 0.9rem;
+      padding: 0.75rem 0.75rem;
+      border: 1px solid var(--red);
+      border-radius: 5px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
       background: var(--white);
       color: var(--black);
       transition: border-color 0.2s;
       outline: none;
     }
+    .petition-form input::placeholder { color: var(--black); }
     .petition-form input:focus {
-      border-color: var(--grey-light);
+      border-color: var(--red);
     }
     .petition-form input:-webkit-autofill,
     .petition-form input:-webkit-autofill:hover,
     .petition-form input:-webkit-autofill:focus {
       -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
       -webkit-text-fill-color: var(--black);
-      border-color: var(--grey-light);
+      border-color: var(--red);
       transition: background-color 5000s ease-in-out 0s;
     }
     .petition-form input.full-width {
@@ -1639,81 +1696,125 @@
     }
     .petition-form button {
       grid-column: 1 / -1;
-      padding: 1.1rem;
+      padding: 0.75rem;
       background: var(--red);
       color: var(--white);
       border: none;
       border-radius: 2px;
-      font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
     }
-    .petition-form button:hover { background: var(--red-dark); }
-    .petition-form button:active { transform: scale(0.99); }
+    .petition-form button span {
+      background-image: linear-gradient(var(--white), var(--white));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.4px;
+      padding-bottom: 2px;
+      transition: background-size 0.3s ease;
+    }
+    .petition-form button:hover span { background-size: 100% 1.4px; }
+    .petition-form button:hover { background: var(--red); }
+    .petition-form button:active { transform: none; }
     .petition-counter {
       margin-top: 2rem;
       font-size: 0.8rem;
-      color: var(--grey);
+      color: rgba(255,255,255,0.6);
     }
     .petition-counter strong {
       font-family: 'Lora', serif;
       font-size: 1.6rem;
-      color: var(--black);
+      color: var(--white);
       display: block;
       margin-bottom: 0.25rem;
     }
-    .petition-success {
-      display: none;
-      padding: 2rem;
-      background: rgba(24,112,90,0.08);
-      border-left: 3px solid var(--green);
-      text-align: left;
-      border-radius: 2px;
+    .petition-form-container-inner {
+      transition: opacity 0.25s ease;
     }
-    .petition-success h3 {
+    .petition-form-container-inner.fading {
+      opacity: 0;
+    }
+    .petition-success-msg {
+      grid-column: 1 / -1;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.5rem;
+      color: var(--white);
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+    .petition-success-msg strong {
       font-family: 'Lora', serif;
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--red);
     }
-    .petition-success p {
-      font-size: 0.88rem;
-      color: var(--grey);
-      margin-bottom: 0;
+    .petition-success-sub {
+      display: inline-block;
+      margin-top: 0.3rem;
+      padding-bottom: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 300;
+      line-height: 1.4;
+      text-wrap: balance;
     }
     .petition-privacy {
       margin-top: 1rem;
       font-size: 0.7rem;
-      color: var(--grey-light);
+      font-family: 'Open Sans', sans-serif;
+      color: var(--white);
     }
 
     /* ===== FOOTER ===== */
     footer {
-      border-top: 1px solid var(--grey-light);
-      padding: 3rem 2rem;
+      background: var(--black);
+    }
+    .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 3rem 2rem 4.8rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .footer-logo {
       font-family: 'Lora', serif;
-      font-size: 0.95rem;
-      color: var(--black);
+      font-style: italic;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--white);
     }
-    .footer-links { display: flex; gap: 1.5rem; }
-    .footer-links a {
-      font-size: 0.75rem;
-      color: var(--grey);
+    .footer-author-link {
+      color: var(--white);
       text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      background-image: linear-gradient(var(--white), var(--white));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.2px;
+      padding-bottom: 2px;
+      transition: background-size 0.3s ease;
     }
-    .footer-links a:hover { color: var(--black); }
+    .footer-author-link:hover { background-size: 100% 1.2px; }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--white);
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      background-image: linear-gradient(var(--white), var(--white));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.2px;
+      padding-bottom: 2px;
+      transition: background-size 0.3s ease;
+    }
+    .footer-links a:hover { background-size: 100% 1.2px; }
 
     /* ===== ANIMATIONS ===== */
     @keyframes fadeUp {
@@ -1789,7 +1890,7 @@
         width: 45%;
         max-width: 180px;
         height: auto;
-        border-radius: 0;
+        border-radius: 3px;
         flex-shrink: 0;
       }
       .hero-right .hero-stats {
@@ -1844,10 +1945,12 @@
       .postcode-result { text-align: left; }
       .hero-sub .postcode-form { justify-content: stretch !important; width: 100%; }
       .hero-sub .postcode-input { flex: 1; min-width: 0; }
+      .petition-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .petition-text { position: static; }
       .petition-form { grid-template-columns: 1fr; }
       .petition-form input { font-size: 16px; }
       .petition-form input.full-width, .petition-form button { grid-column: 1; }
-      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
       .footer-links { flex-wrap: wrap; justify-content: center; }
       .floating-cta {
         left: 0.75rem; right: 0.75rem; width: auto; max-width: none; bottom: 0.75rem;
@@ -1882,7 +1985,7 @@
       .floating-cta-share-btn { color: var(--black) !important; order: 1; font-weight: 300 !important; }
       .floating-cta-share-btn svg { display: none; }
       .floating-cta-share-mobile svg { fill: #333 !important; stroke: none !important; }
-      .floating-cta-social-proof { right: 0.25rem; top: -2.2rem; padding: 0.25rem 0.6rem; }
+      .floating-cta-social-proof { right: 0; top: -2.2rem; padding: 0.25rem 0 0.25rem 0.6rem; }
       .floating-cta-social-proof-text { font-size: 0.65rem; }
       .pillar h2 { font-size: 2.2rem; }
       .chart-section-title { font-size: 1.4rem; }
@@ -1906,7 +2009,7 @@
       margin-left: auto;
       background: var(--white);
       border-radius: 4px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
       padding: 0.7rem 1.5rem;
       display: flex;
       align-items: center;
@@ -2019,7 +2122,7 @@
     }
     .floating-cta-success p {
       font-family: 'Open Sans', sans-serif;
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: var(--black);
       line-height: 1.5;
       margin: 0;
@@ -2111,10 +2214,10 @@
     .floating-cta-social-proof {
       position: absolute;
       top: -2.4rem;
-      right: 0.5rem;
+      right: 0;
       background: none;
       border-radius: 3px;
-      padding: 0.3rem 1.5rem;
+      padding: 0.3rem 0 0.3rem 1.5rem;
       opacity: 0;
       transition: opacity 0.5s ease;
       pointer-events: none;
@@ -2127,13 +2230,13 @@
     }
     #floating-cta-social-proof-text {
       font-family: 'Lora', serif;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 500;
       color: var(--red);
     }
     .floating-cta-social-proof-time {
       font-family: 'Open Sans', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 400;
       color: #888;
     }
@@ -2242,8 +2345,9 @@
       <div class="pillar-header">
 
 
-        <h2>In education</h2>
-        <p class="pillar-lead" style="color:#000">Young people were told a degree was the ticket to a good life. Instead, many were handed a financial anchor before they had even started. The total outstanding student loan balance is forecast to exceed £500 billion.</p>
+        <h2>In <em>education</em></h2>
+        <p class="pillar-lead" style="color:#000">The education system is failing young people at each stage. School absence is nearly double pre-pandemic levels. College funding has only just returned to where it was a decade ago. And graduates leave with £53,000 of debt, into <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">one of the highest-debt systems in the world (UNESCO).</a></p>
+        <p class="pillar-lead" style="color:#000; margin-top:0.75em">The promise was the great equaliser. The reality is underfunding, disengagement, and debt.</p>
       </div>
       <div class="data-cards">
         <!-- PRIMARY & SECONDARY SCHOOLS TABBED CHARTS -->
@@ -2296,7 +2400,7 @@
                 <polyline class="chart-line line-absence-overall"
                   points="60,140 98,138 136,139 174,137 213,134 251,135"/>
                 <!-- Gap connector -->
-                <line x1="251" y1="135" x2="327" y2="138" stroke="#E04B2D" stroke-width="2" class="gap-connector"/>
+                <line x1="251" y1="135" x2="327" y2="138" stroke="#E04B2D" stroke-width="2.5" class="gap-connector"/>
                 <!-- Post-COVID line -->
                 <polyline class="chart-line line-absence-overall-post"
                   points="327,138 365,79 404,83 442,87 480,94"/>
@@ -2363,7 +2467,7 @@
                 <polyline class="chart-line line-absence-persistent"
                   points="60,145 98,142 136,146 174,144 213,141 251,143"/>
                 <!-- Gap connector -->
-                <line x1="251" y1="143" x2="327" y2="133" stroke="#E04B2D" stroke-width="2" class="gap-connector"/>
+                <line x1="251" y1="143" x2="327" y2="133" stroke="#E04B2D" stroke-width="2.5" class="gap-connector"/>
                 <!-- Post-COVID line -->
                 <polyline class="chart-line line-absence-persistent-post"
                   points="327,133 365,50 404,60 442,70 480,85"/>
@@ -2426,7 +2530,7 @@
                 <polyline class="chart-line line-absence-severe"
                   points="60,192 98,191 136,190 174,183 213,179 251,173"/>
                 <!-- Gap connector -->
-                <line x1="251" y1="173" x2="327" y2="155" stroke="#E04B2D" stroke-width="2" class="gap-connector"/>
+                <line x1="251" y1="173" x2="327" y2="155" stroke="#E04B2D" stroke-width="2.5" class="gap-connector"/>
                 <!-- Post-COVID line -->
                 <polyline class="chart-line line-absence-severe-post"
                   points="327,155 365,120 404,95 442,77 480,71"/>
@@ -2836,8 +2940,9 @@
       <div class="pillar-header">
 
 
-        <h2>In employment</h2>
-        <p class="pillar-lead" style="color:#000">Both routes are broken. Graduates face a market where entry-level jobs demand years of experience, and non-graduates are offered apprenticeships that have been hollowed out by employer gatekeeping. Hard work was supposed to be enough.</p>
+        <h2>In <em>employment</em></h2>
+        <p class="pillar-lead" style="color:#000">Work hard, get ahead. Yet, the jobs young people were promised are vanishing.</p>
+        <p class="pillar-lead" style="color:#000; margin-top:0.75em">AI is eliminating entry-level roles. Rising employer NICs have made <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">hiring juniors 7% more expensive (BCC).</a> Apprenticeship starts for under-25s have fallen nearly 40% in a decade. And <a href="https://fortune.com/2025/10/28/gen-z-job-crisis-real-1-2-million-graduates-17000-jobs-uk-ai-labor-market-colleges/" target="_blank" style="text-decoration:underline; color:inherit">1.2 million graduates applied for just 17,000 roles (Forbes).</a></p>
       </div>
       <div class="data-cards">
         <div style="margin-top: 0">
@@ -3127,15 +3232,16 @@
       <div class="pillar-header">
 
 
-        <h2>In housing</h2>
-        <p class="pillar-lead" style="color:#000">No, they're not spending all their disposable income on avocados and Netflix. The average house-price-to-income ratio has tripled since the early 1990s, locking an entire generation out of ownership.</p>
+        <h2>In <em>housing</em></h2>
+        <p class="pillar-lead" style="color:#000">It was never the avocados. House prices have more than doubled relative to earnings since the late 1990s. London saw just <a href="https://www.bloomberg.com/news/features/2026-03-27/london-housebuilding-struggle-to-keep-up-with-growing-population" target="_blank" style="text-decoration:underline; color:inherit">5,547 housing starts last year, down over 75% (Bloomberg).</a> And 3.6 million 16–34 year olds are living with their parents, over a million more than in 2005.</p>
+
       </div>
       <div class="data-cards">
 
         <!-- Purchase -->
         <div style="margin-top: 0">
           <div class="chart-section-title" style="margin-bottom:0">Buying</div>
-          <div class="chart-tab-desc">In <b>England</b>, the median house price was <b>7.6x</b> the median salary in 2025, up from <b>3.5x</b> in 1997.</div>
+          <div class="chart-tab-desc"><b class="loc">In England</b>, the median house price was <b>7.6x</b> the median salary in 2025, up from <b>3.5x</b> in 1997.</div>
         </div>
         <div class="edu-chart" id="chart-price-earnings"></div>
         <div id="housing-purchase-local" style="display:none;">
@@ -3180,7 +3286,7 @@
               <button class="chart-view-btn active" data-view="national">National</button>
             </div>
           </div>
-          <div class="chart-tab-desc" id="housebuilding-tab-desc">In <b>England</b>, 208,600 net additional dwellings were added in 2024-25, <b>56%</b> of the government target of 370,000.</div>
+          <div class="chart-tab-desc" id="housebuilding-tab-desc"><b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,000.</div>
         </div>
         <div class="edu-chart" id="chart-housebuilding"></div>
 
@@ -3191,7 +3297,7 @@
               <button class="chart-view-btn active" data-view="national">National</button>
             </div>
           </div>
-          <div class="chart-tab-desc" id="u34athome-tab-desc">In <b>England</b>, there were 3.6 million 16&ndash;34 year olds living at home with their parents in 2024, <b>up 1.05M</b> since 2005.</div>
+          <div class="chart-tab-desc" id="u34athome-tab-desc"><b class="loc">In England</b>, there were 3.6 million 16&ndash;34 year olds living at home with their parents in 2024, <b>up 1.05M</b> since 2005.</div>
         </div>
         <div class="edu-chart" id="chart-u34athome"></div>
 
@@ -3211,15 +3317,16 @@
       <div class="pillar-header">
 
 
-        <h2>In health</h2>
-        <p class="pillar-lead" style="color:#000">One in five children and young people now has a diagnosable mental health condition. Referrals have surged. Wait times have ballooned. And the safety net — overstretched, underfunded — was designed for a different era.</p>
+        <h2>In <em>health</em></h2>
+        <p class="pillar-lead" style="color:#000">One in five children now has a diagnosable mental health condition, double what it was a generation ago. Over <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">half a million are on a waiting list for support (BMA).</a> Youth services funding has been <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">cut by 76% in real terms since 2010 (YMCA).</a></p>
+        <p class="pillar-lead" style="color:#000; margin-top:0.75em">They were promised a safety net, and what they got was a waiting list.</p>
       </div>
       <div class="data-cards">
         <div style="margin-top: 0">
           <div class="chart-tabs-row">
             <div class="chart-section-title" style="margin-bottom:0">Mental Health Condition</div>
           </div>
-          <div class="chart-tab-desc">In England, 6 in 30 children had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
+          <div class="chart-tab-desc"><b class="loc">In England</b>, 1 in 5 children had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
         </div>
         <div class="classroom-pictogram" id="classroom-pictogram">
           <div class="classroom-svg-wrap" id="classroom-svg-wrap"></div>
@@ -3227,21 +3334,21 @@
         </div>
         <div style="margin-top: 2.5rem">
           <div class="chart-section-title">Referrals to Completions</div>
-          <div class="chart-tab-desc">In <b>England</b>, 1.81 million people were referred for mental health support in 2024-25, with 670K successfully completing treatment, a gap of <b>1.14 million people</b>.</div>
+          <div class="chart-tab-desc"><b class="loc">In England</b>, 1.81 million people were referred for mental health support in 2024-25, with 670K successfully completing treatment, a gap of <b>1.14 million people</b>.</div>
           <div class="edu-chart" id="chart-mh-referrals"></div>
           <div id="mh-trust-map" style="display:none;"></div>
         </div>
         <div style="margin-top: 2.5rem">
           <div class="chart-section-title">Youth Services Funding</div>
-          <div class="chart-tab-desc">In <b>England</b>, local authority spending on youth services per young person has fallen from <b>£71.55</b> in 2012-13 to <b>£37.43</b> in 2024-25 — a cut of nearly <b>half</b>.</div>
+          <div class="chart-tab-desc"><b class="loc">In England</b>, local authority spending on youth services (such as clubs, sports and playgrounds) per young person was £37.43 in 2024-25, <b>down 48%</b> from 2012-13.</div>
           <div class="edu-chart" id="chart-youth-funding"></div>
           <div id="youth-funding-local" style="display:none;">
-            <div class="chart-tab-desc" id="youth-funding-desc"></div>
+            <div class="chart-tab-desc" id="youth-funding-desc" style="min-height:3.2em;margin-bottom:0.4rem;margin-top:0;"></div>
             <div id="youth-funding-map" style="width:100%; height:400px; border-radius:3px; background:var(--cream);"></div>
             <div class="housing-map-legend">
-              <span>More per head</span>
-              <div class="housing-map-legend-bar"></div>
               <span>Less per head</span>
+              <div class="housing-map-legend-bar"></div>
+              <span>More per head</span>
             </div>
             <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://www.gov.uk/government/collections/section-251-materials" target="_blank" rel="noopener">Section 251 outturn data, DLUHC</a></div>
           </div>
@@ -3250,33 +3357,30 @@
     </article>
   </section>
 
-  <!-- PULL QUOTE -->
-  <section class="pull-quote-section reveal">
-    <blockquote class="pull-quote">"A country that loses the faith of its next generation doesn't just lose an argument. It loses its future."</blockquote>
-    <div class="pull-quote-attr">Backing Young Britain</div>
-  </section>
-
   <!-- PETITION -->
   <section class="petition reveal" id="petition">
-    <h2>Sign the petition</h2>
-    <p>We are calling for a Commissioner for Young People and a mandatory Generational Impact Assessment on all major policy. Add your name to demand structural change.</p>
-    <div id="petition-form-container">
-      <form class="petition-form" id="petition-form" action="#petition" method="post" aria-label="Sign the petition for young people in the UK">
-        <input type="text" name="fullName" placeholder="Name" required aria-label="Name" autocomplete="name">
-        <input type="email" name="email" placeholder="Email address" class="full-width" aria-label="Email address" autocomplete="email">
-        <input type="text" name="postcode" placeholder="Postcode" aria-label="Postcode" autocomplete="postal-code">
+    <div class="petition-grid">
+      <div class="petition-left">
+        <h3 class="petition-heading">Add your <em style="font-style:italic">name</em></h3>
+        <div id="petition-form-container">
+          <form class="petition-form" id="petition-form" action="#petition" method="post" aria-label="Sign the petition for young people in the UK">
+            <input type="text" name="fullName" placeholder="Name" required aria-label="Name" autocomplete="name">
+            <input type="text" name="postcode" placeholder="Postcode" aria-label="Postcode" autocomplete="postal-code">
+            <input type="email" name="email" placeholder="Email address" class="full-width" aria-label="Email address" autocomplete="email">
 
-        <button type="submit" id="petition-submit">Add my name</button>
-      </form>
-      <div class="petition-privacy">Your information is safe. We will never share your data with third parties. By signing, you agree to receive campaign updates — you can unsubscribe at any time.</div>
-    </div>
-    <div class="petition-success" id="petition-success">
-      <h3>Thank you for signing.</h3>
-      <p>Your name has been added. Share this campaign to amplify the message — the more signatures we collect, the harder it is for policymakers to look away.</p>
-    </div>
-    <div class="petition-counter">
-      <strong id="sig-count">24,817</strong>
-      signatures so far — help us reach 25,000
+            <div class="petition-success-msg" id="petition-success-msg" style="display:none"><div>Thank you,&nbsp;<strong id="petition-success-name"></strong><br><span class="petition-success-sub">Share this campaign with at least one other person to help the next generation.</span></div></div>
+            <button type="submit" id="petition-submit"><span>Join</span></button>
+          </form>
+          <div class="petition-privacy" id="petition-privacy">Your name will be included in our open letter to the Government. We will not share your data with any other third parties. By signing, you agree to receive campaign updates.</div>
+        </div>
+        <div class="petition-success" id="petition-success" style="display:none"></div>
+      </div>
+      <div class="petition-text">
+        <p><strong style="font-size:1.2rem">We believe the UK Government should start Backing Young Britain and we will deliver our campaign directly to Number 10.</strong><br><span style="font-weight:200;display:inline-block;margin-top:0.8em">Join us and add your name to call for:</span></p>
+        <p><span style="font-weight:700">1.</span> <span style="font-weight:700">National Strategy for Young People:</span> Requiring government to deliver targets for under-30s across education, employment, housing, and health.</p>
+        <p><span style="font-weight:700">2.</span> <span style="font-weight:700">Commissioner for Young People:</span> An independent voice to hold government accountable on the issues shaping the lives of those under 30.</p>
+        <p><span style="font-weight:700">3.</span> <span style="font-weight:700">Generational Impact Assessment on all major legislation:</span> So no law passes without asking: what does this mean for the next generation?</p>
+      </div>
     </div>
   </section>
 
@@ -3303,8 +3407,8 @@
           <span class="floating-cta-share-mobile" id="floating-cta-share-ig">
             <svg width="22" height="22" viewBox="0 0 504 504" fill="#000"><path d="M252,45.4c67.3,0,75.3.3,101.8,1.5,24.6,1.1,37.9,5.2,46.8,8.7,11.8,4.6,20.2,10,29,18.8s14.3,17.2,18.8,29c3.4,8.9,7.5,22.2,8.7,46.8,1.2,26.5,1.5,34.5,1.5,101.8s-.3,75.3-1.5,101.8c-1.1,24.6-5.2,37.9-8.7,46.8-4.6,11.8-10,20.2-18.8,29s-17.2,14.3-29,18.8c-8.9,3.4-22.2,7.5-46.8,8.7-26.5,1.2-34.5,1.5-101.8,1.5s-75.3-.3-101.8-1.5c-24.6-1.1-37.9-5.2-46.8-8.7-11.8-4.6-20.2-10-29-18.8s-14.3-17.2-18.8-29c-3.4-8.9-7.5-22.2-8.7-46.8-1.2-26.5-1.5-34.5-1.5-101.8s.3-75.3,1.5-101.8c1.1-24.6,5.2-37.9,8.7-46.8,4.6-11.8,10-20.2,18.8-29s17.2-14.3,29-18.8c8.9-3.4,22.2-7.5,46.8-8.7,26.5-1.2,34.5-1.5,101.8-1.5M252,0C183.5,0,175,.3,148.2,1.5,121.5,2.7,103.1,7,87,13c-16.6,6.5-30.7,15.1-44.8,29.2S23.4,70.4,17,87C11,103.1,6.7,121.5,5.5,148.2,4.3,175,4,183.5,4,252s.3,77,1.5,103.8c1.2,26.7,5.5,45.1,11.5,61.2,6.5,16.6,15.1,30.7,29.2,44.8S70.4,480.6,87,487c16.1,6,34.5,10.3,61.2,11.5S183.5,500,252,500s77-.3,103.8-1.5c26.7-1.2,45.1-5.5,61.2-11.5,16.6-6.5,30.7-15.1,44.8-29.2s22.7-28.2,29.2-44.8c6-16.1,10.3-34.5,11.5-61.2s1.5-30.2,1.5-103.8-.3-77-1.5-103.8c-1.2-26.7-5.5-45.1-11.5-61.2-6.5-16.6-15.1-30.7-29.2-44.8S437.6,23.4,421,17c-16.1-6-34.5-10.3-61.2-11.5S320.5,4,252,4Z" transform="translate(-4)"/><path d="M252,122.6A129.4,129.4,0,1,0,381.4,252,129.4,129.4,0,0,0,252,122.6Zm0,213.4A84,84,0,1,1,336,252,84,84,0,0,1,252,336Z" transform="translate(-4)"/><circle cx="382.4" cy="121.6" r="30.2"/></svg>
           </span>
-          <button class="floating-cta-share-btn" id="floating-cta-share-btn" aria-label="Share the campaign">
-            <span>Share the campaign</span>
+          <button class="floating-cta-share-btn" id="floating-cta-share-btn" aria-label="Share the campaign with at least one person">
+            <span>Share the campaign with at least one person</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline class="share-arrow" points="8 8 12 4 16 8"/><line class="share-arrow" x1="12" y1="4" x2="12" y2="14"/></svg>
           </button>
         </div>
@@ -3317,13 +3421,8 @@
 
   <!-- FOOTER -->
   <footer role="contentinfo">
-    <div class="footer-logo">Backing Young Britain © 2026</div>
-    <div class="footer-links">
-      <a href="#education">Education</a>
-      <a href="#employment">Employment</a>
-      <a href="#housing">Housing</a>
-      <a href="#health">Health</a>
-      <a href="#petition">Petition</a>
+    <div class="footer-inner">
+      <div class="footer-logo">Built by a <a href="https://www.linkedin.com/in/maxshillam/" target="_blank" rel="noopener" class="footer-author-link">young(ish) Brit</a> who believes the next generation deserves better.<br>Do you have opportunities or solutions to help? <a href="mailto:hello@backingyoungbritain.co.uk" class="footer-author-link">Get in touch.</a></div>
     </div>
   </footer>
 
@@ -3792,7 +3891,7 @@
             else anchor = 'middle';
           }
 
-          var hlColor = isBar ? '#000' : (h.color || lines[si].color);
+          var hlColor = h.color || lines[si].color;
           var hlParts = h.text.split('\n');
           var hlEl = svgEl('text', {
             'class':'axis-label chart-value-label',
@@ -3853,10 +3952,12 @@
         });
 
         // Legend
+        // Build legend element
+        var ld = null;
         if (cfg.legend) {
           var items = cfg.legend;
           if (typeof items === 'string') items = [{color:lines[0].color, label:items}];
-          var ld = document.createElement('div');
+          ld = document.createElement('div');
           ld.className = 'edu-chart-legend' + (items.length > 1 ? ' multi-line' : '');
           items.forEach(function(item, idx) {
             var id = document.createElement('div'); id.className = 'edu-chart-legend-item';
@@ -3872,14 +3973,39 @@
             }
             ld.appendChild(id);
           });
-          container.appendChild(ld);
         }
 
-        // Source
+        // Append legend before source (default) or after (legendBelowSource)
+        if (ld && !cfg.legendBelowSource) container.appendChild(ld);
+
+        // Source (skip when a local map below already shows its own source)
         if (cfg.source) {
-          var sd = document.createElement('div'); sd.className = 'edu-chart-source';
-          sd.innerHTML = 'Source: <a href="'+cfg.source.url+'" target="_blank" rel="noopener">'+cfg.source.text+'</a>';
-          container.appendChild(sd);
+          var skipSource = false;
+          if (containerId === 'chart-youth-funding') {
+            var yfl = document.getElementById('youth-funding-local');
+            if (yfl && yfl.style.display !== 'none') skipSource = true;
+          }
+          if (containerId === 'chart-mh-referrals') {
+            var mht = document.getElementById('mh-trust-map');
+            if (mht && mht.style.display !== 'none') skipSource = true;
+          }
+          if (!skipSource) {
+            var sd = document.createElement('div'); sd.className = 'edu-chart-source';
+            sd.innerHTML = 'Source: <a href="'+cfg.source.url+'" target="_blank" rel="noopener">'+cfg.source.text+'</a>';
+            container.appendChild(sd);
+          }
+        }
+
+        // Append legend after source if legendBelowSource
+        if (ld && cfg.legendBelowSource) container.appendChild(ld);
+
+        // Reserve legend space for sibling tab panels (prevents layout shift on tab switch)
+        if (cfg.reserveLegendHeight) {
+          var ph = document.createElement('div');
+          ph.className = 'edu-chart-legend multi-line';
+          ph.style.visibility = 'hidden';
+          ph.innerHTML = '<div class="edu-chart-legend-item">&nbsp;</div><div class="edu-chart-legend-item">&nbsp;</div>';
+          container.appendChild(ph);
         }
 
         // Reinit tooltip dot lookup after content change
@@ -3904,6 +4030,22 @@
       }
       function simpleYears(start, vals) {
         return vals.map(function(v,i) { return {label:String(start+i), value:v}; });
+      }
+      function halfYearlyAgg(dataArr) {
+        var result = [];
+        for (var i = 0; i < dataArr.length; i += 2) {
+          var lbl = dataArr[i].label;
+          var yr = lbl.match(/\d{4}/)[0];
+          var isH1 = /Q[12]\b|Jan|Feb|Mar|Apr|May|Jun/.test(lbl);
+          var half = isH1 ? 'H1' : 'H2';
+          var v1 = dataArr[i].value;
+          if (i + 1 < dataArr.length) {
+            result.push({ label: half + ' ' + yr, value: (v1 + dataArr[i + 1].value) / 2 });
+          } else {
+            result.push({ label: half + ' ' + yr, value: v1 });
+          }
+        }
+        return result;
       }
 
       var absSrc = {text:'DfE, Pupil absence in schools in England, 2024-25', url:'https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england'};
@@ -3946,7 +4088,7 @@
         'chart-sixth-form': {
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7875,8272,8109,7651,7091,6858,6825,6829,6525,6205,5947,5773,6031,6268,6401,6518,6595])}],
           yAxis: {min:5000, max:9000, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
-          xLabels: [0,4,8,12,16],
+          xLabels: [0,3,6,9,12,15],
           highlights: [{index:1,text:'\u00A38,272'},{index:11,text:'\u00A35,773',below:true},{index:16,text:'\u00A36,595'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Sixth Forms (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -3954,7 +4096,7 @@
         'chart-colleges': {
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7879,8532,8821,8185,7970,7783,7768,7601,7595,7542,7313,7163,7652,7649,7509,7519,7860])}],
           yAxis: {min:6500, max:9500, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
-          xLabels: [0,4,8,12,16],
+          xLabels: [0,3,6,9,12,15],
           highlights: [{index:2,text:'\u00A38,821'},{index:11,text:'\u00A37,163',below:true},{index:16,text:'\u00A37,860'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Colleges (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -3964,17 +4106,17 @@
           yAxis: {min:0, max:60000, step:20000, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1000)+'k';}},
           xLabels: [{i:0,t:'1999-00'},{i:5,t:'2004-05'},{i:10,t:'2009-10'},{i:15,t:'2014-15'},{i:20,t:'2019-20'},{i:25,t:'2024-25'}],
           annotations: [{atIndex:13,label:'\u00A39K Fees',sublabel:'Introduced'}],
-          highlights: [{index:0,text:'\u00A32.7k'},{index:25,text:'\u00A353k'}],
+          highlights: [{index:0,text:'\u00A32.7k',below:false},{index:25,text:'\u00A353k'}],
           legend: [{color:'#E04B2D', label:'Avg. debt on entering repayment'}],
-          source: slcSrc, tooltipFormat: gbpFmt
+          source: slcSrc, tooltipFormat: gbpFmt, reserveLegendHeight: true
         },
         'chart-outstanding': {
           lines: [{color:'#E04B2D', data:(function(){var v=[7.8,10.2,12.5,14.9,17.6,20.3,23.1,26.5,30.5,35.5,43.6,54.4,64.7,76.3,89.3,104.5,121.8,140.1,160.6,182.2,206.4,236.2,266.6];return v.map(function(val,i){var y=2002+i,y2=(y+1)%100;return{label:y+'-'+(y2<10?'0'+y2:y2),value:val*1e9};});})()}],
           yAxis: {min:0, max:300e9, step:100e9, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1e9)+'bn';}},
           xLabels: [{i:0,t:'2002-03'},{i:4,t:'2006-07'},{i:8,t:'2010-11'},{i:12,t:'2014-15'},{i:16,t:'2018-19'},{i:20,t:'2022-23'}],
-          highlights: [{index:0,text:'\u00A37.8bn'},{index:22,text:'\u00A3267bn'}],
+          highlights: [{index:0,text:'\u00A37.8bn',below:false},{index:22,text:'\u00A3267bn'}],
           legend: [{color:'#E04B2D', label:'Total outstanding balance'}],
-          source: slcSrc, tooltipFormat:function(v){return '\u00A3'+(v/1e9).toFixed(1)+'bn';}
+          source: slcSrc, tooltipFormat:function(v){return '\u00A3'+(v/1e9).toFixed(1)+'bn';}, reserveLegendHeight: true
         },
         'chart-monthly': {
           lines: [
@@ -3985,6 +4127,7 @@
           xLabels: [{i:0,t:'2013-14'},{i:2,t:'2015-16'},{i:4,t:'2017-18'},{i:6,t:'2019-20'},{i:8,t:'2021-22'},{i:10,t:'2023-24'}],
           highlights: [{index:11,series:0,text:'\u00A3222\nper month',anchor:'middle',below:true,color:'#E04B2D'},{index:11,series:1,text:'\u00A373\nper month',anchor:'middle',below:true,color:'#606060'}],
           legend: [{color:'#E04B2D',label:'Interest added per borrower'},{color:'#606060',label:'Repayment per borrower'}],
+          legendBelowSource: true,
           source: {text:'SLC, Student Loans in England 2024-25', url:'https://www.gov.uk/government/statistics/student-loans-in-england-2024-to-2025'}
         },
         'chart-neet': {
@@ -3999,22 +4142,22 @@
         },
         'chart-youth-unemp': {
           type: 'bar',
-          lines: [{color:'#E5664D', data:qtrData(2019,[11.0,11.6,11.9,11.2,12.4,13.0,15.2,14.8,13.7,12.9,11.9,11.2,10.7,10.3,10.1,11.7,11.7,12.3,12.0,11.9,13.2,13.4,14.8,14.7,14.2,14.1,15.3,16.1])}],
-          yAxis: {min:8, max:18, step:2.5, format:function(v){return v%1===0?v+'%':v.toFixed(1)+'%';}},
-          xLabels: [{i:1.5,t:'2019'},{i:5.5,t:'2020'},{i:9.5,t:'2021'},{i:13.5,t:'2022'},{i:17.5,t:'2023'},{i:21.5,t:'2024'},{i:25.5,t:'2025'}],
-          annotations: [{atIndex:5, label:'COVID'}],
-          highlights: [{index:14,text:'10%'},{index:27,text:'16%'}],
+          lines: [{color:'#E5664D', data:halfYearlyAgg(qtrData(2019,[11.0,11.6,11.9,11.2,12.4,13.0,15.2,14.8,13.7,12.9,11.9,11.2,10.7,10.3,10.1,11.7,11.7,12.3,12.0,11.9,13.2,13.4,14.8,14.7,14.2,14.1,15.3,16.1]))}],
+          yAxis: {min:0, max:25, step:5, format:function(v){return v%1===0?v+'%':v.toFixed(1)+'%';}},
+          xLabels: [{i:0.5,t:'2019'},{i:2.5,t:'2020'},{i:4.5,t:'2021'},{i:6.5,t:'2022'},{i:8.5,t:'2023'},{i:10.5,t:'2024'},{i:12.5,t:'2025'}],
+          annotations: [{atIndex:2, label:'COVID'}],
+          highlights: [{index:7,text:'10.9%'},{index:13,text:'15.7%'}],
           legend: [{color:'#E04B2D', label:'16\u201324 unemployment rate (seasonally adjusted)'}],
           source: {text:'ONS Labour Force Survey (MGWY), 2026', url:'https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgwy/lms'},
           tooltipFormat: pctFmt
         },
         'chart-claimant': {
           type: 'bar',
-          lines: [{color:'#E5664D', data:(function(){var M=['Jan','Apr','Jul','Oct'],vals=[167500,167100,168200,171800,163200,165100,162500,161400,164800,168800,167900,177600,195200,206000,216700,230300,233700,378600,532400,513700,503700,496100,401400,333500,286100,255200,249200,257900,262200,268900,270700,276900,281700,283000,286900,293400,299800,307400,305800,318300,324700];return vals.map(function(v,i){return{label:M[i%4]+' '+(2016+Math.floor(i/4)),value:v};});})()}],
+          lines: [{color:'#E5664D', data:halfYearlyAgg((function(){var M=['Jan','Apr','Jul','Oct'],vals=[167500,167100,168200,171800,163200,165100,162500,161400,164800,168800,167900,177600,195200,206000,216700,230300,233700,378600,532400,513700,503700,496100,401400,333500,286100,255200,249200,257900,262200,268900,270700,276900,281700,283000,286900,293400,299800,307400,305800,318300,324700];return vals.map(function(v,i){return{label:M[i%4]+' '+(2016+Math.floor(i/4)),value:v};});})())}],
           yAxis: {min:100000, max:600000, step:100000, format:function(v){return Math.round(v/1000)+'k';}},
-          xLabels: [{i:0,t:'2016'},{i:4,t:'2017'},{i:8,t:'2018'},{i:12,t:'2019'},{i:16,t:'2020'},{i:20,t:'2021'},{i:24,t:'2022'},{i:28,t:'2023'},{i:32,t:'2024'},{i:36,t:'2025'},{i:40,t:'2026'}],
-          annotations: [{atIndex:17, label:'COVID'}],
-          highlights: [{index:7,text:'161K'},{index:18,text:'532K'},{index:40,text:'325K'}],
+          xLabels: [{i:0.5,t:'2016'},{i:2.5,t:'2017'},{i:4.5,t:'2018'},{i:6.5,t:'2019'},{i:8.5,t:'2020'},{i:10.5,t:'2021'},{i:12.5,t:'2022'},{i:14.5,t:'2023'},{i:16.5,t:'2024'},{i:18.5,t:'2025'},{i:20,t:'2026'}],
+          annotations: [{atIndex:8, label:'COVID'}],
+          highlights: [{index:3,text:'162K'},{index:9,text:'523K'},{index:20,text:'325K'}],
           legend: [{color:'#E04B2D', label:'18\u201324 claimant count (seasonally adjusted)'}],
           source: {text:'ONS CLA02: Claimant Count by Age, March 2026', url:'https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/outofworkbenefits/datasets/claimantcountbyagegroup'},
           tooltipFormat: function(v){return Math.round(v).toLocaleString('en-GB');}
@@ -4478,7 +4621,7 @@
         }));
         // Whiteboard rubber (small block sitting on tray)
         var rubberW = boardW * 0.08;
-        var rubberH = 2.8;
+        var rubberH = 1.96;
         var rubberX = boardX + boardW * 0.72;
         var rubberY = trayY - rubberH;
         svg.appendChild(svgEl('rect', {
@@ -4516,6 +4659,7 @@
       // Expose globally for dynamic rebuilds and local/national toggle
       window.createChart = createChart;
       window.createHouseGrid = createHouseGrid;
+      window.halfYearlyAgg = halfYearlyAgg;
       window.CHART_NATIONAL_CONFIGS = CHART_DATA;
     })();
     </script>
@@ -4539,6 +4683,7 @@
     // Animate each chart individually when it scrolls into view
     // Animate charts: single rAF loop drives both line drawing and dot/label reveals
     const DRAW_DURATION = 2750;
+    const ICON_BAR_DURATION = 2000;
     function animateChart(chart) {
       // Generation counter: if another animateChart call arrives for this chart,
       // the older rAF loop will see a stale gen and stop.
@@ -4568,7 +4713,7 @@
         chart.classList.add('animated');
 
         // Duration per row, only animate rows that have fills
-        var rowDuration = 1800;
+        var rowDuration = 1000;
         var totalDuration = fr * rowDuration;
         var startTime = null;
 
@@ -4645,31 +4790,53 @@
           return { cx: parseFloat(l.getAttribute('x')), el: l, revealed: false };
         }).sort(function(a, b) { return a.cx - b.cx; });
 
+        // Constant fill speed: all columns grow at the same px/ms rate,
+        // so taller fills (higher %) take proportionally longer.
+        var maxH = 0;
+        fillClipRects.forEach(function(rect) {
+          var h = parseFloat(rect.getAttribute('data-target-h'));
+          if (h > maxH) maxH = h;
+        });
+        var totalDuration = ICON_BAR_DURATION; // tallest column takes this long
         var startTime = null;
 
         function iconTick(now) {
           if (parseInt(chart.dataset.animGen) !== gen) return;
           if (!startTime) startTime = now;
           var elapsed = now - startTime;
-          var t = Math.min(elapsed / DRAW_DURATION, 1);
+          var allDone = true;
 
-          // Ease-out for smooth deceleration
-          var eased = 1 - Math.pow(1 - t, 2.5);
-
-          // Grow all fill clips upward simultaneously
           fillClipRects.forEach(function(rect) {
             var baseY = parseFloat(rect.getAttribute('data-base-y'));
             var targetH = parseFloat(rect.getAttribute('data-target-h'));
+            // Each column's duration is proportional to its height
+            var colDuration = maxH > 0 ? (targetH / maxH) * totalDuration : totalDuration;
+            var colT = Math.min(elapsed / colDuration, 1);
+            var eased = 1 - Math.pow(1 - colT, 2.5);
             var h = eased * targetH;
             rect.setAttribute('y', (baseY - h).toFixed(1));
             rect.setAttribute('height', h.toFixed(1));
+            if (colT < 1) allDone = false;
           });
 
-          if (t >= 1) {
-            labelsByX.forEach(function(l) { if (!l.revealed) { l.el.classList.add('revealed'); l.revealed = true; } });
-          }
+          // Reveal labels as their column finishes
+          labelsByX.forEach(function(l) {
+            if (l.revealed) return;
+            var lx = l.cx;
+            var done = true;
+            fillClipRects.forEach(function(rect) {
+              var rx = parseFloat(rect.getAttribute('x'));
+              var rw = parseFloat(rect.getAttribute('width'));
+              if (lx >= rx && lx <= rx + rw) {
+                var targetH = parseFloat(rect.getAttribute('data-target-h'));
+                var colDuration = maxH > 0 ? (targetH / maxH) * totalDuration : totalDuration;
+                if (elapsed < colDuration) done = false;
+              }
+            });
+            if (done) { l.el.classList.add('revealed'); l.revealed = true; }
+          });
 
-          if (t < 1) {
+          if (!allDone) {
             requestAnimationFrame(iconTick);
           } else {
             labelsByX.forEach(function(l) { if (!l.revealed) l.el.classList.add('revealed'); });
@@ -4905,8 +5072,8 @@
           drawnX = Math.min.apply(null, parallelXValues);
         }
 
-        // Reveal dots whose cx the line has reached
-        while (nextDotIdx < dotsByX.length && dotsByX[nextDotIdx].cx <= drawnX + 1) {
+        // Reveal dots whose cx the line has reached (use wider tolerance for last dot)
+        while (nextDotIdx < dotsByX.length && (dotsByX[nextDotIdx].cx <= drawnX + 2 || t >= 1)) {
           var d = dotsByX[nextDotIdx];
           if (!d.revealed) {
             d.el.style.opacity = '';
@@ -4919,7 +5086,7 @@
         }
 
         // Reveal labels whose x the line has reached
-        while (nextLabelIdx < labelsByX.length && labelsByX[nextLabelIdx].cx <= drawnX + 1) {
+        while (nextLabelIdx < labelsByX.length && (labelsByX[nextLabelIdx].cx <= drawnX + 2 || t >= 1)) {
           var l = labelsByX[nextLabelIdx];
           if (!l.revealed) {
             l.el.classList.add('revealed');
@@ -5363,13 +5530,11 @@
           }
 
           // Build tooltip text
-          const year = matchDots[0].getAttribute('data-year');
+          var year = matchDots[0].getAttribute('data-year');
+          // Format "H1 2025" as "H1-25" for compact tooltip display
+          year = year.replace(/^(H[12])\s+(\d{2})(\d{2})$/, '$1-$3');
           const values = matchDots.map(d => d.getAttribute('data-value'));
-          if (matchDots.length > 1) {
-            tooltip.innerHTML = year + '<br>' + values.join('<br>');
-          } else {
-            tooltip.textContent = year + ': ' + values[0];
-          }
+          tooltip.innerHTML = '<b>' + year + '</b><br>' + values.join('<br>');
           tooltip.classList.add('visible');
 
           // Position tooltip above the highest (lowest cy) data point
@@ -5445,10 +5610,6 @@
       citationLink.target = '_blank';
       citationLink.rel = 'noopener noreferrer';
       citationLink.textContent = '(Pew Research, 2024)';
-      citationLink.style.color = 'inherit';
-      citationLink.style.textDecoration = 'none';
-      citationLink.addEventListener('mouseenter', () => { citationLink.style.textDecoration = 'underline'; citationLink.style.textDecorationColor = 'var(--black)'; citationLink.style.textUnderlineOffset = '3px'; });
-      citationLink.addEventListener('mouseleave', () => { citationLink.style.textDecoration = 'none'; citationLink.style.fontWeight = 'inherit'; });
       citation.appendChild(citationLink);
       heading.appendChild(citation);
 
@@ -5528,7 +5689,7 @@
     var LOCAL_DATA_LOADING = false;
     var LOCAL_DATA_CALLBACKS = [];
     function theRegion(r) { return (r && r !== 'London') ? 'the ' + r : r; }
-    function boldLocation(loc) { return (loc && loc.indexOf('the ') === 0) ? 'the <b class="loc">' + loc.slice(4) + '</b>' : '<b class="loc">' + loc + '</b>'; }
+    function boldLocation(loc) { return (loc && loc.indexOf('the ') === 0) ? '<b class="loc">In the ' + loc.slice(4) + '</b>' : '<b class="loc">In ' + loc + '</b>'; }
 
     function loadLocalData(cb) {
       if (LOCAL_DATA_LOADED) { cb(); return; }
@@ -5911,9 +6072,12 @@
         entries.push({ year: quarters[qi], value: rawValues[qi] });
       }
       if (entries.length === 0) return null;
-      var minEntry = entries[0];
-      for (var mi = 1; mi < entries.length; mi++) { if (entries[mi].value < minEntry.value) minEntry = entries[mi]; }
-      return { first: entries[0], last: entries[entries.length - 1], min: minEntry };
+      // Aggregate into half-yearly
+      var agg = window.halfYearlyAgg(entries.map(function(e) { return { label: e.year, value: e.value }; }));
+      var hEntries = agg.map(function(d) { return { year: d.label, value: d.value }; });
+      var minEntry = hEntries[0];
+      for (var mi = 1; mi < hEntries.length; mi++) { if (hEntries[mi].value < minEntry.value) minEntry = hEntries[mi]; }
+      return { first: hEntries[0], last: hEntries[hEntries.length - 1], min: minEntry };
     }
 
     function getLocalClaimantData() {
@@ -5921,17 +6085,21 @@
       var rawValues = LOCAL_CLAIMANT_DATA.constituencies[CURRENT_CONSTITUENCY];
       var periods = LOCAL_CLAIMANT_DATA.periods;
       if (!rawValues || !periods) return null;
-      var monthMap = {'January':'Jan','February':'Feb','March':'Mar','April':'Apr','May':'May','June':'Jun','July':'Jul','August':'Aug','September':'Sep','October':'Oct','November':'Nov','December':'Dec'};
       var entries = [];
       for (var i = 0; i < rawValues.length; i++) {
         var parts = periods[i].split(' ');
-        var label = (monthMap[parts[0]] || parts[0]) + ' ' + parts[1];
+        var isH1 = /January|February|March|April|May|June/.test(parts[0]);
+        var label = (isH1 ? 'H1' : 'H2') + ' ' + parts[1];
         entries.push({ year: label, value: rawValues[i] });
       }
       if (entries.length === 0) return null;
       var minEntry = entries[0];
       for (var mi = 1; mi < entries.length; mi++) { if (entries[mi].value < minEntry.value) minEntry = entries[mi]; }
       return { first: entries[0], last: entries[entries.length - 1], min: minEntry };
+    }
+
+    function fmtHalf(label) {
+      return label.replace(/^H1\s+(\d{4})$/, 'the first half of $1').replace(/^H2\s+(\d{4})$/, 'the second half of $1');
     }
 
     function generateDescription(panelId, isLocal) {
@@ -5983,7 +6151,7 @@
       }
 
       if (panelId === 'panel-youth-unemp') {
-        return 'In ' + boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of economically active 16\u201324 year olds were unemployed in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
+        return boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of economically active 16\u201324 year olds were unemployed in ' + fmtHalf(data.last.year) + ', ' + dirText + ' versus ' + fmtHalf(ref.year) + '.';
       }
       if (panelId === 'panel-claimant') {
         var claimAbs = Math.round(Math.abs(diff)).toLocaleString('en-GB');
@@ -5995,9 +6163,9 @@
         } else {
           claimDirText = '<b>down ' + claimAbs + '</b>';
         }
-        var claimRefYear = ref.year.split(' ').pop();
-        var claimLoc = (location === 'the UK') ? 'the <b class="loc">UK</b>' : '<b class="loc">' + location + '</b>';
-        return 'In ' + claimLoc + ', there were ' + fmtValue(data.last.value, config.unit) + ' under 24s receiving unemployment benefits in ' + data.last.year + ', ' + claimDirText + ' versus ' + claimRefYear + '.';
+        var claimRefYear = fmtHalf(ref.year);
+        var claimLoc = (location === 'the UK') ? '<b class="loc">In the UK</b>' : '<b class="loc">In ' + location + '</b>';
+        return claimLoc + ', there were ' + fmtValue(data.last.value, config.unit) + ' under 24s receiving unemployment benefits in ' + fmtHalf(data.last.year) + ', ' + claimDirText + ' versus ' + claimRefYear + '.';
       }
       if (panelId === 'panel-apprenticeships' && data.max) {
         var appRef = data.max;
@@ -6011,7 +6179,7 @@
         } else {
           appDirText = '<b>down ' + appPct + '</b>';
         }
-        return 'In ' + boldLocation(location) + ', there were ' + fmtValue(data.last.value, config.unit) + ' ' + config.metric + ' in ' + data.last.year + ', ' + appDirText + ' versus ' + appRef.year + '.';
+        return boldLocation(location) + ', there were ' + fmtValue(data.last.value, config.unit) + ' ' + config.metric + ' in ' + data.last.year + ', ' + appDirText + ' versus ' + appRef.year + '.';
       }
       if (config.unit === 'count-k') {
         var neetPct = Math.abs(diff / ref.value * 100).toFixed(1) + '%';
@@ -6023,13 +6191,13 @@
         } else {
           neetDirText = '<b>down ' + neetPct + '</b>';
         }
-        return 'In ' + boldLocation(location) + ', there were ' + fmtValue(data.last.value, config.unit) + ' ' + config.metric + ' in ' + data.last.year + ', ' + neetDirText + ' versus ' + ref.year + '.';
+        return boldLocation(location) + ', there were ' + fmtValue(data.last.value, config.unit) + ' ' + config.metric + ' in ' + data.last.year + ', ' + neetDirText + ' versus ' + ref.year + '.';
       }
       if (panelId === 'panel-absence-persistent') {
-        return 'In ' + boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of students missed more than 10% of total school sessions in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
+        return boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of students missed more than 10% of total school sessions in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
       }
       if (panelId === 'panel-absence-severe') {
-        return 'In ' + boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of students missed more than 50% of total school sessions in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
+        return boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of students missed more than 50% of total school sessions in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
       }
       if (panelId === 'panel-sixth-form' && data.max) {
         var sfRef = data.max;
@@ -6043,7 +6211,7 @@
         } else {
           sfDirText = '<b>down ' + sfPct + '</b>';
         }
-        return 'In ' + boldLocation(location) + ', sixth form funding per student was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + sfDirText + ' versus ' + sfRef.year + '.';
+        return boldLocation(location) + ', sixth form funding per student was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + sfDirText + ' versus ' + sfRef.year + '.';
       }
       if (panelId === 'panel-colleges' && data.max) {
         var colRef = data.max;
@@ -6057,7 +6225,7 @@
         } else {
           colDirText = '<b>down ' + colPct + '</b>';
         }
-        return 'In ' + boldLocation(location) + ', college funding per student was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + colDirText + ' versus ' + colRef.year + '.';
+        return boldLocation(location) + ', college funding per student was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + colDirText + ' versus ' + colRef.year + '.';
       }
       if (panelId === 'panel-debt') {
         // Always compare against 2012-13 (£9k fees introduced)
@@ -6074,22 +6242,22 @@
         }
         if (debtRef) {
           var debtDiff = data.last.value - debtRef.value;
-          var debtPct = Math.abs(debtDiff / debtRef.value * 100).toFixed(1) + '%';
+          var debtAbsFmt = fmtValue(Math.abs(debtDiff), config.unit);
           var debtDirText;
           if (Math.abs(debtDiff) < threshold) {
             debtDirText = '<b>flat</b>';
           } else if (debtDiff > 0) {
-            debtDirText = '<b>up ' + debtPct + '</b>';
+            debtDirText = '<b>up ' + debtAbsFmt + '</b>';
           } else {
-            debtDirText = '<b>down ' + debtPct + '</b>';
+            debtDirText = '<b>down ' + debtAbsFmt + '</b>';
           }
-          return 'In ' + boldLocation(location) + ', the average student debt upon graduation was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + debtDirText + ' versus ' + debtRef.year + '.';
+          return boldLocation(location) + ', the average student debt upon graduation was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + debtDirText + ' versus ' + debtRef.year + '.';
         }
       }
       if (panelId === 'panel-outstanding') {
-        return 'In ' + boldLocation(location) + ', the total student loan debt owed to the government was <b>' + fmtValue(data.last.value, config.unit) + '</b> in ' + data.last.year + '.';
+        return boldLocation(location) + ', the total student loan debt owed to the government was <b>' + fmtValue(data.last.value, config.unit) + '</b> in ' + data.last.year + '.';
       }
-      return 'In ' + boldLocation(location) + ', ' + config.metric + ' was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
+      return boldLocation(location) + ', ' + config.metric + ' was ' + fmtValue(data.last.value, config.unit) + ' in ' + data.last.year + ', ' + dirText + ' versus ' + ref.year + '.';
     }
 
     var RENT_NATIONAL_FALLBACK = {
@@ -6101,7 +6269,7 @@
 
     function generateRentDescription(isLocal, is1bed) {
       var regionKey = 'United Kingdom';
-      var location = 'the <b>UK</b>';
+      var location = '<b class="loc">In the UK</b>';
       if (isLocal && CURRENT_REGION && LOCAL_RENT_DATA && LOCAL_RENT_DATA.regions[CURRENT_REGION]) {
         regionKey = CURRENT_REGION;
         location = boldLocation(theRegion(CURRENT_REGION));
@@ -6114,14 +6282,14 @@
       if (!rents || !pcts) {
         rents = is1bed ? RENT_NATIONAL_FALLBACK.rent1bed : RENT_NATIONAL_FALLBACK.rent;
         pcts = is1bed ? RENT_NATIONAL_FALLBACK.pct1bed : RENT_NATIONAL_FALLBACK.pct;
-        location = 'the <b>UK</b>';
+        location = '<b class="loc">In the UK</b>';
       }
       var first = rents[0];
       var last = rents[rents.length - 1];
       var pctLast = pcts[pcts.length - 1];
       var changePct = Math.round((last - first) / first * 100);
       var rentType = is1bed ? '1 bed flat' : '1 bedroom in a 2 bed flat';
-      return 'In ' + location + ', average monthly rent for ' + rentType + ' (before bills) was \u00A3' + last.toLocaleString('en-GB') + ' in 2025, <b>up ' + changePct + '%</b> versus 2010. <div style="margin-top:6px">This represents <b>' + pctLast + '%</b> of a median 22\u201329 year old\u2019s take-home pay.</div>';
+      return location + ', average monthly rent for ' + rentType + ' (before bills) was \u00A3' + last.toLocaleString('en-GB') + ' in 2025, <b>up ' + changePct + '%</b> versus 2010. <div style="margin-top:6px">This represents <b>' + pctLast + '%</b> of a median 22\u201329 year old\u2019s take-home pay.</div>';
     }
 
     function generateMonthlyDescription(isLocal) {
@@ -6142,7 +6310,7 @@
         dirText = '<b>down ' + fmtDiff(gapDiff, 'currency') + '</b>';
       }
 
-      return 'In ' + boldLocation(location) + ', the average student accrued <b>' + fmtDynCurrency(interest.last.value) + '</b> in additional monthly interest, whilst only repaid <b>' + fmtDynCurrency(repayment.last.value) + '</b> per month, a gap of <b>' + fmtDynCurrency(gapNow) + '</b>.';
+      return boldLocation(location) + ', the average student accrued <b>' + fmtDynCurrency(interest.last.value) + '</b> in additional monthly interest, whilst only repaid <b>' + fmtDynCurrency(repayment.last.value) + '</b> per month, a gap of <b>' + fmtDynCurrency(gapNow) + '</b>.';
     }
 
     function updateDescription(panelId, isLocal, animate) {
@@ -6571,11 +6739,11 @@
       var finPct = refNum ? Math.round(finNum / refNum * 100) + '%' : '—';
       var popupHtml = '<div style="font-family:\'Open Sans\',sans-serif;font-size:0.82rem;line-height:1.6;">' +
         '<b style="display:block;margin-bottom:4px;">' + displayName + '</b>' +
-        '<div style="text-align:center">' +
-        'Referrals: ' + t.referrals + '<br>' +
-        'Entered treatment: ' + t.entered + ' (' + entPct + ')<br>' +
-        'Finished course: ' + t.finished + ' (' + finPct + ')' +
-        '</div></div>';
+        '<table style="margin:0 auto;border-collapse:collapse;width:100%;">' +
+        '<tr><td style="text-align:right;padding-right:6px;width:60%;">Referrals:</td><td style="width:40%;text-align:left;">' + t.referrals + '</td></tr>' +
+        '<tr><td style="text-align:right;padding-right:6px;">Entered treatment:</td><td style="text-align:left;">' + t.entered + ' (' + entPct + ')</td></tr>' +
+        '<tr><td style="text-align:right;padding-right:6px;">Finished course:</td><td style="text-align:left;">' + t.finished + ' (' + finPct + ')</td></tr>' +
+        '</table></div>';
       var marker = L.circleMarker([t.lat, t.lng], {
         radius: 7, color: '#E04B2D', fillColor: '#E04B2D', fillOpacity: 0.85, weight: 1.5
       }).addTo(map).bindPopup(popupHtml, { closeButton: false, minWidth: 220, maxWidth: 260 });
@@ -7026,7 +7194,8 @@
       var desc = document.getElementById('housebuilding-tab-desc');
       if (desc) {
         var localPct = Math.round(lastVal / need * 100);
-        desc.innerHTML = 'In ' + boldLocation(theRegion(regionName)) + ', ' + Math.round(lastVal).toLocaleString('en-GB') + ' net additional dwellings were added in ' + years[n - 1] + ', <b>' + localPct + '%</b> of the standard method need of ' + Math.round(need).toLocaleString('en-GB') + ' per year.';
+        var justPrefix = localPct < 60 ? '<b>just</b> ' : '';
+        desc.innerHTML = boldLocation(theRegion(regionName)) + ', ' + Math.round(lastVal).toLocaleString('en-GB') + ' net additional dwellings were added in ' + years[n - 1] + ', ' + justPrefix + '<b>' + localPct + '%</b> of the standard method need of ' + Math.round(need).toLocaleString('en-GB') + ' per year.';
       }
 
       createHouseGrid('chart-housebuilding', {
@@ -7053,7 +7222,7 @@
       scheduleChartAnimation(chart);
       // Restore national description
       var desc = document.getElementById('housebuilding-tab-desc');
-      if (desc) desc.innerHTML = 'In <b>England</b>, 208,600 net additional dwellings were added in 2024-25, <b>56%</b> of the government target of 370,000.';
+      if (desc) desc.innerHTML = '<b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,000.';
     }
 
     function buildRentChart(regionName) {
@@ -7198,26 +7367,22 @@
       if (n === 0) return;
       var lineColor = '#E5664D';
 
-      // Dynamic Y scale with nice ticks
-      var dMin = Math.min.apply(null, values), dMax = Math.max.apply(null, values);
-      var range = dMax - dMin || 1;
-      var rawStep = range / 4;
-      var mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
-      var niceSteps = [1, 2, 5, 10];
-      var tickStep = mag;
-      for (var s = 0; s < niceSteps.length; s++) {
-        if (niceSteps[s] * mag >= rawStep) { tickStep = niceSteps[s] * mag; break; }
-      }
-      var yMin = Math.floor((dMin - range * 0.08) / tickStep) * tickStep;
-      if (yMin < 0) yMin = 0;
-      var yMax = Math.ceil((dMax + range * 0.08) / tickStep) * tickStep;
+      // Aggregate into half-yearly
+      var tmpData = values.map(function(v, i) { return { label: labels[i], value: v }; });
+      tmpData = window.halfYearlyAgg(tmpData);
+      labels = tmpData.map(function(d) { return d.label; });
+      values = tmpData.map(function(d) { return d.value; });
+      n = values.length;
 
-      // COVID annotation at Q1 2020
+      // Fixed Y scale to match national chart
+      var yMin = 0, yMax = 25, tickStep = 5;
+
+      // COVID annotation at H1 2020
       var covidIdx = -1;
-      for (var ci = 0; ci < labels.length; ci++) { if (labels[ci] === 'Q1 2020') { covidIdx = ci; break; } }
+      for (var ci = 0; ci < labels.length; ci++) { if (labels[ci] === 'H1 2020') { covidIdx = ci; break; } }
       var annotations = covidIdx >= 0 ? [{ atIndex: covidIdx, label: 'COVID' }] : [];
 
-      // X labels: centered within each year's quarters
+      // X labels: centered within each year's halves
       var xLabels = [];
       var yearIndices = {};
       for (var xi = 0; xi < n; xi++) {
@@ -7232,7 +7397,7 @@
         xLabels.push({ i: center, t: yearKeys[yk] });
       }
 
-      var data = values.map(function(v, i) { return { label: labels[i], value: v }; });
+      var data = tmpData;
 
       createChart('chart-youth-unemp', {
         type: 'bar',
@@ -7270,11 +7435,11 @@
       var periods = LOCAL_CLAIMANT_DATA.periods;
       if (!rawValues || !periods) return;
 
-      // Short month names for display
-      var monthMap = {'January':'Jan','February':'Feb','March':'Mar','April':'Apr','May':'May','June':'Jun','July':'Jul','August':'Aug','September':'Sep','October':'Oct','November':'Nov','December':'Dec'};
+      // Local claimant data is already bi-annual (Feb/Aug) — relabel as H1/H2
       var labels = periods.map(function(p) {
         var parts = p.split(' ');
-        return (monthMap[parts[0]] || parts[0]) + ' ' + parts[1];
+        var isH1 = /January|February|March|April|May|June/.test(parts[0]);
+        return (isH1 ? 'H1' : 'H2') + ' ' + parts[1];
       });
 
       var values = rawValues.slice();
@@ -7296,12 +7461,12 @@
       if (yMin < 0) yMin = 0;
       var yMax = Math.ceil((dMax + range * 0.08) / tickStep) * tickStep;
 
-      // COVID annotation at February 2020 (index 8)
+      // COVID annotation at H1 2020
       var covidIdx = -1;
-      for (var ci = 0; ci < labels.length; ci++) { if (labels[ci] === 'Feb 2020') { covidIdx = ci; break; } }
+      for (var ci = 0; ci < labels.length; ci++) { if (labels[ci] === 'H1 2020') { covidIdx = ci; break; } }
       var annotations = covidIdx >= 0 ? [{ atIndex: covidIdx, label: 'COVID' }] : [];
 
-      // X labels: one per year, centered between Feb and Aug
+      // X labels: one per year, centered within halves
       var xLabels = [];
       var yearIndices = {};
       for (var xi = 0; xi < n; xi++) {
@@ -7353,7 +7518,17 @@
       if (!chart) return;
       var cfg = window.CHART_NATIONAL_CONFIGS[chartId];
       if (!cfg) return;
-      createChart(chartId, cfg);
+      // If the local table/source is visible, omit the chart's own source to avoid duplicates
+      var src = document.getElementById('source-' + chartKey);
+      var hasLocalSource = src && src.style.display !== 'none';
+      if (hasLocalSource) {
+        var cfgCopy = {};
+        for (var k in cfg) cfgCopy[k] = cfg[k];
+        cfgCopy.source = null;
+        createChart(chartId, cfgCopy);
+      } else {
+        createChart(chartId, cfg);
+      }
       resetChart(chart);
       scheduleChartAnimation(chart);
     }
@@ -7616,6 +7791,8 @@
       if (CURRENT_LA_NAME) {
         var youthEl = document.getElementById('youth-funding-local');
         if (youthEl) youthEl.style.display = 'block';
+        var youthChartSource = document.querySelector('#chart-youth-funding .edu-chart-source');
+        if (youthChartSource) youthChartSource.style.display = 'none';
         if (window.initYouthFundingMap) {
           window.initYouthFundingMap(CURRENT_LA_NAME);
         }
@@ -7823,6 +8000,7 @@
       if (e.key === 'Enter') lookupPostcode();
     });
 
+
     // National NEET chart is now rendered by createChart via initCharts()
     // Regional NEET is built on-demand by buildNeetChart(regionName)
 
@@ -7857,17 +8035,151 @@
           email: form.querySelector('[name="email"]').value.trim(),
           postcode: form.querySelector('[name="postcode"]') ? form.querySelector('[name="postcode"]').value.trim() : ''
         });
-        fetch('https://script.google.com/macros/s/AKfycbwzYCcXNWxPRoEara38fDh9vqrh4hQJ8PHl1JP68Yz4Ejvskjg2_ie56qP51VK9kgIY/exec', {
+        fetch('https://script.google.com/macros/s/AKfycby_FSh7a33hpoLHuJpWApgjrh5Lm53zTf_ENOuON_GWlWMD6nk-7qwdtaTK1QMai2hS/exec', {
           method: 'POST',
           mode: 'no-cors',
           body: petitionData
         }).catch(function() {}); // opaque response is fine
 
-        document.getElementById('petition-form-container').style.display = 'none';
-        document.getElementById('petition-success').style.display = 'block';
+        // Measure and lock heights before any changes
+        var petitionGrid = document.querySelector('.petition-grid');
+        if (petitionGrid) petitionGrid.style.minHeight = petitionGrid.offsetHeight + 'px';
+        var petitionLeft = form.closest('.petition-left');
+        if (petitionLeft) petitionLeft.style.minHeight = petitionLeft.offsetHeight + 'px';
+        var formHeight = form.offsetHeight;
+        var container = document.getElementById('petition-form-container');
+        container.style.height = container.offsetHeight + 'px';
+        var userName = form.querySelector('[name="fullName"]').value.trim();
+
+        // Fade out
+        container.classList.add('petition-form-container-inner');
+        container.classList.add('fading');
+
+        setTimeout(function() {
+          // Hide the input fields and privacy text
+          form.querySelectorAll('input').forEach(function(input) { input.style.display = 'none'; });
+          document.getElementById('petition-privacy').style.visibility = 'hidden';
+
+          // Lock the form to its original height, switch to flexbox column
+          form.style.height = formHeight + 'px';
+          form.style.display = 'flex';
+          form.style.flexDirection = 'column';
+          form.style.gap = '0';
+
+          // Show the thank you message, filling the space above the button
+          document.getElementById('petition-success-name').textContent = userName;
+          var msgEl = document.getElementById('petition-success-msg');
+          msgEl.style.flex = '1';
+          msgEl.style.alignItems = 'center';
+          msgEl.style.justifyContent = 'flex-start';
+          msgEl.style.display = 'flex';
+
+          // Replace Join button with Share the campaign
+          var submitBtn = document.getElementById('petition-submit');
+          submitBtn.querySelector('span').textContent = 'Share';
+          submitBtn.type = 'button';
+          submitBtn.onclick = function() {
+            var shareUrl = window.location.href;
+            var shareTitle = 'Backing Young Britain';
+            var shareText = 'Britain is failing its young people. Discover the data and join the campaign.';
+            if (navigator.share) {
+              navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+            } else {
+              navigator.clipboard.writeText(shareUrl).then(function() {
+                alert('Link copied to clipboard!');
+              });
+            }
+          };
+
+          // Fade in
+          container.offsetWidth;
+          container.classList.remove('fading');
+
+          // Fire confetti from the Share button after fade-in completes
+          setTimeout(function() { spawnPetitionConfetti(); }, 250);
+        }, 250);
+
         // Increment counter
         const counter = document.getElementById('sig-count');
         counter.textContent = (parseInt(counter.textContent.replace(/,/g, '')) + 1).toLocaleString();
+
+
+      }
+
+      function spawnPetitionConfetti() {
+        var btn = document.getElementById('petition-submit');
+        btn.style.position = 'relative';
+        btn.style.zIndex = '150';
+        var petitionSection = document.getElementById('petition');
+        // Create an overlay container for confetti so we don't set overflow:hidden on the section (which breaks sticky)
+        var confettiContainer = document.getElementById('petition-confetti-container');
+        if (!confettiContainer) {
+          confettiContainer = document.createElement('div');
+          confettiContainer.id = 'petition-confetti-container';
+          confettiContainer.style.position = 'absolute';
+          confettiContainer.style.top = '0';
+          confettiContainer.style.left = '0';
+          confettiContainer.style.width = '100%';
+          confettiContainer.style.height = '100%';
+          confettiContainer.style.overflow = 'hidden';
+          confettiContainer.style.pointerEvents = 'none';
+          petitionSection.style.position = 'relative';
+          petitionSection.appendChild(confettiContainer);
+        }
+        var sectionRect = petitionSection.getBoundingClientRect();
+        var btnRect = btn.getBoundingClientRect();
+        var centerX = btnRect.left - sectionRect.left + Math.round(btnRect.width / 2);
+        var originTop = btnRect.top - sectionRect.top;
+        var h = btnRect.height;
+        var tw = btnRect.width;
+        var offsets = [tw * 0.4, -tw * 0.45, 0, tw * 0.48, -tw * 0.35, tw * 0.25, -tw * 0.5, tw * 0.15, -tw * 0.25];
+        var shades = ['#ED7A66', '#E04B2D', '#F6A99F', '#E8634A', '#F29283', '#E04B2D', '#ED7A66', '#F6A99F', '#E8634A'];
+        var sizes = [
+          { w: 28, h: 14 },
+          { w: 17, h: 8 },
+          { w: 13, h: 13 },
+          { w: 30, h: 15 },
+          { w: 11, h: 11 },
+          { w: 20, h: 10 },
+          { w: 15, h: 15 },
+          { w: 24, h: 12 },
+          { w: 12, h: 12 }
+        ];
+        var pieces = [
+          { peakX: 35,  peakY: -50, x: 45,  endY: h * 0.5, rot: 200 },
+          { peakX: -35, peakY: -45, x: -45, endY: h * 0.6, rot: 140 },
+          { peakX: 40,  peakY: -38, x: -30, endY: h * 0.7, rot: 170 },
+          { peakX: -40, peakY: -55, x: -50, endY: h * 0.75, rot: -100 },
+          { peakX: 28,  peakY: -60, x: 40,  endY: h * 0.85, rot: -60 },
+          { peakX: -25, peakY: -52, x: -35, endY: h * 0.55, rot: 120 },
+          { peakX: 45,  peakY: -48, x: 55,  endY: h * 0.65, rot: -150 },
+          { peakX: -15, peakY: -58, x: -22, endY: h * 0.45, rot: 80 },
+          { peakX: 20,  peakY: -42, x: 30,  endY: h * 0.8, rot: -180 }
+        ];
+        pieces.forEach(function(p, i) {
+          setTimeout(function() {
+            var piece = document.createElement('span');
+            piece.className = 'floating-cta-confetti rising';
+            piece.style.position = 'absolute';
+            piece.style.width = sizes[i].w + 'px';
+            piece.style.height = sizes[i].h + 'px';
+            piece.style.background = shades[i];
+            piece.style.left = (centerX + offsets[i]) + 'px';
+            piece.style.top = originTop + 'px';
+            piece.style.zIndex = '1';
+            piece.style.setProperty('--confetti-peak-x', p.peakX + 'px');
+            piece.style.setProperty('--confetti-peak-y', p.peakY + 'px');
+            piece.style.setProperty('--confetti-end', 'translate(' + p.x + 'px,' + p.endY + 'px)');
+            piece.style.setProperty('--confetti-rot', p.rot + 'deg');
+            confettiContainer.appendChild(piece);
+            piece.addEventListener('animationend', function handler() {
+              piece.removeEventListener('animationend', handler);
+              piece.className = 'floating-cta-confetti falling';
+              piece.style.zIndex = '200';
+              piece.addEventListener('animationend', function() { piece.remove(); });
+            });
+          }, 200 + i * 30);
+        });
       }
     });
 
@@ -7877,7 +8189,7 @@
       var floatingCta = document.getElementById('floating-cta');
       var floatingForm = document.getElementById('floating-cta-form');
       var floatingSuccess = document.getElementById('floating-cta-success');
-      var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzYCcXNWxPRoEara38fDh9vqrh4hQJ8PHl1JP68Yz4Ejvskjg2_ie56qP51VK9kgIY/exec';
+      var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_FSh7a33hpoLHuJpWApgjrh5Lm53zTf_ENOuON_GWlWMD6nk-7qwdtaTK1QMai2hS/exec';
 
       var hasScrolledPastEducation = false;
       var petitionInView = false;
@@ -8245,13 +8557,13 @@
         var deposit = data.hp * 0.10;
         var annualSaving = takeHome * 0.10;
         var yearsToSave = (deposit / annualSaving).toFixed(1);
-        desc.innerHTML = 'In <b>' + name + '</b>, the median house price is \u00A3' +
+        desc.innerHTML = '<b class="loc">In ' + name + '</b>, the median house price is \u00A3' +
           Math.round(data.hp).toLocaleString('en-GB') + ' against median earnings of \u00A3' +
           Math.round(data.earnings).toLocaleString('en-GB') + ', a ratio of <b>' +
           data.ratio.toFixed(1) + 'x</b>.' +
           '<div style="margin-top:6px">It would take <b>' + yearsToSave + ' years</b> to save for a 10% house deposit, assuming 10% of monthly take-home salary is saved.</div>';
       } else {
-        desc.innerHTML = '<b>' + name + '</b> \u2014 no housing data available for this constituency.';
+        desc.innerHTML = '<b class="loc">' + name + '</b> \u2014 no housing data available for this constituency.';
       }
       // Restyle highlights
       var prev = currentSelected;
@@ -8352,20 +8664,42 @@
       });
     }
 
-    // Colour scale: per-head funding -> red intensity (lower = darker red)
+    // Colour scale: per-head funding -> red intensity (higher = darker)
     var MIN_PH = 0, MAX_PH = 100;
     function youthFundingColor(perHead) {
       if (perHead === null || perHead === undefined) return '#ccc';
-      // Higher per-head = lighter (less concern), lower = darker red
       var t = Math.min(1, Math.max(0, perHead / MAX_PH));
-      // Invert: t=0 (£0) -> darkest, t=1 (£100+) -> lightest
-      return 'rgba(224,75,45,' + (1.0 - t * 0.7).toFixed(2) + ')';
+      return 'rgba(224,75,45,' + (0.25 + t * 0.75).toFixed(2) + ')';
     }
 
     function initYouthFundingMap(laName) {
       loadYouthFundingMapData(function() {
         var objectKey = Object.keys(LA_TOPO.objects)[0];
-        var geojson = topojson.feature(LA_TOPO, LA_TOPO.objects[objectKey]);
+        var geometries = LA_TOPO.objects[objectKey].geometries;
+
+        // Group geometries by resolved name (merge districts into counties)
+        var groups = {};
+        geometries.forEach(function(geom) {
+          var name = geom.properties.LAD25NM;
+          var resolved = DISTRICT_TO_COUNTY[name] || name;
+          if (!groups[resolved]) groups[resolved] = [];
+          groups[resolved].push(geom);
+        });
+
+        // Build merged GeoJSON: dissolve internal borders for same-county districts
+        var mergedFeatures = [];
+        Object.keys(groups).forEach(function(resolvedName) {
+          var merged = topojson.merge(LA_TOPO, groups[resolvedName]);
+          mergedFeatures.push({
+            type: 'Feature',
+            properties: { LAD25NM: resolvedName },
+            geometry: merged
+          });
+        });
+        var mergedCollection = { type: 'FeatureCollection', features: mergedFeatures };
+
+        // Resolve the user's LA name for selection matching
+        var resolvedLaName = DISTRICT_TO_COUNTY[laName] || laName;
 
         if (!YOUTH_MAP) {
           YOUTH_MAP = L.map('youth-funding-map', {
@@ -8385,14 +8719,14 @@
 
         if (YOUTH_GEO_LAYER) YOUTH_MAP.removeLayer(YOUTH_GEO_LAYER);
 
-        YOUTH_GEO_LAYER = L.geoJSON(geojson, {
+        YOUTH_GEO_LAYER = L.geoJSON(mergedCollection, {
           style: function(feature) {
             var name = feature.properties.LAD25NM;
             var data = YOUTH_FUNDING_LOOKUP[name];
-            var isSelected = name === laName;
+            var isSelected = name === resolvedLaName;
             return {
-              fillColor: data ? youthFundingColor(data.perHead) : '#ccc',
-              fillOpacity: data ? 0.85 : 0.15,
+              fillColor: data ? youthFundingColor(data.perHead) : '#E07060',
+              fillOpacity: data ? 0.85 : 0.45,
               weight: isSelected ? 3.5 : 0.5,
               color: '#fff',
               opacity: 1
@@ -8405,30 +8739,23 @@
           }
         }).addTo(YOUTH_MAP);
 
-        youthCurrentSelected = laName;
+        youthCurrentSelected = resolvedLaName;
         YOUTH_GEO_LAYER.eachLayer(function(layer) {
-          if (layer.feature.properties.LAD25NM === laName) layer.bringToFront();
+          if (layer.feature.properties.LAD25NM === resolvedLaName) layer.bringToFront();
         });
-        zoomToYouthLA(laName);
-        selectYouthFundingLA(laName);
+        zoomToYouthLA(resolvedLaName);
+        selectYouthFundingLA(resolvedLaName);
       });
     }
 
     function selectYouthFundingLA(name) {
       var data = YOUTH_FUNDING_LOOKUP[name];
       var desc = document.getElementById('youth-funding-desc');
-      var county = DISTRICT_TO_COUNTY[name];
-      var displayName = county ? name + '</b> (' + county + ')' : name + '</b>';
       if (data) {
-        var natAvg = 37.43;
-        var diff = data.perHead - natAvg;
-        var comparison = diff >= 0
-          ? '<b>\u00A3' + Math.abs(diff).toFixed(2) + ' above</b> the national average'
-          : '<b>\u00A3' + Math.abs(diff).toFixed(2) + ' below</b> the national average';
-        desc.innerHTML = 'In <b>' + displayName + ', spending on youth services is <b>\u00A3' +
-          data.perHead.toFixed(2) + '</b> per young person in 2024-25 \u2014 ' + comparison + ' of \u00A3' + natAvg.toFixed(2) + '.';
+        desc.innerHTML = '<b class="loc">In ' + name + '</b>, spending on youth services was <b>\u00A3' +
+          data.perHead.toFixed(2) + '</b> per young person in 2024-25.';
       } else {
-        desc.innerHTML = '<b>' + name + '</b> \u2014 no youth services funding data available.';
+        desc.innerHTML = '<b class="loc">' + name + '</b>: This council does not report dedicated youth services spending separately or the data is unavailable.';
       }
       var prev = youthCurrentSelected;
       youthCurrentSelected = name;
