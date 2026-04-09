@@ -172,6 +172,7 @@
     html {
       scroll-behavior: smooth;
       font-size: 16px;
+      overflow-x: hidden;
     }
 
     body {
@@ -1454,6 +1455,8 @@
     @media (max-width: 600px) {
       #institutions-map-leaflet { height: 300px !important; }
       #mh-trust-map-leaflet { height: 300px !important; }
+      #housing-map { height: 300px !important; }
+      #youth-funding-map { height: 300px !important; }
     }
     .edu-chart-legend {
       display: none;
@@ -1670,6 +1673,7 @@
     .petition p strong {
       font-weight: 700;
     }
+    .petition-intro-mobile { display: none; }
     .petition-form {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1791,21 +1795,15 @@
     .footer-logo {
       font-family: 'Lora', serif;
       font-style: italic;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 400;
       color: var(--white);
     }
     .footer-author-link {
       color: var(--white);
-      text-decoration: none;
-      background-image: linear-gradient(var(--white), var(--white));
-      background-repeat: no-repeat;
-      background-position: left bottom;
-      background-size: 0% 1.2px;
-      padding-bottom: 2px;
-      transition: background-size 0.3s ease;
+      text-decoration: underline;
     }
-    .footer-author-link:hover { background-size: 100% 1.2px; }
+    .footer-author-link:hover { text-decoration: underline; }
     .footer-links { display: flex; gap: 2rem; }
     .footer-links a {
       font-family: 'Open Sans', sans-serif;
@@ -1958,6 +1956,7 @@
       .pillar-lead--hea-desktop { display: none; }
       .pillar-lead--hea-mobile { display: block; }
       .pillar-lead { font-size: 1rem; }
+      #employment, #housing, #health { margin-top: -3.2rem; }
       .hero-sub-mobile {
         display: block;
         text-align: left;
@@ -1970,12 +1969,24 @@
       .postcode-result { text-align: left; }
       .hero-sub .postcode-form { justify-content: stretch !important; width: 100%; }
       .hero-sub .postcode-input { flex: 1; min-width: 0; }
+      .petition-intro-mobile { display: block; color: var(--white); font-family: 'Open Sans', sans-serif; font-size: 1.1rem; line-height: 1.7; font-weight: 200; margin-bottom: 1rem; }
+      .petition-text p:first-child strong { display: none; }
+      .petition { padding-top: 3rem; }
       .petition-grid { grid-template-columns: 1fr; gap: 2rem; }
       .petition-text { position: static; }
-      .petition-form { grid-template-columns: 1fr; }
-      .petition-form input { font-size: 16px; }
-      .petition-form input.full-width, .petition-form button { grid-column: 1; }
-      .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+      .petition-form { grid-template-columns: 1fr 1fr; }
+      .petition-form input { font-size: 16px; padding: 0.3rem 0.7rem; }
+      .petition-form input[name="fullName"] { grid-column: 1 / -1; order: 1; }
+      .petition-form input[name="email"] { grid-column: 1 / -1; order: 2; }
+      .petition-form input[name="postcode"] { grid-column: 1; order: 3; }
+      .petition-form button { grid-column: 2; order: 4; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+      .petition-form .petition-success-msg { grid-column: 1 / -1; order: 5; }
+      .petition { padding-bottom: 1.2rem; border-bottom: none; }
+      .petition + footer, footer { border-top: none; }
+      .petition p { font-size: 1rem; }
+      .petition-text p:first-child strong { font-size: 1.1rem; }
+      .footer-inner { flex-direction: column; gap: 1rem; text-align: left; padding-top: 2rem; }
+      .footer-logo { font-size: 1rem; }
       .footer-links { flex-wrap: wrap; justify-content: center; }
       .floating-cta {
         left: 0.75rem; right: 0.75rem; width: auto; max-width: none; bottom: 0.5rem !important;
@@ -3396,6 +3407,7 @@
     <div class="petition-grid">
       <div class="petition-left">
         <h3 class="petition-heading">Add your <em style="font-style:italic">name</em></h3>
+        <p class="petition-intro-mobile"><strong>We believe the UK Government should start Backing Young Britain and we will deliver our campaign directly to Number 10.</strong></p>
         <div id="petition-form-container">
           <form class="petition-form" id="petition-form" action="#petition" method="post" aria-label="Sign the petition for young people in the UK">
             <input type="text" name="fullName" placeholder="Name" required aria-label="Name" autocomplete="name">
@@ -3405,7 +3417,7 @@
             <div class="petition-success-msg" id="petition-success-msg" style="display:none"><div>Thank you,&nbsp;<strong id="petition-success-name"></strong><br><span class="petition-success-sub">Share this campaign with at least one other person to help the next generation.</span></div></div>
             <button type="submit" id="petition-submit"><span>Join</span></button>
           </form>
-          <div class="petition-privacy" id="petition-privacy">Your name will be included in our open letter to the Government. We will not share your data with any other third parties. By signing, you agree to receive campaign updates.</div>
+          <div class="petition-privacy" id="petition-privacy">Your name will be included in our open letter to the Government. We will not share your data with any other third parties.</div>
         </div>
         <div class="petition-success" id="petition-success" style="display:none"></div>
       </div>
@@ -3572,8 +3584,9 @@
           }
         }
 
-        // X labels
-        (cfg.xLabels || []).forEach(function(item) {
+        // X labels (use mobile-specific labels if available)
+        var resolvedXLabels = (isMobile && cfg.xLabelsMobile) ? cfg.xLabelsMobile : (cfg.xLabels || []);
+        resolvedXLabels.forEach(function(item) {
           var idx, text;
           if (typeof item === 'object' && item !== null) { idx = item.i; text = item.t; }
           else { idx = item; var d = lines[0].data[idx]; text = d ? d.label : ''; }
@@ -4168,6 +4181,7 @@
           lines: [{color:'#E04B2D', data:simpleYears(2015,[763206,733473,693082,687897,691358,695327,624323,680096,747964,825078,843242])}],
           yAxis: {min:550000, max:900000, step:50000, format:function(v){if(v>=1e6)return(v/1e6).toFixed(1).replace(/\.0$/,'')+'M';return(v/1000).toFixed(1).replace(/\.0$/,'')+'K';}},
           xLabels: [{i:0,t:'2015'},{i:1,t:'2016'},{i:2,t:'2017'},{i:3,t:'2018'},{i:4,t:'2019'},{i:5,t:'2020'},{i:6,t:'2021'},{i:7,t:'2022'},{i:8,t:'2023'},{i:9,t:'2024'},{i:10,t:'2025'}],
+          xLabelsMobile: [{i:0,t:'2015'},{i:2,t:'2017'},{i:4,t:'2019'},{i:6,t:'2021'},{i:8,t:'2023'},{i:10,t:'2025'}],
           annotations: [{atIndex:5, label:'COVID'}],
           highlights: [{index:6,text:'624.3K'},{index:10,text:'843.2K'}],
           legend: [{color:'#E04B2D', label:'16\u201324 year olds NEET (seasonally adjusted)'}],
@@ -4190,6 +4204,7 @@
           lines: [{color:'#E5664D', data:halfYearlyAgg((function(){var M=['Jan','Apr','Jul','Oct'],vals=[167500,167100,168200,171800,163200,165100,162500,161400,164800,168800,167900,177600,195200,206000,216700,230300,233700,378600,532400,513700,503700,496100,401400,333500,286100,255200,249200,257900,262200,268900,270700,276900,281700,283000,286900,293400,299800,307400,305800,318300,324700];return vals.map(function(v,i){return{label:M[i%4]+' '+(2016+Math.floor(i/4)),value:v};});})())}],
           yAxis: {min:100000, max:600000, step:100000, format:function(v){return Math.round(v/1000)+'k';}},
           xLabels: [{i:0.5,t:'2016'},{i:2.5,t:'2017'},{i:4.5,t:'2018'},{i:6.5,t:'2019'},{i:8.5,t:'2020'},{i:10.5,t:'2021'},{i:12.5,t:'2022'},{i:14.5,t:'2023'},{i:16.5,t:'2024'},{i:18.5,t:'2025'},{i:20,t:'2026'}],
+          xLabelsMobile: [{i:0.5,t:'2016'},{i:4.5,t:'2018'},{i:8.5,t:'2020'},{i:12.5,t:'2022'},{i:16.5,t:'2024'},{i:20,t:'2026'}],
           annotations: [{atIndex:8, label:'COVID'}],
           highlights: [{index:3,text:'162K'},{index:9,text:'523K'},{index:20,text:'325K'}],
           legend: [{color:'#E04B2D', label:'18\u201324 claimant count (seasonally adjusted)'}],
@@ -4206,6 +4221,7 @@
           ]}],
           yAxis: {min:100000, max:300000, step:50000, format:function(v){return (v/1000).toFixed(0)+'K';}},
           xLabels: [{i:0,t:'2010/11'},{i:2,t:'2012/13'},{i:4,t:'2014/15'},{i:6,t:'2016/17'},{i:8,t:'2018/19'},{i:10,t:'2020/21'},{i:12,t:'2022/23'},{i:14,t:'2024/25'}],
+          xLabelsMobile: [{i:0,t:'2010/11'},{i:4,t:'2014/15'},{i:8,t:'2018/19'},{i:12,t:'2022/23'}],
           annotations: [{atIndex:9,label:'COVID'}],
           highlights: [{index:1,text:'291.3K'},{index:10,text:'159.8K'},{index:14,text:'172.2K'}],
           legend: [{color:'#E04B2D', label:'Apprenticeship starts (aged 16\u201324)'}],
@@ -4558,27 +4574,30 @@
         ];
         var maxShaded = 6; // max across all years
 
-        var COLS = 10, ROWS = 3;
-        var ICON_W = 15.9, ICON_H = 18.9;
-        var PAD_X = 6, PAD_Y = 1.5;
+        var COLS = 6, ROWS = 5;
+        var isMobilePic = window.innerWidth <= 600;
+        var ICON_W = isMobilePic ? 33.6 : 15.9;
+        var ICON_H = isMobilePic ? 40.32 : 18.9;
+        var PAD_X = isMobilePic ? 8 : 6;
+        var PAD_Y = isMobilePic ? 1.125 : 1.5;
+        var gridOffX = 4;
         var cellW = ICON_W + PAD_X;
         var cellH = ICON_H + PAD_Y;
         var gridW = COLS * cellW - PAD_X;
-        var gridOffX = 4;
 
         // Whiteboard dimensions
         var boardMargin = 5.6;
         var boardH = 27.1;
         var boardY = 2;
         var boardW = (gridW + gridOffX * 2) * 0.29;
-        var gridY = boardY + boardH + boardMargin;
+        var gridY = isMobilePic ? 2 : boardY + boardH + boardMargin;
 
         var fullW = gridW + gridOffX * 2;
         var svgW = fullW;
         var boardX = (fullW - boardW) / 2;
         var svgH = gridY + ROWS * cellH - PAD_Y;
 
-        // Seated-at-desk person: head + torso + desk surface
+        // Person icon: head + torso (+ desk on desktop)
         function personPath(x, y, w, h) {
           var cx = x + w / 2;
           var r = w * 0.16;
@@ -4588,17 +4607,8 @@
           var torsoBot = y + h * 0.54;
           var sw = w * 0.26;
           var sr = w * 0.1; // shoulder rounding radius
-          // Desk
-          var deskY = torsoBot + h * 0.04;
-          var deskH = h * 0.06;
-          var deskL = x + w * 0.05;
-          var deskR = x + w * 0.95;
-          // Table legs (at desk edges, same width as desk thickness)
-          var legTop = deskY + deskH;
-          var legBot = legTop + (y + h - legTop) * 0.6;
-          var legW = deskH; // same thickness as desk
 
-          return (
+          var d =
             // Head
             'M' + cx + ',' + (headCY - r) +
             'a' + r + ',' + r + ',0,1,0,.01,0Z' +
@@ -4608,23 +4618,34 @@
             'L' + (cx - sw) + ',' + torsoBot +
             'L' + (cx + sw) + ',' + torsoBot +
             'L' + (cx + sw) + ',' + (torsoTop + sr) +
-            'Q' + (cx + sw) + ',' + torsoTop + ' ' + (cx + sw - sr) + ',' + torsoTop + 'Z' +
+            'Q' + (cx + sw) + ',' + torsoTop + ' ' + (cx + sw - sr) + ',' + torsoTop + 'Z';
+
+          if (!isMobilePic) {
             // Desk
-            'M' + deskL + ',' + deskY +
-            'L' + deskR + ',' + deskY +
-            'L' + deskR + ',' + (deskY + deskH) +
-            'L' + deskL + ',' + (deskY + deskH) + 'Z' +
-            // Left leg (at left edge of desk)
-            'M' + deskL + ',' + legTop +
-            'L' + (deskL + legW) + ',' + legTop +
-            'L' + (deskL + legW) + ',' + legBot +
-            'L' + deskL + ',' + legBot + 'Z' +
-            // Right leg (at right edge of desk)
-            'M' + (deskR - legW) + ',' + legTop +
-            'L' + deskR + ',' + legTop +
-            'L' + deskR + ',' + legBot +
-            'L' + (deskR - legW) + ',' + legBot + 'Z'
-          );
+            var deskY = torsoBot + h * 0.04;
+            var deskH = h * 0.06;
+            var deskL = x + w * 0.05;
+            var deskR = x + w * 0.95;
+            // Table legs
+            var legTop = deskY + deskH;
+            var legBot = legTop + (y + h - legTop) * 0.6;
+            var legW = deskH;
+            d +=
+              'M' + deskL + ',' + deskY +
+              'L' + deskR + ',' + deskY +
+              'L' + deskR + ',' + (deskY + deskH) +
+              'L' + deskL + ',' + (deskY + deskH) + 'Z' +
+              'M' + deskL + ',' + legTop +
+              'L' + (deskL + legW) + ',' + legTop +
+              'L' + (deskL + legW) + ',' + legBot +
+              'L' + deskL + ',' + legBot + 'Z' +
+              'M' + (deskR - legW) + ',' + legTop +
+              'L' + deskR + ',' + legTop +
+              'L' + deskR + ',' + legBot +
+              'L' + (deskR - legW) + ',' + legBot + 'Z';
+          }
+
+          return d;
         }
 
         var fillColor = '#E04B2D';
@@ -4637,40 +4658,42 @@
           'aria-label': 'Classroom of 30 children showing mental health prevalence'
         });
 
-        // Whiteboard — filled border matching desk weight
-        var borderW = ICON_H * 0.06; // match desk thickness
-        svg.appendChild(svgEl('rect', {
-          x: boardX + '', y: boardY + '',
-          width: boardW + '', height: boardH + '',
-          rx: '0.8', ry: '0.8',
-          fill: '#ebebeb'
-        }));
-        svg.appendChild(svgEl('rect', {
-          x: (boardX + borderW) + '', y: (boardY + borderW) + '',
-          width: (boardW - borderW * 2) + '', height: (boardH - borderW * 2) + '',
-          rx: '0.5', ry: '0.5',
-          fill: '#fff'
-        }));
-        // Whiteboard tray (centered on bottom edge)
-        var trayH = 2.2;
-        var trayY = boardY + boardH - trayH / 2;
-        svg.appendChild(svgEl('rect', {
-          x: (boardX + boardW * 0.15) + '', y: trayY + '',
-          width: (boardW * 0.7) + '', height: trayH + '',
-          rx: '0.3', ry: '0.3',
-          fill: '#ebebeb'
-        }));
-        // Whiteboard rubber (small block sitting on tray)
-        var rubberW = boardW * 0.08;
-        var rubberH = 1.96;
-        var rubberX = boardX + boardW * 0.72;
-        var rubberY = trayY - rubberH;
-        svg.appendChild(svgEl('rect', {
-          x: rubberX + '', y: rubberY + '',
-          width: rubberW + '', height: rubberH + '',
-          rx: '0.2', ry: '0.2',
-          fill: '#ebebeb'
-        }));
+        // Whiteboard (desktop only)
+        if (!isMobilePic) {
+          var borderW = ICON_H * 0.06; // match desk thickness
+          svg.appendChild(svgEl('rect', {
+            x: boardX + '', y: boardY + '',
+            width: boardW + '', height: boardH + '',
+            rx: '0.8', ry: '0.8',
+            fill: '#ebebeb'
+          }));
+          svg.appendChild(svgEl('rect', {
+            x: (boardX + borderW) + '', y: (boardY + borderW) + '',
+            width: (boardW - borderW * 2) + '', height: (boardH - borderW * 2) + '',
+            rx: '0.5', ry: '0.5',
+            fill: '#fff'
+          }));
+          // Whiteboard tray (centered on bottom edge)
+          var trayH = 2.2;
+          var trayY = boardY + boardH - trayH / 2;
+          svg.appendChild(svgEl('rect', {
+            x: (boardX + boardW * 0.15) + '', y: trayY + '',
+            width: (boardW * 0.7) + '', height: trayH + '',
+            rx: '0.3', ry: '0.3',
+            fill: '#ebebeb'
+          }));
+          // Whiteboard rubber (small block sitting on tray)
+          var rubberW = boardW * 0.08;
+          var rubberH = 1.96;
+          var rubberX = boardX + boardW * 0.72;
+          var rubberY = trayY - rubberH;
+          svg.appendChild(svgEl('rect', {
+            x: rubberX + '', y: rubberY + '',
+            width: rubberW + '', height: rubberH + '',
+            rx: '0.2', ry: '0.2',
+            fill: '#ebebeb'
+          }));
+        }
 
         // All 30 seated icons
         var icons = [];
@@ -6708,6 +6731,11 @@
       var marker = L.circleMarker([inst.lat, inst.lng], {
         radius: 7, color: '#E04B2D', fillColor: '#E04B2D', fillOpacity: 0.85, weight: 1.5
       }).addTo(map).bindPopup(popupHtml, { closeButton: false, minWidth: 180, maxWidth: 180 });
+      if (window.innerWidth <= 600) {
+        L.circleMarker([inst.lat, inst.lng], {
+          radius: 20, fillOpacity: 0, opacity: 0, weight: 0
+        }).addTo(map).on('click', function() { marker.openPopup(); });
+      }
       INST_MAP_PLOTTED[inst.name] = true;
       return marker;
     }
@@ -6812,6 +6840,11 @@
       var marker = L.circleMarker([t.lat, t.lng], {
         radius: 7, color: '#E04B2D', fillColor: '#E04B2D', fillOpacity: 0.85, weight: 1.5
       }).addTo(map).bindPopup(popupHtml, { closeButton: false, minWidth: 220, maxWidth: 260 });
+      if (window.innerWidth <= 600) {
+        L.circleMarker([t.lat, t.lng], {
+          radius: 20, fillOpacity: 0, opacity: 0, weight: 0
+        }).addTo(map).on('click', function() { marker.openPopup(); });
+      }
       MH_TRUST_MAP_PLOTTED[t.name] = true;
       return marker;
     }
@@ -7131,7 +7164,11 @@
 
       // X labels: all years
       var xLabels = [];
-      for (var i = 0; i < n; i++) xLabels.push(i);
+      var xLabelsMobile = [];
+      for (var i = 0; i < n; i++) {
+        xLabels.push(i);
+        if (i % 2 === 0) xLabelsMobile.push(i);
+      }
 
       var data = values.map(function(v, i) { return { label: yearLabels[i], value: v }; });
 
@@ -7139,6 +7176,7 @@
         lines: [{ color: lineColor, data: data, dotRadius: 2.5, tooltipFormat: fmtNeetValue }],
         yAxis: { min: yMin, max: yMax, step: tickStep, format: fmtNeetAxis },
         xLabels: xLabels,
+        xLabelsMobile: xLabelsMobile,
         annotations: annotations,
         highlights: [
           { index: 0, text: fmtNeetValue(values[0]), series: 0, anchor: 'start', below: n > 1 && values[1] > values[0] },
@@ -7197,7 +7235,11 @@
       var annotations = covidIdx >= 0 ? [{ atIndex: covidIdx, label: 'COVID' }] : [];
 
       var xLabels = [];
-      for (var i = 0; i < n; i++) xLabels.push(i);
+      var xLabelsMobile = [];
+      for (var i = 0; i < n; i++) {
+        xLabels.push(i);
+        if (i % 2 === 0) xLabelsMobile.push(i);
+      }
 
       var data = rawValues.map(function(v, i) { return { label: years[i], value: v }; });
 
@@ -7216,6 +7258,7 @@
         lines: [{ color: lineColor, data: data, dotRadius: 2.5, tooltipFormat: fmtVal }],
         yAxis: { min: yMin, max: yMax, step: tickStep, format: fmtAxis },
         xLabels: xLabels,
+        xLabelsMobile: xLabelsMobile,
         annotations: annotations,
         highlights: [
           { index: 0, text: fmtVal(rawValues[0]), series: 0, anchor: 'start', below: n > 1 && rawValues[1] > rawValues[0] },
@@ -7540,10 +7583,12 @@
         yearIndices[yr].push(xi);
       }
       var yearKeys = Object.keys(yearIndices);
+      var xLabelsMobile = [];
       for (var yk = 0; yk < yearKeys.length; yk++) {
         var idxs = yearIndices[yearKeys[yk]];
         var center = (idxs[0] + idxs[idxs.length - 1]) / 2;
         xLabels.push({ i: center, t: yearKeys[yk] });
+        if (yk % 2 === 0) xLabelsMobile.push({ i: center, t: yearKeys[yk] });
       }
 
       var data = values.map(function(v, i) { return { label: labels[i], value: v }; });
@@ -7553,6 +7598,7 @@
         lines: [{ color: lineColor, data: data, dotRadius: 2.5, tooltipFormat: function(v) { return Math.round(v).toLocaleString('en-GB'); } }],
         yAxis: { min: yMin, max: yMax, step: tickStep, format: function(v) { return Math.round(v).toLocaleString('en-GB'); } },
         xLabels: xLabels,
+        xLabelsMobile: xLabelsMobile,
         annotations: annotations,
         highlights: [
           { index: 0, text: values[0].toLocaleString('en-GB'), series: 0, anchor: 'start', below: n > 1 && values[1] > values[0] },
