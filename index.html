@@ -831,12 +831,8 @@
     }
     .edu-chart .axis-label {
       font-family: 'Open Sans', sans-serif;
-      font-size: 8px;
-      font-weight: 300;
-      fill: #000;
-    }
-    .edu-chart .chart-value-label {
       font-size: 10px;
+      fill: #000;
     }
     .edu-chart .axis-label-right {
       font-family: 'Open Sans', sans-serif;
@@ -1123,17 +1119,17 @@
       .share-sheet {
         position: fixed;
         left: 0; right: 0; bottom: 0;
-        max-height: 70vh;
+        max-height: 75vh;
         background: linear-gradient(to top, rgba(245,245,245,0.97) 60%, rgba(245,245,245,0) 100%);
         border-radius: 5px 5px 0 0;
-        padding: 60px 20px calc(15px + env(safe-area-inset-bottom));
+        padding: 60px 20px calc(5px + env(safe-area-inset-bottom));
         z-index: 10000;
-        transform: translateY(100%);
+        opacity: 0;
         pointer-events: none;
-        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        transition: opacity 0.4s ease;
         box-sizing: border-box;
       }
-      .share-sheet.visible { transform: translateY(0); pointer-events: auto; }
+      .share-sheet.visible { opacity: 1; pointer-events: auto; }
       .share-sheet-preview {
         border-radius: 7px;
         border: none;
@@ -1141,7 +1137,7 @@
       }
       .share-sheet-preview img {
         width: 100%;
-        max-height: calc(70vh - 180px);
+        max-height: calc(75vh - 180px);
         display: block;
         border-radius: 7px;
         object-fit: contain;
@@ -9108,6 +9104,7 @@
         clone.querySelectorAll('.chart-line, .gap-connector').forEach(function(el) {
           el.style.opacity = '1';
           el.style.strokeDashoffset = '0';
+          el.style.strokeWidth = '4';
           // Restore original dash pattern if any, otherwise remove dash
           var pattern = el.getAttribute('data-dashpattern');
           if (pattern) {
@@ -9140,6 +9137,12 @@
           var y = el.getAttribute('data-target-y');
           if (y) el.setAttribute('y', y);
         });
+        // Override axis label and annotation font size and weight (not value labels)
+        clone.querySelectorAll('.axis-label:not(.chart-value-label), .annotation-label').forEach(function(el) {
+          el.style.fontSize = '12px';
+          el.style.fontWeight = '300';
+        });
+
         // Reset any highlight labels
         clone.querySelectorAll('.highlight-label').forEach(function(el) {
           el.style.opacity = '1';
@@ -9224,7 +9227,7 @@
         var descH = descLines.length * descLineH;
 
         // Source
-        var srcFontSize = 9 * scale;
+        var srcFontSize = 10 * scale;
         var srcLineH = srcFontSize * 1.6;
         measure.font = '600 ' + srcFontSize + 'px "Open Sans", sans-serif';
         var srcLines = ctx.sourceText ? wrapText(measure, ctx.sourceText.toUpperCase(), maxTextW) : [];
@@ -9291,12 +9294,12 @@
 
         // Chart image — flush left to align with text padding
         c.drawImage(chart.img, 0, y, chartW, chartH);
-        y += chartH + gap;
+        y += chartH;
 
         // Source
         if (srcLines.length) {
-          c.font = '600 ' + srcFontSize + 'px "Open Sans", sans-serif';
-          c.fillStyle = '#888';
+          c.font = '400 ' + srcFontSize + 'px "Open Sans", sans-serif';
+          c.fillStyle = '#000';
           srcLines.forEach(function(line) {
             c.fillText(line, pad, y + srcFontSize);
             y += srcLineH;
@@ -9459,18 +9462,11 @@
       document.body.appendChild(sheetOverlay);
       document.body.appendChild(sheetEl);
 
-      // WhatsApp button
+      // WhatsApp button — same behaviour as floating CTA WhatsApp
       document.getElementById('share-sheet-wa').addEventListener('click', function() {
-        if (!currentBlob) return;
-        var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({
-            files: [file],
-            text: currentShareText
-          }).catch(function() {});
-        } else {
-          window.open('https://wa.me/?text=' + encodeURIComponent(currentShareText), '_blank');
-        }
+        var shareText = 'Britain\'s young people are among the brightest and most ambitious in the world, yet they\'re being let down across education, employment, housing and health. See how your area compares and sign our open letter.';
+        var shareUrl = window.location.href;
+        window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
         closeShareSheet();
       });
 
