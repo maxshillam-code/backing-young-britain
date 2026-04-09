@@ -2004,7 +2004,7 @@
       .share-btn-text-desktop { display: none; }
       .share-btn-text-mobile { display: inline; }
       .floating-cta-social-proof { right: 0; top: -2.2rem; padding: 0.25rem 0 0.25rem 0.6rem; }
-      .floating-cta-social-proof-text { font-size: 0.55rem; }
+      #floating-cta-social-proof-text { font-size: 0.8rem; }
       .pillar h2 { font-size: 2.2rem; }
       .chart-section-title { font-size: 1.4rem; }
     }
@@ -8331,20 +8331,35 @@
         var h = floatingCta.offsetHeight;
         floatingCta.style.minHeight = h + 'px';
 
-        // Hide the heading and set the user's name in the thank-you message
-        floatingCta.querySelector('h3').style.display = 'none';
         var userName = floatingForm.querySelector('[name="fullName"]').value.trim();
         document.getElementById('floating-cta-name').textContent = userName;
 
-        floatingForm.style.display = 'none';
-        floatingSuccess.style.display = 'block';
-        // Trigger reflow then fade in
-        floatingSuccess.offsetWidth;
-        floatingSuccess.classList.add('visible');
+        // Fade out all entry-state content simultaneously
+        var heading = floatingCta.querySelector('h3');
+        var socialProof = document.getElementById('floating-cta-social-proof');
+        var allContent = [heading, floatingForm, socialProof].concat(
+          Array.from(floatingForm.querySelectorAll('input, button'))
+        );
+        allContent.forEach(function(el) {
+          if (el) {
+            el.style.transition = 'opacity 0.25s ease';
+            el.style.opacity = '0';
+          }
+        });
 
-        // Fire confetti after success is visible so we can measure its width
-        spawnConfetti();
-        document.getElementById('floating-cta-close').style.display = '';
+        setTimeout(function() {
+          heading.style.display = 'none';
+          floatingForm.style.display = 'none';
+          if (socialProof) socialProof.style.display = 'none';
+          floatingSuccess.style.display = 'block';
+          // Trigger reflow then fade in
+          floatingSuccess.offsetWidth;
+          floatingSuccess.classList.add('visible');
+
+          // Fire confetti after success is visible so we can measure its width
+          spawnConfetti();
+          document.getElementById('floating-cta-close').style.display = '';
+        }, 250);
 
         // Nudge share arrow after confetti finishes + 300ms delay
         setTimeout(function() {
