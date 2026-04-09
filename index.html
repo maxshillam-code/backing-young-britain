@@ -8579,7 +8579,7 @@
   (function() {
     var LOCAL_HOUSING_DATA = null;
     var CONSTITUENCY_TOPO = null;
-    var HOUSING_MAP = null;
+    var HOUSING_MAP = window.HOUSING_MAP = null;
     var HOUSING_GEO_LAYER = null;
     var HOUSING_MAP_LOADED = false;
     var HOUSING_MAP_LOADING = false;
@@ -8635,7 +8635,7 @@
         var geojson = topojson.feature(CONSTITUENCY_TOPO, CONSTITUENCY_TOPO.objects[objectKey]);
 
         if (!HOUSING_MAP) {
-          HOUSING_MAP = L.map('housing-map', {
+          HOUSING_MAP = window.HOUSING_MAP = L.map('housing-map', {
             zoomControl: true,
             attributionControl: true,
             scrollWheelZoom: false
@@ -9152,8 +9152,8 @@
         var scale = 2;
         var vb = svg.viewBox.baseVal;
         // Add extra space for text that overflows the viewBox
-        var extraLeft = 10;
-        var extraRight = 20;
+        var extraLeft = 25;
+        var extraRight = 25;
         var extraTop = 5;
         var extraBottom = 25;
         var newVBX = vb.x - extraLeft;
@@ -9187,12 +9187,74 @@
           img.src = url;
         });
       }).then(function(chart) {
+        return composeShareImage(chart, ctx);
+      });
+    }
+
+    // Capture a Leaflet map using html2canvas, then compose with branding
+    function captureMapToBlob(mapEl, ctx) {
+      // Hide zoom controls, share buttons, and attribution before capture
+      var hideEls = mapEl.querySelectorAll('.leaflet-control-zoom, .leaflet-control-attribution, .map-share-btn');
+      hideEls.forEach(function(el) { el.style.display = 'none'; });
+
+      // Mark as map export for composition
+      ctx._isMap = true;
+
+      return loadHtml2Canvas().then(function() {
+        var scale = 2;
+        // Capture at actual visible size, not the CSS-set size
+        var rect = mapEl.getBoundingClientRect();
+        return html2canvas(mapEl, {
+          scale: scale,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          width: rect.width,
+          height: rect.height
+        });
+      }).then(function(mapCanvas) {
+        // Restore hidden elements
+        hideEls.forEach(function(el) { el.style.display = ''; });
+        var chart = {
+          img: mapCanvas,
+          w: mapCanvas.width,
+          h: mapCanvas.height
+        };
+        return composeShareImage(chart, ctx);
+      });
+    }
+
+    // Shared image composition: brand bar + title + desc + chart/map + source + CTA footer
+    function composeShareImage(chart, ctx) {
         var scale = 2;
         var pad = 24 * scale;
-        var chartW = chart.w;
-        var chartH = chart.h;
-        var contentW = chartW + pad * 2;
+        // Use a minimum content width so maps match chart images
+        var minContentW = 1196;
+        var naturalW = chart.w + pad * 2;
+        var contentW = Math.max(naturalW, minContentW);
         var maxTextW = contentW - pad * 2;
+        // For maps, crop 10% from edges (centred) to remove unshaded tile edges
+        var chartW, chartH;
+        if (ctx._isMap) {
+          var cropRatio = 0.9;
+          var cropW = Math.floor(chart.w * cropRatio);
+          var cropH = Math.floor(chart.h * cropRatio);
+          var offsetX = Math.floor((chart.w - cropW) / 2);
+          var offsetY = Math.floor((chart.h - cropH) / 2);
+          var croppedMap = document.createElement('canvas');
+          croppedMap.width = cropW;
+          croppedMap.height = cropH;
+          croppedMap.getContext('2d').drawImage(chart.img, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
+          chart.img = croppedMap;
+          chart.w = cropW;
+          chart.h = cropH;
+          chartW = chart.w;
+          chartH = chart.h;
+        } else {
+          chartW = contentW - pad * 2;
+          var chartScale = chartW / chart.w;
+          chartH = chart.h * chartScale;
+        }
 
         var measure = document.createElement('canvas').getContext('2d');
 
@@ -9279,6 +9341,7 @@
           c.fillStyle = '#000';
           if (descRichLines) {
             descRichLines.forEach(function(segments) {
+              if (segments._breakBefore) y += 8 * scale;
               drawRichLine(c, segments, pad, y + descFontSize, descFontSize);
               y += descLineH;
             });
@@ -9292,12 +9355,14 @@
           y += gap;
         }
 
-        // Chart image — flush left to align with text padding
-        c.drawImage(chart.img, 0, y, chartW, chartH);
+        // Chart/map image
+        var imgX = (contentW - chartW) / 2;
+        c.drawImage(chart.img, imgX, y, chartW, chartH);
         y += chartH;
 
         // Source
         if (srcLines.length) {
+          if (ctx._isMap) y += 5 * scale;
           c.font = '400 ' + srcFontSize + 'px "Open Sans", sans-serif';
           c.fillStyle = '#000';
           srcLines.forEach(function(line) {
@@ -9336,7 +9401,6 @@
         return new Promise(function(resolve) {
           trimmed.toBlob(function(blob) { resolve(blob); }, 'image/png');
         });
-      });
     }
 
     // Word-wrap helper (plain text)
@@ -9357,7 +9421,7 @@
       return lines;
     }
 
-    // Parse HTML string into [{text, bold}] spans
+    // Parse HTML string into [{text, bold, lineBreak}] spans
     function parseDescHtml(html) {
       var div = document.createElement('div');
       div.innerHTML = html;
@@ -9367,8 +9431,13 @@
           var t = node.textContent;
           if (t) spans.push({ text: t, bold: false });
         } else if (node.nodeType === 1) {
-          var isBold = node.tagName === 'B' || node.tagName === 'STRONG' || window.getComputedStyle(node).fontWeight >= 600;
-          if (isBold) {
+          var tag = node.tagName;
+          var isBold = tag === 'B' || tag === 'STRONG' || window.getComputedStyle(node).fontWeight >= 600;
+          var isBlock = tag === 'DIV' || tag === 'P' || tag === 'BR';
+          if (isBlock) {
+            spans.push({ text: '', bold: false, lineBreak: true });
+          }
+          if (isBold && !isBlock) {
             var t = node.textContent;
             if (t) spans.push({ text: t, bold: true });
           } else {
@@ -9387,6 +9456,10 @@
       // Flatten spans into words with bold flag
       var words = [];
       spans.forEach(function(span) {
+        if (span.lineBreak) {
+          words.push({ text: '', bold: false, lineBreak: true });
+          return;
+        }
         var parts = span.text.split(/(\s+)/);
         parts.forEach(function(p) {
           if (p) words.push({ text: p, bold: span.bold });
@@ -9398,6 +9471,13 @@
       var currentWidth = 0;
 
       words.forEach(function(w) {
+        if (w.lineBreak) {
+          if (currentLine.length) lines.push(currentLine);
+          currentLine = [];
+          currentLine._breakBefore = true;
+          currentWidth = 0;
+          return;
+        }
         measureCtx.font = w.bold ? boldFont : normalFont;
         var ww = measureCtx.measureText(w.text).width;
         if (currentWidth + ww > maxWidth && currentLine.length > 0) {
@@ -9462,10 +9542,21 @@
       document.body.appendChild(sheetOverlay);
       document.body.appendChild(sheetEl);
 
-      // WhatsApp button — same behaviour as floating CTA WhatsApp
+      // WhatsApp button — share image + text via Web Share API, fallback to wa.me
       document.getElementById('share-sheet-wa').addEventListener('click', function() {
         var shareText = 'Britain\'s young people are among the brightest and most ambitious in the world, yet they\'re being let down across education, employment, housing and health. See how your area compares and sign our open letter.';
         var shareUrl = window.location.href;
+        if (currentBlob) {
+          var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              text: shareText + ' ' + shareUrl
+            }).catch(function() {});
+            closeShareSheet();
+            return;
+          }
+        }
         window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
         closeShareSheet();
       });
@@ -9586,12 +9677,14 @@
         e.preventDefault();
         mapBtn.classList.add('loading');
         var mapEl = mapBtn.parentElement;
+        // Find the actual Leaflet map container inside
+        var leafletEl = mapEl.querySelector('.leaflet-container') || mapEl;
         var ctx = findMapContext(mapEl);
         var shareText = ctx.title || 'Map';
         if (ctx.desc) shareText += ': ' + ctx.desc;
         shareText += '\n\nbackingyoungbritain.co.uk';
 
-        captureChartToBlob(mapEl, ctx).then(function(blob) {
+        captureMapToBlob(leafletEl, ctx).then(function(blob) {
           mapBtn.classList.remove('loading');
           openShareSheet(blob, shareText);
         }).catch(function(err) {
