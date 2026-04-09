@@ -172,7 +172,6 @@
     html {
       scroll-behavior: smooth;
       font-size: 16px;
-      overflow-x: hidden;
     }
 
     body {
@@ -1124,30 +1123,36 @@
       .share-sheet {
         position: fixed;
         left: 0; right: 0; bottom: 0;
+        max-height: 70vh;
         background: linear-gradient(to top, rgba(245,245,245,0.97) 60%, rgba(245,245,245,0) 100%);
         border-radius: 5px 5px 0 0;
-        padding: 60px 20px calc(16px + env(safe-area-inset-bottom));
+        padding: 60px 20px calc(15px + env(safe-area-inset-bottom));
         z-index: 10000;
         transform: translateY(100%);
         pointer-events: none;
         transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        box-sizing: border-box;
       }
       .share-sheet.visible { transform: translateY(0); pointer-events: auto; }
       .share-sheet-preview {
-        width: 100%;
-        border-radius: 5px 5px 0 0;
-        border: 1px solid #eee;
-        border-bottom: none;
-        margin-bottom: 20px;
+        border-radius: 7px;
+        border: none;
+        margin-bottom: 15px;
       }
       .share-sheet-preview img {
         width: 100%;
+        max-height: calc(70vh - 180px);
         display: block;
-        border-radius: 5px 5px 0 0;
+        border-radius: 7px;
+        object-fit: contain;
+        object-position: center top;
       }
       .share-sheet-actions {
         display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 12px;
+        flex-shrink: 0;
       }
       .share-sheet-btn {
         flex: 1;
@@ -9204,7 +9209,7 @@
         var titleH = titleLines.length * titleLineH;
 
         // Description
-        var descFontSize = 20 * scale;
+        var descFontSize = 18 * scale;
         var descLineH = descFontSize * 1.5;
         measure.font = '400 ' + descFontSize + 'px "Open Sans", sans-serif';
         var descRichLines = null;
@@ -9227,20 +9232,21 @@
 
         // CTA footer bar
         var ctaFontSize = 18 * scale;
-        measure.font = '400 ' + ctaFontSize + 'px "Open Sans", sans-serif';
-        var ctaLines = ['See how your local area compares', 'and sign our open letter.'];
+        measure.font = '300 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        var ctaLines = ['See how your area compares at backingyoungbritain.co.uk'];
         var ctaLineH = ctaFontSize * 1.4;
-        var ctaH = brandH;
+        var ctaH = 65 * scale;
         var ctaPadV = (ctaH - ctaLines.length * ctaLineH) / 2;
 
         // Compose
         var gap = 12 * scale;
         var brandGap = 26 * scale;
         var titleGap = titleLines.length ? 14 * scale : 0;
-        var totalH = brandH + brandGap + pad + titleH + titleGap + descH + gap + chartH + gap + srcH + gap + ctaH;
+        // Use oversized canvas, trim after drawing
+        var maxH = (brandH + brandGap + pad + titleH + titleGap + descH + gap + chartH + gap + srcH + gap + ctaH) * 2;
         var finalCanvas = document.createElement('canvas');
         finalCanvas.width = contentW;
-        finalCanvas.height = totalH;
+        finalCanvas.height = maxH;
         var c = finalCanvas.getContext('2d');
 
         c.fillStyle = '#ffffff';
@@ -9302,32 +9308,30 @@
         c.fillStyle = '#E04B2D';
         c.fillRect(0, y, finalCanvas.width, ctaH);
 
-        var qrSize = ctaH - 2 * (10 * scale);
-        var qrX = finalCanvas.width - pad - qrSize;
-        var qrY = y + (ctaH - qrSize) / 2;
-        var ctaMaxTextW = qrX - pad - (10 * scale);
-
-        c.font = '400 ' + ctaFontSize + 'px "Open Sans", sans-serif';
         c.fillStyle = '#fff';
-        var ctaY = y + ctaPadV;
-        ctaLines.forEach(function(line) {
-          c.fillText(line, pad, ctaY + ctaFontSize);
-          ctaY += ctaLineH;
-        });
+        var ctaY = y + ctaPadV + ctaFontSize;
+        var ctaPrefix = 'See how your area compares at ';
+        var ctaDomain = 'backingyoungbritain.co.uk';
+        c.font = '300 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        var prefixW = c.measureText(ctaPrefix).width;
+        c.font = '500 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        var domainW = c.measureText(ctaDomain).width;
+        var totalTextW = prefixW + domainW;
+        var ctaX = (finalCanvas.width - totalTextW) / 2;
+        c.font = '300 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        c.fillText(ctaPrefix, ctaX, ctaY);
+        c.font = '500 ' + ctaFontSize + 'px "Open Sans", sans-serif';
+        c.fillText(ctaDomain, ctaX + prefixW, ctaY);
 
-        // Load and draw QR code
-        var ctaBarY = y;
+        // Trim canvas to exact content height
+        var finalH = y + ctaH;
+        var trimmed = document.createElement('canvas');
+        trimmed.width = finalCanvas.width;
+        trimmed.height = finalH;
+        trimmed.getContext('2d').drawImage(finalCanvas, 0, 0);
+
         return new Promise(function(resolve) {
-          var qrImg = new Image();
-          qrImg.onload = function() {
-            c.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
-            finalCanvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
-          };
-          qrImg.onerror = function() {
-            // If QR fails to load, still return the image without it
-            finalCanvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
-          };
-          qrImg.src = 'qr-code.png';
+          trimmed.toBlob(function(blob) { resolve(blob); }, 'image/png');
         });
       });
     }
@@ -9439,13 +9443,12 @@
       sheetEl.innerHTML =
         '<div class="share-sheet-preview"><img id="share-sheet-img" alt="Chart preview"></div>' +
         '<div class="share-sheet-actions">' +
-          '<button class="share-sheet-btn share-sheet-btn--wa" id="share-sheet-wa">' +
-            '<svg width="20" height="20" viewBox="0 0 720 720" fill="#fff"><path d="M360,0C161.18,0,0,161.18,0,360c0,65.41,17.45,126.75,47.94,179.61L0,720l187.02-44.21c51.34,28.18,110.28,44.21,172.98,44.21,198.82,0,360-161.18,360-360S558.82,0,360,0ZM360,655.52c-60.17,0-116.13-17.98-162.82-48.87l-110.49,28.14,30.99-105.61c-33.53-47.93-53.2-106.26-53.2-169.19,0-163.21,132.31-295.52,295.52-295.52s295.52,132.31,295.52,295.52-132.31,295.52-295.52,295.52Z"/><path d="M444.35,407.52l87.1,41.06c4,1.88,6.56,5.94,6.2,10.34-.94,11.46-5.54,34.43-26.13,55.02-58.12,58.12-162.49-7.64-166.74-10.18-25.67-13.79-50.06-32.24-73.19-55.36-23.12-23.12-41.58-47.52-55.37-73.19-2.55-4.24-68.31-108.61-10.18-166.74,20.59-20.59,43.56-25.19,55.02-26.13,4.41-.36,8.46,2.2,10.34,6.2l41.07,87.1c1.94,4.12,1.09,9.02-2.13,12.24l-30.61,30.61c-6.62,6.62-8.56,16.93-4,25.11,11.17,20.03,26.19,39.32,43.59,57.07,17.75,17.4,37.04,32.43,57.07,43.59,8.18,4.56,18.48,2.62,25.11-4l30.61-30.61c3.22-3.22,8.12-4.08,12.24-2.13Z"/></svg>' +
-            'WhatsApp' +
+          '<span style="font-family:\'Open Sans\',sans-serif;font-size:1rem;font-weight:500;color:#000;align-self:center;">Share</span>' +
+          '<button class="share-sheet-btn" id="share-sheet-wa" style="flex:none;background:none;border:none;padding:8px;cursor:pointer;">' +
+            '<svg width="22" height="22" viewBox="0 0 720 720" fill="#000"><path d="M360,0C161.18,0,0,161.18,0,360c0,65.41,17.45,126.75,47.94,179.61L0,720l187.02-44.21c51.34,28.18,110.28,44.21,172.98,44.21,198.82,0,360-161.18,360-360S558.82,0,360,0ZM360,655.52c-60.17,0-116.13-17.98-162.82-48.87l-110.49,28.14,30.99-105.61c-33.53-47.93-53.2-106.26-53.2-169.19,0-163.21,132.31-295.52,295.52-295.52s295.52,132.31,295.52,295.52-132.31,295.52-295.52,295.52Z"/><path d="M444.35,407.52l87.1,41.06c4,1.88,6.56,5.94,6.2,10.34-.94,11.46-5.54,34.43-26.13,55.02-58.12,58.12-162.49-7.64-166.74-10.18-25.67-13.79-50.06-32.24-73.19-55.36-23.12-23.12-41.58-47.52-55.37-73.19-2.55-4.24-68.31-108.61-10.18-166.74,20.59-20.59,43.56-25.19,55.02-26.13,4.41-.36,8.46,2.2,10.34,6.2l41.07,87.1c1.94,4.12,1.09,9.02-2.13,12.24l-30.61,30.61c-6.62,6.62-8.56,16.93-4,25.11,11.17,20.03,26.19,39.32,43.59,57.07,17.75,17.4,37.04,32.43,57.07,43.59,8.18,4.56,18.48,2.62,25.11-4l30.61-30.61c3.22-3.22,8.12-4.08,12.24-2.13Z"/></svg>' +
           '</button>' +
-          '<button class="share-sheet-btn share-sheet-btn--ig" id="share-sheet-ig">' +
-            '<svg width="20" height="20" viewBox="0 0 504 504" fill="#fff"><path d="M252,45.4c67.3,0,75.3.3,101.8,1.5,24.6,1.1,37.9,5.2,46.8,8.7,11.8,4.6,20.2,10,29,18.8s14.3,17.2,18.8,29c3.4,8.9,7.5,22.2,8.7,46.8,1.2,26.5,1.5,34.5,1.5,101.8s-.3,75.3-1.5,101.8c-1.1,24.6-5.2,37.9-8.7,46.8-4.6,11.8-10,20.2-18.8,29s-17.2,14.3-29,18.8c-8.9,3.4-22.2,7.5-46.8,8.7-26.5,1.2-34.5,1.5-101.8,1.5s-75.3-.3-101.8-1.5c-24.6-1.1-37.9-5.2-46.8-8.7-11.8-4.6-20.2-10-29-18.8s-14.3-17.2-18.8-29c-3.4-8.9-7.5-22.2-8.7-46.8-1.2-26.5-1.5-34.5-1.5-101.8s.3-75.3,1.5-101.8c1.1-24.6,5.2-37.9,8.7-46.8,4.6-11.8,10-20.2,18.8-29s17.2-14.3,29-18.8c8.9-3.4,22.2-7.5,46.8-8.7,26.5-1.2,34.5-1.5,101.8-1.5M252,0C183.5,0,175,.3,148.2,1.5,121.5,2.7,103.1,7,87,13c-16.6,6.5-30.7,15.1-44.8,29.2S23.4,70.4,17,87C11,103.1,6.7,121.5,5.5,148.2,4.3,175,4,183.5,4,252s.3,77,1.5,103.8c1.2,26.7,5.5,45.1,11.5,61.2,6.5,16.6,15.1,30.7,29.2,44.8S70.4,480.6,87,487c16.1,6,34.5,10.3,61.2,11.5S183.5,500,252,500s77-.3,103.8-1.5c26.7-1.2,45.1-5.5,61.2-11.5,16.6-6.5,30.7-15.1,44.8-29.2s22.7-28.2,29.2-44.8c6-16.1,10.3-34.5,11.5-61.2s1.5-30.2,1.5-103.8-.3-77-1.5-103.8c-1.2-26.7-5.5-45.1-11.5-61.2-6.5-16.6-15.1-30.7-29.2-44.8S437.6,23.4,421,17c-16.1-6-34.5-10.3-61.2-11.5S320.5,4,252,4Z" transform="translate(-4)"/><path d="M252,122.6A129.4,129.4,0,1,0,381.4,252,129.4,129.4,0,0,0,252,122.6Zm0,213.4A84,84,0,1,1,336,252,84,84,0,0,1,252,336Z" transform="translate(-4)"/><circle cx="382.4" cy="121.6" r="30.2"/></svg>' +
-            'Stories' +
+          '<button class="share-sheet-btn" id="share-sheet-share" style="flex:none;background:none;border:none;padding:8px;cursor:pointer;">' +
+            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline points="8 8 12 4 16 8"/><line x1="12" y1="4" x2="12" y2="14"/></svg>' +
           '</button>' +
         '</div>' +
         '<div class="share-sheet-toast" id="share-sheet-toast"></div>';
@@ -9471,14 +9474,15 @@
         closeShareSheet();
       });
 
-      // Instagram Stories button — share image via system share sheet
-      document.getElementById('share-sheet-ig').addEventListener('click', function() {
+      // Default share button — opens system share sheet
+      document.getElementById('share-sheet-share').addEventListener('click', function() {
         if (!currentBlob) return;
         var file = new File([currentBlob], 'backing-young-britain.png', { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           navigator.share({
             files: [file],
-            title: 'Backing Young Britain'
+            title: 'Backing Young Britain',
+            text: currentShareText
           }).catch(function() {});
         } else {
           // Fallback: download the image
@@ -9489,7 +9493,7 @@
           a.click();
           setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
           var toast = document.getElementById('share-sheet-toast');
-          toast.textContent = 'Image saved — open Instagram and add it to your Story';
+          toast.textContent = 'Image saved';
           toast.classList.add('visible');
         }
         closeShareSheet();
@@ -9508,26 +9512,20 @@
         sheetOverlay.classList.add('visible');
         sheetEl.classList.add('visible');
       });
-      var scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = '-' + scrollY + 'px';
-      document.body.style.left = '0';
-      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
-      document.body.dataset.shareScrollY = scrollY;
+      document.documentElement.style.overflow = 'hidden';
+      var nav = document.getElementById('nav');
+      if (nav) nav.style.display = 'none';
     }
 
     function closeShareSheet() {
       if (!sheetEl) return;
       sheetOverlay.classList.remove('visible');
       sheetEl.classList.remove('visible');
-      var scrollY = parseInt(document.body.dataset.shareScrollY || '0', 10);
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
       document.body.style.overflow = '';
-      window.scrollTo(0, scrollY);
+      document.documentElement.style.overflow = '';
+      var nav = document.getElementById('nav');
+      if (nav) nav.style.display = '';
       var toast = document.getElementById('share-sheet-toast');
       if (toast) { toast.classList.remove('visible'); toast.textContent = ''; }
       if (currentImageUrl) {
