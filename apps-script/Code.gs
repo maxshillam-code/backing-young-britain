@@ -94,7 +94,7 @@ function doGet(e) {
   return HtmlService.createHtmlOutput(
     '<html><body style="font-family:sans-serif;text-align:center;padding:60px 20px">'
     + '<h2>Backing Young Britain</h2>'
-    + '<p>Visit <a href="' + SITE_URL + '">backingyoungbritain.org</a></p>'
+    + '<p>Visit <a href="' + SITE_URL + '">backingyoungbritain.co.uk</a></p>'
     + '</body></html>'
   );
 }
