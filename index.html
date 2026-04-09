@@ -1974,7 +1974,7 @@
         gap: 0.4rem 1rem !important;
         align-items: center;
         justify-items: start;
-        padding: 0.6rem 1rem !important;
+        padding: 0.6rem 1rem 0.6rem 1.5rem !important;
       }
       .floating-cta .floating-cta-close { grid-column: 1 / -1; grid-row: 1; justify-self: end; }
       .floating-cta h3 { grid-column: 1; grid-row: 1; margin: 0; }
@@ -1985,7 +1985,7 @@
       .floating-cta-form button[type="submit"] { grid-column: 1; grid-row: 2; width: 100%; }
       .floating-cta-success { grid-column: 1 / -1; justify-self: stretch; width: 100% !important; font-size: 1.2rem; }
       .floating-cta-success p { text-align: left !important; font-size: 1.05rem !important; font-weight: 600; line-height: 1; padding-top: 0.3rem; }
-      .floating-cta-success strong { font-size: 1.1rem !important; }
+      .floating-cta-success strong { font-size: 1.15rem !important; }
       .floating-cta-success-row { flex-direction: column; align-items: flex-start !important; gap: 0; justify-content: center; height: 100%; }
       .floating-cta-success .floating-cta-share {
         margin-left: 0;
@@ -1998,7 +1998,7 @@
       }
       .floating-cta-share-btn { color: var(--black) !important; order: 1; font-weight: 400 !important; font-size: 1.05rem !important; }
       .floating-cta-share-btn svg { display: none; }
-      .floating-cta-share-mobile svg { fill: #333 !important; stroke: none !important; }
+      .floating-cta-share-mobile svg { fill: #000 !important; stroke: none !important; }
       #floating-cta-share-ig { display: none; }
       #floating-cta-share-wa { order: 2; }
       .share-btn-text-desktop { display: none; }
@@ -8281,7 +8281,7 @@
         var h = ctaRect.height;
         var tw = refWidth;
         var offsets = isMobile
-          ? [tw * 0.25, -tw * 0.3, 0, tw * 0.35, -tw * 0.2, tw * 0.15, -tw * 0.35]
+          ? [tw * 0.4, -tw * 0.45, tw * 0.35, tw * 0.48, -tw * 0.35, -tw * 0.4, -tw * 0.5]
           : [tw * 0.35, -tw * 0.4, 0, tw * 0.45, -tw * 0.3, tw * 0.2, -tw * 0.45];
         var shades = ['#ED7A66', '#E04B2D', '#F6A99F', '#E8634A', '#F29283', '#E04B2D', '#ED7A66'];
         var sizes = [
@@ -8294,13 +8294,13 @@
           { w: 15, h: 15 }
         ];
         var pieces = [
-          { peakX: 18,  peakY: -50, x: 25,  endY: h * 0.5, rot: 200 },
-          { peakX: -18, peakY: -45, x: -25, endY: h * 0.6, rot: 140 },
-          { peakX: 22,  peakY: -38, x: -14, endY: h * 0.7, rot: 170 },
-          { peakX: -22, peakY: -55, x: -30, endY: h * 0.75, rot: -100 },
-          { peakX: 14,  peakY: -60, x: 20,  endY: h * 0.85, rot: -60 },
-          { peakX: -30, peakY: -52, x: -38, endY: h * 0.55, rot: 120 },
-          { peakX: 32,  peakY: -48, x: 40,  endY: h * 0.65, rot: -150 }
+          { peakX: 10,  peakY: -55, x: 15,  endY: h * 0.5, rot: 200 },
+          { peakX: -10, peakY: -50, x: -15, endY: h * 0.6, rot: 140 },
+          { peakX: 12,  peakY: -45, x: -8,  endY: h * 0.7, rot: 170 },
+          { peakX: -12, peakY: -60, x: -18, endY: h * 0.75, rot: -100 },
+          { peakX: 8,   peakY: -65, x: 12,  endY: h * 0.85, rot: -60 },
+          { peakX: -14, peakY: -58, x: -20, endY: h * 0.55, rot: 120 },
+          { peakX: 15,  peakY: -52, x: 20,  endY: h * 0.65, rot: -150 }
         ];
         pieces.forEach(function(p, i) {
           setTimeout(function() {
