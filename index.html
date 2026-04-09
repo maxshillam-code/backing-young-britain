@@ -792,7 +792,11 @@
       height: auto;
       display: block;
     }
-
+    @media (max-width: 600px) {
+      .classroom-pictogram {
+        margin-top: -1rem;
+      }
+    }
     /* Education chart */
     .edu-chart {
       padding: 0;
@@ -817,6 +821,9 @@
     #chart-housebuilding svg {
       width: 100%;
       margin-left: 0;
+    }
+    #chart-housebuilding {
+      margin-top: -1.5rem;
     }
     #chart-housebuilding .edu-chart-source {
       margin-top: 5px;
@@ -1959,6 +1966,7 @@
       .pillar-lead--hea-mobile { display: block; }
       .pillar-lead { font-size: 1rem; }
       #employment, #housing, #health { margin-top: -3.2rem; }
+      #health { padding-bottom: 3rem; }
       .hero-sub-mobile {
         display: block;
         text-align: left;
@@ -1971,13 +1979,16 @@
       .postcode-result { text-align: left; }
       .hero-sub .postcode-form { justify-content: stretch !important; width: 100%; }
       .hero-sub .postcode-input { flex: 1; min-width: 0; }
-      .petition-intro-mobile { display: block; color: var(--white); font-family: 'Open Sans', sans-serif; font-size: 1.1rem; line-height: 1.7; font-weight: 200; margin-bottom: 1rem; }
+      .petition-left { display: flex; flex-direction: column; }
+      .petition-intro-mobile { display: block; color: var(--white); font-family: 'Open Sans', sans-serif; font-size: 1.1rem; line-height: 1.7; font-weight: 200; margin-bottom: 1rem; order: 3; margin-top: 1rem; }
+      .petition-text { margin-top: -4.5rem; }
+      .petition-text p:first-child { margin-top: 0; }
       .petition-text p:first-child strong { display: none; }
       .petition { padding-top: 3rem; }
       .petition-grid { grid-template-columns: 1fr; gap: 2rem; }
       .petition-text { position: static; }
       .petition-form { grid-template-columns: 1fr 1fr; }
-      .petition-form input { font-size: 16px; padding: 0.3rem 0.7rem; }
+      .petition-form input { font-size: 16px; padding: 0.39rem 0.91rem; }
       .petition-form input[name="fullName"] { grid-column: 1 / -1; order: 1; }
       .petition-form input[name="email"] { grid-column: 1 / -1; order: 2; }
       .petition-form input[name="postcode"] { grid-column: 1; order: 3; }
@@ -2390,7 +2401,6 @@
 
         <h2>In <em>education</em></h2>
         <p class="pillar-lead pillar-lead--edu-desktop" style="color:#000">The education system is failing young people at each stage. School absence is nearly double pre-pandemic levels. College funding has only just returned to where it was a decade ago. And graduates leave with £53,000 of debt, into one of the highest-debt systems in the world <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
-        <p class="pillar-lead pillar-lead--edu-desktop" style="color:#000; margin-top:0.75em">The promise was the great equaliser. The reality is underfunding, disengagement, and debt.</p>
         <p class="pillar-lead pillar-lead--edu-mobile" style="color:#000">The education system is failing young people at every stage: school absence nearly double pre-pandemic levels, college funding only just back to where it was a decade ago, and graduates leaving with £53,000 of debt <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
       </div>
       <div class="data-cards">
@@ -2985,8 +2995,7 @@
 
 
         <h2>In <em>employment</em></h2>
-        <p class="pillar-lead pillar-lead--emp-desktop" style="color:#000">Work hard, get ahead. Yet, the jobs young people were promised are vanishing.</p>
-        <p class="pillar-lead pillar-lead--emp-desktop" style="color:#000; margin-top:0.75em">AI is eliminating entry-level roles. Rising employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Apprenticeship starts for under-25s have fallen nearly 40% in a decade. And 1.2 million graduates applied for just 17,000 roles <a href="https://fortune.com/2025/10/28/gen-z-job-crisis-real-1-2-million-graduates-17000-jobs-uk-ai-labor-market-colleges/" target="_blank" style="text-decoration:underline; color:inherit">(Forbes)</a>. Labour's recent solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
+        <p class="pillar-lead pillar-lead--emp-desktop" style="color:#000">AI is eliminating entry-level roles. Rising employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Apprenticeship starts for under-25s have fallen nearly 40% in a decade. And 1.2 million graduates applied for just 17,000 roles <a href="https://fortune.com/2025/10/28/gen-z-job-crisis-real-1-2-million-graduates-17000-jobs-uk-ai-labor-market-colleges/" target="_blank" style="text-decoration:underline; color:inherit">(Forbes)</a>. Labour's recent solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
         <p class="pillar-lead pillar-lead--emp-mobile" style="color:#000">The jobs young people were promised are vanishing. AI is eliminating entry-level roles and employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Labour's recent solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
       </div>
       <div class="data-cards">
@@ -3365,7 +3374,6 @@
 
         <h2>In <em>health</em></h2>
         <p class="pillar-lead pillar-lead--hea-desktop" style="color:#000">One in five young people now has a diagnosable mental health condition, double what it was a generation ago. Over half a million are on a waiting list for support <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">(BMA)</a>. Youth services funding has been cut by 76% in real terms since 2010 <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">(YMCA)</a>.</p>
-        <p class="pillar-lead pillar-lead--hea-desktop" style="color:#000; margin-top:0.75em">They were promised a safety net, and what they got was a waiting list.</p>
         <p class="pillar-lead pillar-lead--hea-mobile" style="color:#000">One in five young people now has a diagnosable mental health condition, double a generation ago. Over half a million are on a waiting list <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">(BMA)</a>, and youth services funding has been cut 76% in real terms since 2010 <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">(YMCA)</a>.</p>
       </div>
       <div class="data-cards">
@@ -3373,7 +3381,7 @@
           <div class="chart-tabs-row">
             <div class="chart-section-title" style="margin-bottom:0">Mental Health Condition</div>
           </div>
-          <div class="chart-tab-desc"><b class="loc">In England</b>, 1 in 5 children had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
+          <div class="chart-tab-desc"><b class="loc">In England</b>, 1 in 5 young people had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
         </div>
         <div class="classroom-pictogram" id="classroom-pictogram">
           <div class="classroom-svg-wrap" id="classroom-svg-wrap"></div>
@@ -4416,30 +4424,33 @@
         if (oldLeg) oldLeg.remove();
         if (oldSrc) oldSrc.remove();
         Array.from(container.children).forEach(function(c) { if (c.tagName !== 'svg') c.remove(); });
-        var gridViewH = 235;
-        if (svg) { svg.innerHTML = ''; svg.setAttribute('viewBox', '0 0 '+W+' '+gridViewH); } else {
+        if (svg) { svg.innerHTML = ''; } else {
           container.innerHTML = '';
-          svg = svgEl('svg', { viewBox: '0 0 '+W+' '+gridViewH, preserveAspectRatio: 'xMidYMid meet' });
+          svg = svgEl('svg', { preserveAspectRatio: 'xMidYMid meet' });
           container.appendChild(svg);
         }
 
-        var gridRows = 5, gridCols = 10;
+        var gridRows = 5, gridCols = 5;
         var totalHouses = gridRows * gridCols;
         var pct = Math.min(cfg.built / cfg.need, 1);
         var filledCount = pct * totalHouses; // fractional for partial fill
         var builtColor = cfg.builtColor || '#E04B2D';
         var greyColor = '#ebebeb';
 
-        // Layout: left-align with description text, +5% width, +10% height
-        var gridW = W - 22, gridH = 220;
-        var gridY = 5;
-        var cellW = gridW / gridCols;
-        var cellH = gridH / gridRows;
-        var houseW = cellW * 0.78;
-        var houseH = cellH * 0.78;
+        // Layout: fixed cell size (same as original 10-col grid), viewBox fits actual grid
+        var origGridW = W - 22, origGridH = 220;
+        var cellW = origGridW / 10;
+        var cellH = 26.6;
+        var houseW = (origGridW / 10) * 0.464;
+        var houseH = (origGridH / 5) * 0.464;
         var houseOffX = (cellW - houseW) / 2;
         var houseOffY = (cellH - houseH) / 2;
         var gridX = 0;
+        var gridY = 5;
+        var gridW = gridCols * cellW;
+        var gridH = gridRows * cellH;
+        var actualW = gridW;
+        var actualH = gridY + gridH;
 
         // House shape path (same proportions as existing icon)
         function hPath(x, y, w, h) {
@@ -4458,6 +4469,8 @@
 
         var defs = svg.querySelector('defs') || svgEl('defs', {});
         if (!svg.querySelector('defs')) svg.insertBefore(defs, svg.firstChild);
+
+        svg.setAttribute('viewBox', '0 0 ' + actualW + ' ' + actualH);
 
         var gridG = svgEl('g', { 'class': 'house-grid-group' });
 
@@ -4578,10 +4591,10 @@
 
         var COLS = 6, ROWS = 5;
         var isMobilePic = window.innerWidth <= 600;
-        var ICON_W = isMobilePic ? 33.6 : 15.9;
-        var ICON_H = isMobilePic ? 40.32 : 18.9;
+        var ICON_W = isMobilePic ? 33.6 : 8.36;
+        var ICON_H = isMobilePic ? 40.32 : 9.95;
         var PAD_X = isMobilePic ? 8 : 6;
-        var PAD_Y = isMobilePic ? 1.125 : 1.5;
+        var PAD_Y = isMobilePic ? 1.125 : 0.3;
         var gridOffX = 4;
         var cellW = ICON_W + PAD_X;
         var cellH = ICON_H + PAD_Y;
@@ -4589,9 +4602,9 @@
 
         // Whiteboard dimensions
         var boardMargin = 5.6;
-        var boardH = 27.1;
+        var boardH = 12.08;
         var boardY = 2;
-        var boardW = (gridW + gridOffX * 2) * 0.29;
+        var boardW = (gridW + gridOffX * 2) * 0.292;
         var gridY = isMobilePic ? 2 : boardY + boardH + boardMargin;
 
         var fullW = gridW + gridOffX * 2;
@@ -4622,13 +4635,12 @@
             'L' + (cx + sw) + ',' + (torsoTop + sr) +
             'Q' + (cx + sw) + ',' + torsoTop + ' ' + (cx + sw - sr) + ',' + torsoTop + 'Z';
 
-          if (!isMobilePic) {
+          if (true) {
             // Desk
             var deskY = torsoBot + h * 0.04;
             var deskH = h * 0.06;
             var deskL = x + w * 0.05;
             var deskR = x + w * 0.95;
-            // Table legs
             var legTop = deskY + deskH;
             var legBot = legTop + (y + h - legTop) * 0.6;
             var legW = deskH;
@@ -4662,7 +4674,7 @@
 
         // Whiteboard (desktop only)
         if (!isMobilePic) {
-          var borderW = ICON_H * 0.06; // match desk thickness
+          var borderW = ICON_H * 0.06;
           svg.appendChild(svgEl('rect', {
             x: boardX + '', y: boardY + '',
             width: boardW + '', height: boardH + '',
@@ -4675,8 +4687,7 @@
             rx: '0.5', ry: '0.5',
             fill: '#fff'
           }));
-          // Whiteboard tray (centered on bottom edge)
-          var trayH = 2.2;
+          var trayH = 1.1;
           var trayY = boardY + boardH - trayH / 2;
           svg.appendChild(svgEl('rect', {
             x: (boardX + boardW * 0.15) + '', y: trayY + '',
@@ -4684,9 +4695,8 @@
             rx: '0.3', ry: '0.3',
             fill: '#ebebeb'
           }));
-          // Whiteboard rubber (small block sitting on tray)
-          var rubberW = boardW * 0.08;
-          var rubberH = 1.96;
+          var rubberW = boardW * 0.12;
+          var rubberH = 0.98;
           var rubberX = boardX + boardW * 0.72;
           var rubberY = trayY - rubberH;
           svg.appendChild(svgEl('rect', {
@@ -9202,15 +9212,18 @@
 
       return loadHtml2Canvas().then(function() {
         var scale = 2;
-        // Capture at actual visible size, not the CSS-set size
         var rect = mapEl.getBoundingClientRect();
         return html2canvas(mapEl, {
           scale: scale,
           useCORS: true,
           allowTaint: true,
-          backgroundColor: null,
+          backgroundColor: '#ffffff',
           width: rect.width,
-          height: rect.height
+          height: rect.height,
+          scrollX: -window.scrollX,
+          scrollY: -window.scrollY,
+          x: rect.left,
+          y: rect.top
         });
       }).then(function(mapCanvas) {
         // Restore hidden elements
@@ -9233,21 +9246,8 @@
         var naturalW = chart.w + pad * 2;
         var contentW = Math.max(naturalW, minContentW);
         var maxTextW = contentW - pad * 2;
-        // For maps, crop 10% from edges (centred) to remove unshaded tile edges
         var chartW, chartH;
         if (ctx._isMap) {
-          var cropRatio = 0.9;
-          var cropW = Math.floor(chart.w * cropRatio);
-          var cropH = Math.floor(chart.h * cropRatio);
-          var offsetX = Math.floor((chart.w - cropW) / 2);
-          var offsetY = Math.floor((chart.h - cropH) / 2);
-          var croppedMap = document.createElement('canvas');
-          croppedMap.width = cropW;
-          croppedMap.height = cropH;
-          croppedMap.getContext('2d').drawImage(chart.img, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
-          chart.img = croppedMap;
-          chart.w = cropW;
-          chart.h = cropH;
           chartW = chart.w;
           chartH = chart.h;
         } else {
