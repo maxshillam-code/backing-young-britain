@@ -3354,7 +3354,7 @@
               <button class="chart-view-btn active" data-view="national">National</button>
             </div>
           </div>
-          <div class="chart-tab-desc" id="housebuilding-tab-desc"><b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,000.</div>
+          <div class="chart-tab-desc" id="housebuilding-tab-desc"><b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,400.</div>
         </div>
         <div class="edu-chart" id="chart-housebuilding"></div>
 
@@ -3371,7 +3371,7 @@
 
         <div id="u34athome-local" style="display:none;">
           <div id="u34athome-nearest-table"></div>
-          <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/families/datasets/youngadultslivingwiththeirparents" target="_blank" rel="noopener">ONS Young adults living with their parents</a></div>
+          <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://docs.google.com/spreadsheets/d/1dNHo057y4fFjoz_pZxroYjXAXVObS_GvHevioqqx3C4/edit?usp=sharing" target="_blank" rel="noopener">Office for National Statistics</a></div>
         </div>
 
       </div>
@@ -3398,7 +3398,7 @@
         </div>
         <div class="classroom-pictogram" id="classroom-pictogram">
           <div class="classroom-svg-wrap" id="classroom-svg-wrap"></div>
-          <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-of-children-and-young-people-in-england" target="_blank" rel="noopener">NHS Digital, Mental Health of Children and Young People surveys</a></div>
+          <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://docs.google.com/spreadsheets/d/1WqcnV3lx3oi5xgLanccVf_7XE8o5CGYSJu4BhVC83ZE/edit?usp=sharing" target="_blank" rel="noopener">NHS England</a></div>
         </div>
         <div style="margin-top: 2.5rem">
           <div class="chart-section-title">Referrals to Completions</div>
@@ -3418,7 +3418,7 @@
               <div class="housing-map-legend-bar"></div>
               <span>More per head</span>
             </div>
-            <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://www.gov.uk/government/collections/section-251-materials" target="_blank" rel="noopener">Section 251 outturn data, DLUHC</a></div>
+            <div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://docs.google.com/spreadsheets/d/103My4CJ_qQk-xRc44MIbUcLIVvx2PT7h4sohA-6By9w/edit?usp=sharing" target="_blank" rel="noopener">Department for Education</a></div>
           </div>
         </div>
       </div>
@@ -3609,11 +3609,27 @@
 
         // X labels (use mobile-specific labels if available)
         var resolvedXLabels = (isMobile && cfg.xLabelsMobile) ? cfg.xLabelsMobile : (cfg.xLabels || []);
+        var plotLeftX = cPAD.left;
+        var plotRightX = cW - padRight;
+        // For non-bar charts, edge labels snap to plot edges with start/end anchors; middle labels
+        // are remapped into a shrunken span so the visual spacing between all label centers stays even.
+        var isBarLabels = cfg.type === 'bar';
+        var estLabelHalfW = isMobile ? 17 : 14;
+        var usableLeftX = isBarLabels ? plotLeftX : plotLeftX + estLabelHalfW;
+        var usableRightX = isBarLabels ? plotRightX : plotRightX - estLabelHalfW;
         resolvedXLabels.forEach(function(item) {
           var idx, text;
           if (typeof item === 'object' && item !== null) { idx = item.i; text = item.t; }
           else { idx = item; var d = lines[0].data[idx]; text = d ? d.label : ''; }
-          svg.appendChild(svgEl('text', { 'class':'axis-label', x:xPos(idx), y:cH-cPAD.bottom+(isMobile?24:18), 'text-anchor':'middle' }, text));
+          var naturalX = xPos(idx);
+          var ratio = localPW > 0 ? (naturalX - plotLeftX) / localPW : 0;
+          var xp = usableLeftX + ratio * (usableRightX - usableLeftX);
+          var anchor = 'middle';
+          if (!isBarLabels) {
+            if (naturalX <= plotLeftX + 0.5) { xp = plotLeftX; anchor = 'start'; }
+            else if (naturalX >= plotRightX - 0.5) { xp = plotRightX; anchor = 'end'; }
+          }
+          svg.appendChild(svgEl('text', { 'class':'axis-label', x:xp, y:cH-cPAD.bottom+(isMobile?24:18), 'text-anchor':anchor }, text));
         });
 
         // Lines/bars/icons, gaps, dots
@@ -3747,7 +3763,7 @@
                 cx: xPos(i).toFixed(1), cy: yPos(d.value, actualSeries).toFixed(1),
                 r: 0, fill: 'transparent',
                 'data-year': d.label || '',
-                'data-value': tfmtA(d.value),
+                'data-value': tfmtA(d.value, d),
                 'data-raw': d.value,
                 'data-r': 0
               });
@@ -3834,7 +3850,7 @@
                 cx: barXPos(i).toFixed(1), cy: yPos(d.value, series).toFixed(1),
                 r: 0, fill: color,
                 'data-year': d.label || '',
-                'data-value': tfmt(d.value),
+                'data-value': tfmt(d.value, d),
                 'data-raw': d.value,
                 'data-r': 0
               });
@@ -3895,7 +3911,7 @@
                 cx:xPos(i).toFixed(1), cy:yPos(d.value,series).toFixed(1),
                 r:0, fill:color,
                 'data-year': d.label || '',
-                'data-value': tfmt(d.value),
+                'data-value': tfmt(d.value, d),
                 'data-raw': d.value,
                 'data-r': dotR
               });
@@ -4133,7 +4149,7 @@
         'chart-absence-overall': {
           lines: [{color:'#E04B2D', data:absData([4.5,4.6,4.6,4.7,4.8,4.7,null,4.6,7.5,7.4,7.2,6.8])}],
           yAxis: {min:0, max:10, step:2, format:function(v){return v+'%';}},
-          xLabels: [0,2,4,7,9,11],
+          xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:0,text:'4.5%'},{index:8,text:'7.5%'},{index:11,text:'6.8%'}],
           legend: [{color:'#E04B2D', label:'Overall absence rate'}],
@@ -4142,7 +4158,7 @@
         'chart-absence-persistent': {
           lines: [{color:'#E04B2D', data:absData([10.7,11.0,10.5,10.8,11.2,10.9,null,12.1,22.5,21.2,19.9,18.1])}],
           yAxis: {min:0, max:25, step:5, format:function(v){return v+'%';}},
-          xLabels: [0,2,4,7,9,11],
+          xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:2,text:'10.5%'},{index:8,text:'22.5%'},{index:11,text:'18.1%'}],
           legend: [{color:'#E04B2D', label:'Persistent absentees (10%+ sessions missed)'}],
@@ -4151,7 +4167,7 @@
         'chart-absence-severe': {
           lines: [{color:'#E04B2D', data:absData([0.6,0.6,0.6,0.7,0.8,0.8,null,1.1,1.6,2.0,2.3,2.4])}],
           yAxis: {min:0, max:3, step:1, format:function(v){return v===0?'0%':v.toFixed(1)+'%';}},
-          xLabels: [0,2,4,7,9,11],
+          xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:0,text:'0.6%'},{index:11,text:'2.4%'}],
           legend: [{color:'#E04B2D', label:'Severe absentees (50%+ sessions missed)'}],
@@ -4160,7 +4176,7 @@
         'chart-sixth-form': {
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7875,8272,8109,7651,7091,6858,6825,6829,6525,6205,5947,5773,6031,6268,6401,6518,6595])}],
           yAxis: {min:5000, max:9000, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
-          xLabels: [0,3,6,9,12,15],
+          xLabels: [{i:0,t:'2009-10'},{i:3.2,t:'2012-13'},{i:6.4,t:'2015-16'},{i:9.6,t:'2019-20'},{i:12.8,t:'2022-23'},{i:16,t:'2025-26'}],
           highlights: [{index:1,text:'\u00A38,272'},{index:11,text:'\u00A35,773',below:true},{index:16,text:'\u00A36,595'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Sixth Forms (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -4168,7 +4184,7 @@
         'chart-colleges': {
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7879,8532,8821,8185,7970,7783,7768,7601,7595,7542,7313,7163,7652,7649,7509,7519,7860])}],
           yAxis: {min:6500, max:9500, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
-          xLabels: [0,3,6,9,12,15],
+          xLabels: [{i:0,t:'2009-10'},{i:3.2,t:'2012-13'},{i:6.4,t:'2015-16'},{i:9.6,t:'2019-20'},{i:12.8,t:'2022-23'},{i:16,t:'2025-26'}],
           highlights: [{index:2,text:'\u00A38,821'},{index:11,text:'\u00A37,163',below:true},{index:16,text:'\u00A37,860'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Colleges (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -4185,7 +4201,7 @@
         'chart-outstanding': {
           lines: [{color:'#E04B2D', data:(function(){var v=[7.8,10.2,12.5,14.9,17.6,20.3,23.1,26.5,30.5,35.5,43.6,54.4,64.7,76.3,89.3,104.5,121.8,140.1,160.6,182.2,205.6,236.2,266.6];return v.map(function(val,i){var y=2002+i,y2=(y+1)%100;return{label:y+'-'+(y2<10?'0'+y2:y2),value:val*1e9};});})()}],
           yAxis: {min:0, max:300e9, step:100e9, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1e9)+'bn';}},
-          xLabels: [{i:0,t:'2002-03'},{i:4,t:'2006-07'},{i:8,t:'2010-11'},{i:12,t:'2014-15'},{i:16,t:'2018-19'},{i:20,t:'2022-23'}],
+          xLabels: [{i:0,t:'2002-03'},{i:4.4,t:'2006-07'},{i:8.8,t:'2011-12'},{i:13.2,t:'2015-16'},{i:17.6,t:'2020-21'},{i:22,t:'2024-25'}],
           highlights: [{index:0,text:'\u00A37.8bn',below:false},{index:22,text:'\u00A3267bn'}],
           legend: [{color:'#E04B2D', label:'Total outstanding balance'}],
           source: slcSrc, tooltipFormat:function(v){return '\u00A3'+(v/1e9).toFixed(1)+'bn';}, reserveLegendHeight: true
@@ -4196,7 +4212,7 @@
             {color:'#606060', dotRadius:3, data:absData([45,46,47,51,53,50,null,52,55,67,71,73]), tooltipFormat:function(v){return '\u00A3'+v+'/month repayment';}}
           ],
           yAxis: {min:0, max:250, step:50, format:function(v){return '\u00A3'+v;}},
-          xLabels: [0,2,4,7,9,11],
+          xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'HMRC', sublabel:'Data Change'}],
           highlights: [{index:11,series:0,text:'\u00A3222\nper month',anchor:'middle',below:true,color:'#E04B2D'},{index:11,series:1,text:'\u00A373\nper month',anchor:'middle',below:true,color:'#606060'}],
           legend: [{color:'#E04B2D',label:'Interest added per borrower'},{color:'#606060',label:'Repayment per borrower'}],
@@ -4219,7 +4235,7 @@
           lines: [{color:'#E5664D', data:halfYearlyAgg(qtrData(2016,[13.7,13.6,13.3,12.5,12.4,12.3,12.0,12.4,12.0,11.3,11.2,11.8,11.0,11.6,11.9,11.2,12.4,13.0,15.2,14.8,13.7,12.9,11.9,11.2,10.7,10.3,10.1,11.7,11.7,12.3,12.0,11.9,13.2,13.4,14.8,14.7,14.2,14.1,15.3,16.1]))}],
           yAxis: {min:0, max:25, step:5, format:function(v){return v%1===0?v+'%':v.toFixed(1)+'%';}},
           xLabels: [{i:0.5,t:'2016'},{i:2.5,t:'2017'},{i:4.5,t:'2018'},{i:6.5,t:'2019'},{i:8.5,t:'2020'},{i:10.5,t:'2021'},{i:12.5,t:'2022'},{i:14.5,t:'2023'},{i:16.5,t:'2024'},{i:18.5,t:'2025'}],
-          xLabelsMobile: [{i:0.5,t:'2016'},{i:4.5,t:'2018'},{i:8.5,t:'2020'},{i:12.5,t:'2022'},{i:16.5,t:'2024'}],
+          xLabelsMobile: [{i:0.5,t:'2016'},{i:6.5,t:'2019'},{i:12.5,t:'2022'},{i:18.5,t:'2025'}],
           annotations: [{atIndex:8, label:'COVID'}],
           highlights: [{index:0,text:'13.7%'},{index:19,text:'15.7%'}],
           legend: [{color:'#E04B2D', label:'16\u201324 unemployment rate (seasonally adjusted)'}],
@@ -4241,8 +4257,8 @@
             return result;
           })()}],
           yAxis: {min:100000, max:600000, step:100000, format:function(v){return Math.round(v/1000)+'k';}},
-          xLabels: [{i:0.5,t:'2016'},{i:2.5,t:'2017'},{i:4.5,t:'2018'},{i:6.5,t:'2019'},{i:8.5,t:'2020'},{i:10.5,t:'2021'},{i:12.5,t:'2022'},{i:14.5,t:'2023'},{i:16.5,t:'2024'},{i:18.5,t:'2025'},{i:20,t:'2026'}],
-          xLabelsMobile: [{i:0.5,t:'2016'},{i:4.5,t:'2018'},{i:8.5,t:'2020'},{i:12.5,t:'2022'},{i:16.5,t:'2024'},{i:20,t:'2026'}],
+          xLabels: [{i:0.5,t:'2016'},{i:2.45,t:'2017'},{i:4.4,t:'2018'},{i:6.35,t:'2019'},{i:8.3,t:'2020'},{i:10.25,t:'2021'},{i:12.2,t:'2022'},{i:14.15,t:'2023'},{i:16.1,t:'2024'},{i:18.05,t:'2025'},{i:20,t:'2026'}],
+          xLabelsMobile: [{i:0.5,t:'2016'},{i:4.4,t:'2018'},{i:8.3,t:'2020'},{i:12.2,t:'2022'},{i:16.1,t:'2024'},{i:20,t:'2026'}],
           annotations: [{atIndex:8, label:'COVID'}],
           highlights: [{index:3,text:'162K'},{index:9,text:'519K'},{index:20,text:'327K'}],
           legend: [{color:'#E04B2D', label:'18\u201324 claimant count (seasonally adjusted)'}],
@@ -4259,7 +4275,7 @@
           ]}],
           yAxis: {min:100000, max:300000, step:50000, format:function(v){return (v/1000).toFixed(0)+'K';}},
           xLabels: [{i:0,t:'2010/11'},{i:2,t:'2012/13'},{i:4,t:'2014/15'},{i:6,t:'2016/17'},{i:8,t:'2018/19'},{i:10,t:'2020/21'},{i:12,t:'2022/23'},{i:14,t:'2024/25'}],
-          xLabelsMobile: [{i:0,t:'2010/11'},{i:4,t:'2014/15'},{i:8,t:'2018/19'},{i:12,t:'2022/23'}],
+          xLabelsMobile: [{i:0,t:'2010/11'},{i:3.5,t:'2014/15'},{i:7,t:'2017/18'},{i:10.5,t:'2021/22'},{i:14,t:'2024/25'}],
           annotations: [{atIndex:9,label:'COVID'}],
           highlights: [{index:1,text:'291.3K'},{index:10,text:'159.8K'},{index:14,text:'172.2K'}],
           legend: [{color:'#E04B2D', label:'Apprenticeship starts (aged 16\u201324)'}],
@@ -4283,67 +4299,75 @@
           source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dRW8HAsug2mk9xqNeNam0EbX5L4mxMzg8kMkfK5B6G4/edit?usp=sharing'}
         },
         'chart-rent': {
-          lines: [{color:'#E04B2D', dotRadius:2.5, data:simpleYears(2010,[379,387,398,408,414,424,438,450,454,460,469,474,489,520,568,610]),
+          lines: [{color:'#E04B2D', dotRadius:2.5, data:simpleYears(2010,[378,386,397,406,413,424,438,450,454,460,469,474,489,520,568,610]),
             tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}}],
           yAxis: {min:300, max:700, step:100, format:function(v){return '\u00A3'+v;}},
-          xLabels: [{i:0,t:'2010'},{i:2,t:'2012'},{i:4,t:'2014'},{i:6,t:'2016'},{i:8,t:'2018'},{i:10,t:'2020'},{i:12,t:'2022'},{i:14,t:'2024'}],
-          highlights: [{index:0,text:'\u00A3379'},{index:15,text:'\u00A3610'}],
+          xLabels: [{i:0,t:'2010'},{i:3,t:'2013'},{i:6,t:'2016'},{i:9,t:'2019'},{i:12,t:'2022'},{i:15,t:'2025'}],
+          highlights: [{index:0,text:'\u00A3378'},{index:15,text:'\u00A3610'}],
           legend: [{color:'#E04B2D', label:'Average monthly rent'}],
-          source: {text:'ONS Index of Private Housing Rental Prices (PIPR)', url:'https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/indexofprivatehousingrentalprices/latest'},
+          source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing'},
           tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}
         },
         'chart-rent-1bed': {
-          lines: [{color:'#E04B2D', dotRadius:2.5, data:simpleYears(2010,[666,680,700,716,728,744,771,793,799,810,833,837,855,912,1000,1082]),
+          lines: [{color:'#E04B2D', dotRadius:2.5, data:simpleYears(2010,[664,678,698,714,725,744,771,793,799,810,833,837,855,912,1000,1082]),
             tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}}],
           yAxis: {min:500, max:1200, step:100, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
-          xLabels: [{i:0,t:'2010'},{i:2,t:'2012'},{i:4,t:'2014'},{i:6,t:'2016'},{i:8,t:'2018'},{i:10,t:'2020'},{i:12,t:'2022'},{i:14,t:'2024'}],
-          highlights: [{index:0,text:'\u00A3666'},{index:15,text:'\u00A31,082'}],
+          xLabels: [{i:0,t:'2010'},{i:3,t:'2013'},{i:6,t:'2016'},{i:9,t:'2019'},{i:12,t:'2022'},{i:15,t:'2025'}],
+          highlights: [{index:0,text:'\u00A3664'},{index:15,text:'\u00A31,082'}],
           legend: [{color:'#E04B2D', label:'Average monthly rent (1 bed flat)'}],
-          source: {text:'ONS Index of Private Housing Rental Prices (PIPR)', url:'https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/indexofprivatehousingrentalprices/latest'},
+          source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing'},
           tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}
         },
         'chart-housebuilding': {
           type: 'houseGrid',
           built: 208600,
-          need: 370000,
+          need: 370400,
           builtColor: '#E04B2D',
           legend: [{color:'#E04B2D', label:'Net additional dwellings'},{color:'#fff', label:'Shortfall vs target', outlineOnly:true}],
-          source: {text:'DLUHC, Live Table 120', url:'https://www.gov.uk/government/statistical-data-sets/live-tables-on-net-supply-of-housing'}
+          source: {text:'Ministry of Housing, Communities and Local Government', url:'https://docs.google.com/spreadsheets/d/1YzjrITs6JsQIgln1FAE89n6b0lR3GkwnXbYLvugBqhs/edit?usp=sharing'}
         },
-        'chart-u34athome': {
-          lines: [{color:'#E04B2D', data:simpleYears(2005,[2585,2644,2644,2703,2845,2855,2977,3136,3291,3303,3295,3288,3371,3352,3487,3568,3591,3424,3567,3631])}],
-          yAxis: {min:2000, max:4000, step:500, format:function(v){return (v/1000).toFixed(1).replace(/\.0$/,'')+'M';}},
-          xLabels: [{i:0,t:'2005'},{i:3,t:'2008'},{i:6,t:'2011'},{i:9,t:'2014'},{i:12,t:'2017'},{i:15,t:'2020'},{i:18,t:'2023'}],
-          highlights: [{index:0,text:'2.6M'},{index:19,text:'3.6M'}],
-          legend: [{color:'#E04B2D', label:'16\u201334 year olds living with parents (thousands)'}],
-          source: {text:'ONS Young adults living with their parents', url:'https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/families/datasets/youngadultslivingwiththeirparents'},
-          tooltipFormat: function(v){return (v/1000).toFixed(1).replace(/\.0$/,'')+'M';}
-        },
+        'chart-u34athome': (function(){
+          var U34_PCT = {'2005':22,'2006':22,'2007':22,'2008':22,'2009':23,'2010':23,'2011':24,'2012':25,'2013':26,'2014':26,'2015':25,'2016':25,'2017':26,'2018':26,'2019':27,'2020':28,'2021':28,'2022':27,'2023':28,'2024':28};
+          var u34fmt = function(v, d){
+            var base = (v/1000).toFixed(1).replace(/\.0$/,'')+'M';
+            var pct = d && U34_PCT[d.label];
+            return pct ? '<span style="display:inline-block;line-height:1.35">'+base+'<br>('+pct+'% of total)</span>' : base;
+          };
+          return {
+            lines: [{color:'#E04B2D', data:simpleYears(2005,[2585,2644,2644,2703,2845,2855,2977,3136,3291,3303,3295,3288,3371,3352,3487,3568,3591,3424,3567,3631])}],
+            yAxis: {min:2000, max:4000, step:500, format:function(v){return (v/1000).toFixed(1).replace(/\.0$/,'')+'M';}},
+            xLabels: [{i:0,t:'2005'},{i:3.17,t:'2008'},{i:6.33,t:'2011'},{i:9.5,t:'2014'},{i:12.67,t:'2018'},{i:15.83,t:'2021'},{i:19,t:'2024'}],
+            highlights: [{index:0,text:'2.6M'},{index:19,text:'3.6M'}],
+            legend: [{color:'#E04B2D', label:'16\u201334 year olds living with parents (thousands)'}],
+            source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dNHo057y4fFjoz_pZxroYjXAXVObS_GvHevioqqx3C4/edit?usp=sharing'},
+            tooltipFormat: u34fmt
+          };
+        })(),
         'chart-mh-referrals': {
           lines: [
             {color:'#E04B2D', dotRadius:2.5,
               data: [
                 {label:'2013-14',value:1118990},{label:'2014-15',value:1267193},{label:'2015-16',value:1399088},
-                {label:'2016-17',value:1391360},{label:'2017-18',value:1440000},{label:'2018-19',value:1604000},
-                {label:'2019-20',value:1694740},{label:'2020-21',value:1410000},{label:'2021-22',value:1810000},
-                {label:'2022-23',value:1760000},{label:'2023-24',value:1830000},{label:'2024-25',value:1810000}
+                {label:'2016-17',value:1385664},{label:'2017-18',value:1439957},{label:'2018-19',value:1603643},
+                {label:'2019-20',value:1694790},{label:'2020-21',value:1456446},{label:'2021-22',value:1812596},
+                {label:'2022-23',value:1759581},{label:'2023-24',value:1829202},{label:'2024-25',value:1813432}
               ],
               tooltipFormat: function(v){return 'Referrals: '+Math.round(v).toLocaleString('en-GB');}},
             {color:'#777', dotRadius:2.5,
               data: [
                 {label:'2013-14',value:364343},{label:'2014-15',value:468881},{label:'2015-16',value:537131},
-                {label:'2016-17',value:567106},{label:'2017-18',value:580000},{label:'2018-19',value:606000},
-                {label:'2019-20',value:606000},{label:'2020-21',value:520000},{label:'2021-22',value:688000},
-                {label:'2022-23',value:672000},{label:'2023-24',value:671648},{label:'2024-25',value:670419}
+                {label:'2016-17',value:567106},{label:'2017-18',value:554709},{label:'2018-19',value:582556},
+                {label:'2019-20',value:606192},{label:'2020-21',value:634649},{label:'2021-22',value:664087},
+                {label:'2022-23',value:672193},{label:'2023-24',value:671648},{label:'2024-25',value:670419}
               ],
               tooltipFormat: function(v){return 'Finished: '+Math.round(v).toLocaleString('en-GB');}}
           ],
           yAxis: {min:0, max:2000000, step:500000, format:function(v){return v===0?'0':(v/1000000).toFixed(1).replace(/\.0$/,'')+'M';}},
-          xLabels: [{i:0,t:'2013-14'},{i:3,t:'2016-17'},{i:6,t:'2019-20'},{i:9,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           highlights: [{index:0, series:0, text:'1.1M', color:'#E04B2D'},{index:11, series:0, text:'1.8M', color:'#E04B2D'},{index:0, series:1, text:'364K', color:'#777', below:true},{index:11, series:1, text:'670K', color:'#777', below:true}],
-          gapLabels: [{index:0, text:'755K'},{index:5, text:'998K'},{index:11, text:'1.14M'}],
+          gapLabels: [{index:0, text:'755K'},{index:5, text:'1.02M'},{index:11, text:'1.14M'}],
           legend: [{color:'#E04B2D', label:'Referrals received'},{color:'#777', label:'Finished course of treatment'}],
-          source: {text:'NHS Digital, Mental Health Services Dataset', url:'https://digital.nhs.uk/data-and-information/publications/statistical/mental-health-services-monthly-statistics'}
+          source: {text:'NHS England', url:'https://docs.google.com/spreadsheets/d/1oc_9dgbs4VkTZSNixRsKNJX1gs1M68_91Z-J71gVzlY/edit?usp=sharing'}
         },
         'chart-youth-funding': {
           lines: [
@@ -4361,7 +4385,7 @@
           xLabels: [{i:0,t:'2012-13'},{i:2,t:'2014-15'},{i:4,t:'2016-17'},{i:6,t:'2018-19'},{i:8,t:'2020-21'},{i:10,t:'2022-23'},{i:12,t:'2024-25'}],
           highlights: [{index:0, series:0, text:'£71.55', color:'#E04B2D'},{index:12, series:0, text:'£37.43', color:'#E04B2D', below:true}],
           legend: [{color:'#E04B2D', label:'Expenditure per young person (0-17)'}],
-          source: {text:'Section 251 outturn data, DLUHC', url:'https://www.gov.uk/government/collections/section-251-materials'}
+          source: {text:'Department for Education', url:'https://docs.google.com/spreadsheets/d/103My4CJ_qQk-xRc44MIbUcLIVvx2PT7h4sohA-6By9w/edit?usp=sharing'}
         }
       };
 
@@ -6008,6 +6032,22 @@
 
     function fmtCurrency(v) { return '\u00A3' + v.toLocaleString('en-GB'); }
 
+    function evenXLabels(yearLabels, count) {
+      var n = yearLabels.length;
+      if (n === 0) return [];
+      if (count >= n) return yearLabels.map(function(lbl, i) { return { i: i, t: lbl }; });
+      if (count < 2) count = 2;
+      var out = [];
+      for (var k = 0; k < count; k++) {
+        var pos = k * (n - 1) / (count - 1);
+        var nearest = Math.round(pos);
+        if (nearest < 0) nearest = 0;
+        if (nearest >= n) nearest = n - 1;
+        out.push({ i: pos, t: yearLabels[nearest] });
+      }
+      return out;
+    }
+
     // === DYNAMIC GRAPH DESCRIPTIONS ===
     var CHART_DESC_CONFIGS = {
       'panel-debt':               { chartId: 'chart-debt',              metric: 'average student debt upon graduation',                                    unit: 'currency', hasLA: false },
@@ -6395,9 +6435,9 @@
     }
 
     var RENT_NATIONAL_FALLBACK = {
-      rent:    [379,387,398,408,414,424,438,450,454,460,469,474,489,520,568,610],
+      rent:    [378,386,397,406,413,424,438,450,454,460,469,474,489,520,568,610],
       pct:     [27,28,28,28,28,28,28,28,27,26,26,26,26,25,25,26],
-      rent1bed:[666,680,700,716,728,744,771,793,799,810,833,837,855,912,1000,1082],
+      rent1bed:[664,678,698,714,725,744,771,793,799,810,833,837,855,912,1000,1082],
       pct1bed: [48,49,49,49,49,48,49,49,47,46,47,46,45,44,45,47]
     };
 
@@ -6499,13 +6539,8 @@
       var yMin = Math.floor((dMin - range * 0.15) / 500) * 500;
       var yMax = Math.ceil((dMax + range * 0.15) / 500) * 500;
 
-      // X labels: every other + last
-      var xLabels = [];
-      for (var i = 0; i < n; i++) {
-        if (i % 2 === 0 || i === n - 1) xLabels.push(i);
-      }
-
       var data = trend.map(function(d) { return { label: d.year, value: d.value }; });
+      var xLabels = evenXLabels(data.map(function(d) { return d.label; }), Math.min(n, Math.ceil(n / 2) + 1));
 
       createChart(chartId, {
         lines: [{ color: lineColor, data: data, dotRadius: 3, tooltipFormat: fmtCurrency }],
@@ -6809,7 +6844,7 @@
 
       container.style.display = '';
       container.innerHTML = '<div id="mh-trust-map-leaflet" style="width:100%;height:370px;border-radius:3px;background:var(--cream);"></div>' +
-        '<div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://digital.nhs.uk/data-and-information/publications/statistical/psychological-therapies-annual-reports-on-the-use-of-iapt-services" target="_blank" rel="noopener">NHS England, Talking Therapies data, 2024-25</a></div>';
+        '<div class="edu-chart-source" style="margin-top:5px">Source: <a href="https://docs.google.com/spreadsheets/d/1oc_9dgbs4VkTZSNixRsKNJX1gs1M68_91Z-J71gVzlY/edit?usp=sharing" target="_blank" rel="noopener">NHS England</a></div>';
 
       var map = L.map('mh-trust-map-leaflet', {
         zoomControl: true,
@@ -6999,7 +7034,7 @@
       createChart(chartId, {
         lines: [{ color: absCfg.color, data: data, dotRadius: 3, tooltipFormat: pctFmt }],
         yAxis: { min: 0, max: absCfg.yMax, step: absCfg.yStep, format: yFmt },
-        xLabels: [{ i: 0, t: '2013-14' }, { i: 2, t: '2015-16' }, { i: 4, t: '2017-18' }, { i: 7, t: '2020-21' }, { i: 9, t: '2022-23' }, { i: 11, t: '2024-25' }],
+        xLabels: [{ i: 0, t: '2013-14' }, { i: 2.2, t: '2015-16' }, { i: 4.4, t: '2017-18' }, { i: 6.6, t: '2020-21' }, { i: 8.8, t: '2022-23' }, { i: 11, t: '2024-25' }],
         annotations: [{ atGap: true, label: 'COVID' }],
         highlights: highlights,
         legend: [{ color: absCfg.color, label: absCfg.legend + ' \u2014 ' + laName }],
@@ -7212,13 +7247,9 @@
       var covidIdx = yearLabels.indexOf('2020');
       var annotations = covidIdx >= 0 ? [{ atIndex: covidIdx, label: 'COVID' }] : [];
 
-      // X labels: all years
       var xLabels = [];
-      var xLabelsMobile = [];
-      for (var i = 0; i < n; i++) {
-        xLabels.push(i);
-        if (i % 2 === 0) xLabelsMobile.push(i);
-      }
+      for (var i = 0; i < n; i++) xLabels.push(i);
+      var xLabelsMobile = evenXLabels(yearLabels, Math.min(n, 6));
 
       var data = values.map(function(v, i) { return { label: yearLabels[i], value: v }; });
 
@@ -7285,11 +7316,8 @@
       var annotations = covidIdx >= 0 ? [{ atIndex: covidIdx, label: 'COVID' }] : [];
 
       var xLabels = [];
-      var xLabelsMobile = [];
-      for (var i = 0; i < n; i++) {
-        xLabels.push(i);
-        if (i % 2 === 0) xLabelsMobile.push(i);
-      }
+      for (var i = 0; i < n; i++) xLabels.push(i);
+      var xLabelsMobile = evenXLabels(years, Math.min(n, 5));
 
       var data = rawValues.map(function(v, i) { return { label: years[i], value: v }; });
 
@@ -7362,7 +7390,7 @@
         need: need,
         builtColor: lineColor,
         legend: [{ color: lineColor, label: 'Net additional dwellings \u2014 ' + theRegion(regionName) }, { color: '#fff', label: 'Shortfall vs need', outlineOnly: true }],
-        source: { text: 'DLUHC, Live Table 122', url: 'https://www.gov.uk/government/statistical-data-sets/live-tables-on-net-supply-of-housing' }
+        source: { text: 'Ministry of Housing, Communities and Local Government', url: 'https://docs.google.com/spreadsheets/d/1YzjrITs6JsQIgln1FAE89n6b0lR3GkwnXbYLvugBqhs/edit?usp=sharing' }
       });
 
       resetChart(chart);
@@ -7380,7 +7408,7 @@
       scheduleChartAnimation(chart);
       // Restore national description
       var desc = document.getElementById('housebuilding-tab-desc');
-      if (desc) desc.innerHTML = '<b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,000.';
+      if (desc) desc.innerHTML = '<b class="loc">In England</b>, 208,600 net additional dwellings were added in 2024-25, <b>just</b> <b>56%</b> of the government target of 370,400.';
     }
 
     function buildRentChart(regionName) {
@@ -7408,8 +7436,7 @@
       if (yMin < 0) yMin = 0;
       var yMax = Math.ceil((dMax + range * 0.08) / tickStep) * tickStep;
 
-      var xLabels = [];
-      for (var i = 0; i < n; i += 2) xLabels.push({i: i, t: years[i]});
+      var xLabels = evenXLabels(years, Math.min(n, 6));
 
       var data = rawValues.map(function(v, i) { return { label: years[i], value: v }; });
 
@@ -7425,7 +7452,7 @@
           { index: n - 1, text: '\u00A3' + rawValues[n - 1].toLocaleString('en-GB'), series: 0, anchor: 'end' }
         ],
         legend: [{ color: lineColor, label: 'Average monthly rent \u2014 ' + theRegion(regionName) }],
-        source: { text: 'ONS Index of Private Housing Rental Prices (PIPR)', url: 'https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/indexofprivatehousingrentalprices/latest' },
+        source: { text: 'Office for National Statistics', url: 'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing' },
         tooltipFormat: fmtVal
       });
 
@@ -7468,8 +7495,7 @@
       if (yMin < 0) yMin = 0;
       var yMax = Math.ceil((dMax + range * 0.08) / tickStep) * tickStep;
 
-      var xLabels = [];
-      for (var i = 0; i < n; i += 2) xLabels.push({i: i, t: years[i]});
+      var xLabels = evenXLabels(years, Math.min(n, 6));
 
       var data = rawValues.map(function(v, i) { return { label: years[i], value: v }; });
 
@@ -7485,7 +7511,7 @@
           { index: n - 1, text: '\u00A3' + rawValues[n - 1].toLocaleString('en-GB'), series: 0, anchor: 'end' }
         ],
         legend: [{ color: lineColor, label: 'Average monthly rent (1 bed flat) \u2014 ' + theRegion(regionName) }],
-        source: { text: 'ONS Index of Private Housing Rental Prices (PIPR)', url: 'https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/indexofprivatehousingrentalprices/latest' },
+        source: { text: 'Office for National Statistics', url: 'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing' },
         tooltipFormat: fmtVal
       });
 
@@ -7633,12 +7659,26 @@
         yearIndices[yr].push(xi);
       }
       var yearKeys = Object.keys(yearIndices);
-      var xLabelsMobile = [];
+      var yearCenters = [];
       for (var yk = 0; yk < yearKeys.length; yk++) {
         var idxs = yearIndices[yearKeys[yk]];
         var center = (idxs[0] + idxs[idxs.length - 1]) / 2;
+        yearCenters.push(center);
         xLabels.push({ i: center, t: yearKeys[yk] });
-        if (yk % 2 === 0) xLabelsMobile.push({ i: center, t: yearKeys[yk] });
+      }
+      var xLabelsMobile = [];
+      var mobileCount = Math.min(yearKeys.length, 5);
+      if (yearCenters.length > 0) {
+        var firstC = yearCenters[0], lastC = yearCenters[yearCenters.length - 1];
+        for (var mk = 0; mk < mobileCount; mk++) {
+          var pos = mobileCount === 1 ? firstC : firstC + mk * (lastC - firstC) / (mobileCount - 1);
+          var nearest = 0, minD = Infinity;
+          for (var yj = 0; yj < yearCenters.length; yj++) {
+            var dd = Math.abs(yearCenters[yj] - pos);
+            if (dd < minD) { minD = dd; nearest = yj; }
+          }
+          xLabelsMobile.push({ i: pos, t: yearKeys[nearest] });
+        }
       }
 
       var data = values.map(function(v, i) { return { label: labels[i], value: v }; });
