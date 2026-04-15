@@ -2370,8 +2370,8 @@
         <dl class="hero-stats">
           <div class="hero-stat hero-stat--emigration">
             <div class="hero-stat-inner">
-              <dt class="hero-stat-label">Net emigration of 16–34 year olds in 2025.<br><span style="display:inline-block;margin-top:0.5rem">Top destinations:<br>Dubai, Australia, Canada.</span></dt>
-              <dd class="hero-stat-number">111,000</dd>
+              <dt class="hero-stat-label">Brits who leave the UK are under 35.<br><span style="display:inline-block;margin-top:0.5rem">Just 57% of those returning are.</span></dt>
+              <dd class="hero-stat-number">3 in 4</dd>
             </div>
             <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/internationalmigration" target="_blank" rel="noopener noreferrer" class="stat-source">Source: ONS</a>
           </div>
@@ -3005,8 +3005,8 @@
 
 
         <h2>In <em>employment</em></h2>
-        <p class="pillar-lead pillar-lead--emp-desktop" style="color:#000">AI is eliminating entry-level roles. Rising employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Apprenticeship starts for under-25s have fallen nearly 40% in a decade. And 1.2 million graduates applied for just 17,000 roles <a href="https://fortune.com/2025/10/28/gen-z-job-crisis-real-1-2-million-graduates-17000-jobs-uk-ai-labor-market-colleges/" target="_blank" style="text-decoration:underline; color:inherit">(Forbes)</a>. Labour's recent solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
-        <p class="pillar-lead pillar-lead--emp-mobile" style="color:#000">The jobs young people were promised are vanishing. AI is eliminating entry-level roles and employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Labour's recent solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
+        <p class="pillar-lead pillar-lead--emp-desktop" style="color:#000">AI is displacing entry-level roles while rising employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Apprenticeship starts for under-25s have fallen nearly 40% in a decade. Graduate vacancies now attract 140 applications each, up from 86 just two years ago <a href="https://ise.org.uk/knowledge/insights/492/apprenticeships_rise_as_graduate_vacancies_drop_8/" target="_blank" style="text-decoration:underline; color:inherit">(ISE)</a>. The government's response? Deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
+        <p class="pillar-lead pillar-lead--emp-mobile" style="color:#000">The jobs young people were promised are vanishing. AI is eliminating entry-level roles and employer NICs have made hiring juniors 7% more expensive <a href="https://www.britishchambers.org.uk/news/2026/03/the-growing-threat-to-entry-level-jobs-in-the-age-of-ai/" target="_blank" style="text-decoration:underline; color:inherit">(BCC)</a>. Recent government solutions have been deemed <em>'inadequate'</em> <a href="https://www.economist.com/britain/2026/03/19/britains-youngsters-are-increasingly-out-of-work?giftId=ZWQyMDEzZDYtNDlhYi00NGU4LTg1MWUtMTZkNWJiNmRhMjAx&utm_campaign=gifted_article" target="_blank" style="text-decoration:underline; color:inherit">(The Economist)</a>.</p>
       </div>
       <div class="data-cards">
         <div style="margin-top: 0">
@@ -6264,18 +6264,18 @@
         return boldLocation(location) + ', ' + fmtValue(data.last.value, config.unit) + ' of economically active 16\u201324 year olds were unemployed in ' + fmtHalf(data.last.year) + ', ' + dirText + ' versus ' + fmtHalf(ref.year) + '.';
       }
       if (panelId === 'panel-claimant') {
-        var claimAbs = Math.round(Math.abs(diff)).toLocaleString('en-GB');
-        var claimDirText;
-        if (Math.abs(diff) < threshold) {
-          claimDirText = '<b>flat</b>';
-        } else if (diff > 0) {
-          claimDirText = '<b>up ' + claimAbs + '</b>';
-        } else {
-          claimDirText = '<b>down ' + claimAbs + '</b>';
-        }
         var claimRefYear = fmtHalf(ref.year);
         var claimLoc = (location === 'the UK') ? '<b class="loc">In the UK</b>' : '<b class="loc">In ' + location + '</b>';
-        return claimLoc + ', there were ' + fmtValue(data.last.value, config.unit) + ' under 24s receiving unemployment benefits in ' + fmtHalf(data.last.year) + ', ' + claimDirText + ' versus ' + claimRefYear + '.';
+        var claimAge = isLocal ? '16-24' : '18-24';
+        var claimChangeText;
+        if (Math.abs(diff) < threshold) {
+          claimChangeText = '<b>unchanged from</b> ' + claimRefYear;
+        } else if (diff > 0) {
+          claimChangeText = '<b>up from</b> ' + fmtValue(ref.value, config.unit) + ' in ' + claimRefYear;
+        } else {
+          claimChangeText = '<b>down from</b> ' + fmtValue(ref.value, config.unit) + ' in ' + claimRefYear;
+        }
+        return claimLoc + ', an average of ' + fmtValue(data.last.value, config.unit) + ' ' + claimAge + ' year olds were claiming unemployment benefits in ' + fmtHalf(data.last.year) + ', ' + claimChangeText + '.';
       }
       if (panelId === 'panel-apprenticeships' && data.max) {
         var appRef = data.max;
@@ -6300,6 +6300,9 @@
           neetDirText = '<b>up ' + neetPct + '</b>';
         } else {
           neetDirText = '<b>down ' + neetPct + '</b>';
+        }
+        if (panelId === 'panel-neet') {
+          return boldLocation(location) + ', an average of ' + fmtValue(data.last.value, config.unit) + ' 16\u201324 year olds were not in education, employment or training in ' + data.last.year + ', ' + neetDirText + ' versus ' + ref.year + '.';
         }
         return boldLocation(location) + ', there were ' + fmtValue(data.last.value, config.unit) + ' ' + config.metric + ' in ' + data.last.year + ', ' + neetDirText + ' versus ' + ref.year + '.';
       }
