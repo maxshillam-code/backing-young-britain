@@ -367,6 +367,7 @@
       transition: background-size 0.6s ease;
     }
     .hero h1 .heading-break-mobile { display: none; }
+    .hero h1 .heading-break-desktop { display: inline; }
     .hero h1 .typing-char {
       visibility: hidden;
     }
@@ -1134,7 +1135,7 @@
         left: 0; right: 0; bottom: 0;
         max-height: 75vh;
         background: rgb(245,245,245);
-        border-radius: 5px 5px 0 0;
+        border-radius: 15px 15px 0 0;
         padding: 25px 20px calc(5px + env(safe-area-inset-bottom));
         z-index: 10000;
         opacity: 0;
@@ -1144,7 +1145,7 @@
       }
       .share-sheet.visible { opacity: 1; pointer-events: auto; }
       .share-sheet-preview {
-        border-radius: 7px;
+        border-radius: 10px;
         border: none;
         margin-bottom: 15px;
       }
@@ -1152,20 +1153,22 @@
         width: 100%;
         max-height: calc(75vh - 180px);
         display: block;
-        border-radius: 7px;
+        border-radius: 10px;
         object-fit: contain;
         object-position: center top;
       }
       .share-sheet-actions {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         gap: 12px;
         flex-shrink: 0;
         padding: 0;
+        position: relative;
       }
       .share-sheet-close {
-        margin-left: auto;
+        position: absolute;
+        right: 0;
         background: none;
         border: none;
         padding: 8px;
@@ -1486,7 +1489,7 @@
     }
     .edu-chart-legend {
       display: none;
-      gap: 1.5rem;
+      gap: 0.5rem;
       margin-top: 0;
       margin-bottom: 15px;
       flex-wrap: wrap;
@@ -1752,14 +1755,8 @@
       transition: background 0.2s, transform 0.1s;
     }
     .petition-form button span {
-      background-image: linear-gradient(var(--white), var(--white));
-      background-repeat: no-repeat;
-      background-position: left bottom;
-      background-size: 0% 1.4px;
       padding-bottom: 2px;
-      transition: background-size 0.3s ease;
     }
-    .petition-form button:hover span { background-size: 100% 1.4px; }
     .petition-form button:hover { background: var(--red); }
     .petition-form button:active { transform: none; }
     .petition-counter {
@@ -1972,6 +1969,7 @@
     }
     @media (max-width: 600px) {
       .hero h1 .heading-break-mobile { display: inline; }
+      .hero h1 .heading-break-desktop { display: none; }
       .nav-logo { font-size: 1.2rem; }
       .hero-label { font-size: 0.8rem; margin-bottom: 1.93rem; }
       .hero-columns { margin-top: 3rem; }
@@ -2108,10 +2106,13 @@
       .petition-form input[name="email"] { grid-column: 1 / -1; order: 2; }
       .petition-form input[name="postcode"] { grid-column: 1; order: 3; }
       .petition-form button { grid-column: 2; order: 4; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+      .petition-form button span { background-image: none !important; }
+      .postcode-btn::after { display: none !important; }
+      .floating-cta-form button::after { display: none !important; }
       .petition-form .petition-success-msg { grid-column: 1 / -1; order: 5; align-items: flex-start !important; justify-content: flex-start !important; }
       .petition-name-break { display: inline; }
       .petition-form .petition-success-msg { line-height: 1.2; }
-      .petition-form .petition-success-sub { display: block; margin-top: 0.3rem; padding-bottom: 0.5rem; }
+      .petition-form .petition-success-sub { display: block; margin-top: 0.3rem; padding-bottom: 0.5rem; text-wrap: wrap; }
       .petition { padding-bottom: 1.2rem; border-bottom: none; }
       .petition + footer, footer { border-top: none; }
       .petition p { font-size: 1rem; }
@@ -2262,19 +2263,6 @@
       position: relative;
       overflow: hidden;
     }
-    .floating-cta-form button::after {
-      content: '';
-      position: absolute;
-      bottom: 0.3rem;
-      left: 0.75rem;
-      right: 0.75rem;
-      height: 1.4px;
-      background: var(--white);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
-    }
-    .floating-cta-form button:hover::after { transform: scaleX(1); }
     .floating-cta-form button:hover { background: var(--red); }
     .floating-cta-form button:active { transform: scale(0.99); }
     .floating-cta-close {
@@ -2441,7 +2429,7 @@
   <nav id="nav" role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="#" class="nav-logo">Backing Young Britain</a>
-      <a href="#petition" class="nav-join-mobile">Join</a>
+      <a href="#petition" class="nav-join-mobile">Sign</a>
       <button class="nav-share-mobile" aria-label="Share" id="nav-share-btn-mobile">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline class="share-arrow" points="8 8 12 4 16 8"/><line class="share-arrow" x1="12" y1="4" x2="12" y2="14"/></svg>
       </button>
@@ -2472,7 +2460,7 @@
       <div class="hero-sub">
         <div class="hero-sub-top">
           <p class="hero-sub-intro">Britain is home to some of the brightest and most ambitious young people in the world, yet across education, employment, housing and health, they are being let down.</p>
-          <img src="hero-sign.png" alt="Back Young Britain" class="hero-sign-img">
+          <img src="hero-sign.jpg" alt="Back Young Britain" class="hero-sign-img">
         </div>
         <p class="hero-sub-cta">See how young people are faring in your local area, and <a href="#petition" class="campaign-link"><strong>add your name to our open letter</strong></a> calling on the Government to start Backing Young Britain.</p>
         <p class="hero-sub-mobile">Britain's young people are among the brightest and most ambitious in the world, yet they're being let down across education, employment, housing and health. See how your area compares and <a href="#petition" class="campaign-link"><strong>sign our open letter</strong></a>.</p>
@@ -2483,7 +2471,7 @@
         <div class="postcode-result" id="postcode-result"></div>
       </div>
       <div class="hero-right">
-        <img src="hero-sign.png" alt="Back Young Britain" class="hero-sign-img-desktop">
+        <img src="hero-sign.jpg" alt="Back Young Britain" class="hero-sign-img-desktop">
         <dl class="hero-stats">
           <div class="hero-stat hero-stat--emigration">
             <div class="hero-stat-inner">
@@ -2527,8 +2515,8 @@
 
 
         <h2>In <em>education</em></h2>
-        <p class="pillar-lead pillar-lead--edu-desktop" style="color:#000">The education system is failing young people at each stage. School absence is nearly double pre-pandemic levels. College funding has only just returned to where it was a decade ago. And graduates leave with £53,000 of debt, into one of the highest-debt systems in the world <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
-        <p class="pillar-lead pillar-lead--edu-mobile" style="color:#000">The education system is failing young people at every stage: school absence nearly double pre-pandemic levels, college funding only just back to where it was a decade ago, and graduates leaving with £53,000 of debt <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
+        <p class="pillar-lead pillar-lead--edu-desktop" style="color:#000">The education system is letting young people down at each stage. School absence is nearly double pre-pandemic levels. College funding has only just returned to where it was a decade ago. And graduates leave with £53,000 of debt, into one of the highest-debt systems in the world <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
+        <p class="pillar-lead pillar-lead--edu-mobile" style="color:#000">The education system is letting young people down at every stage: school absence nearly double pre-pandemic levels, college funding only just back to where it was a decade ago, and graduates leaving with £53,000 of debt <a href="https://www.unesco.org/gem-report/en/publication/equity-and-access" target="_blank" style="text-decoration:underline; color:inherit">(UNESCO)</a>.</p>
       </div>
       <div class="data-cards">
         <!-- PRIMARY & SECONDARY SCHOOLS TABBED CHARTS -->
@@ -3422,7 +3410,7 @@
 
         <!-- Purchase -->
         <div style="margin-top: 0">
-          <div class="chart-section-title" style="margin-bottom:0">Buying</div>
+          <div class="chart-section-title" style="margin-bottom:0" data-no-share>Buying</div>
           <div class="chart-tab-desc"><b class="loc">In England</b>, the median house price was <b>7.6x</b> the median salary in 2025, <b>up from 3.5x</b> in 1997.</div>
         </div>
         <div class="edu-chart" id="chart-price-earnings"></div>
@@ -3462,7 +3450,7 @@
 
         <div style="margin-top: 2.5rem">
           <div class="chart-tabs-row">
-            <div class="chart-section-title" style="margin-bottom:0">House Building</div>
+            <div class="chart-section-title" style="margin-bottom:0" data-no-share>House Building</div>
             <div class="chart-view-toggle enabled" id="housebuilding-view-toggle">
               <button class="chart-view-btn housebuilding-local-hidden" data-view="local"><span class="toggle-housebuilding-label">Your region</span></button>
               <button class="chart-view-btn active" data-view="national">National</button>
@@ -3501,12 +3489,12 @@
 
         <h2>In <em>health</em></h2>
         <p class="pillar-lead pillar-lead--hea-desktop" style="color:#000">One in five young people now has a diagnosable mental health condition, double what it was a generation ago. Over half a million are on a waiting list for support <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">(BMA)</a>. Youth services funding has been cut by 76% in real terms since 2010 <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">(YMCA)</a>.</p>
-        <p class="pillar-lead pillar-lead--hea-mobile" style="color:#000">One in five young people now has a diagnosable mental health condition, double a generation ago. Over half a million are on a waiting list <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">(BMA)</a>, and youth services funding has been cut 76% in real terms since 2010 <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">(YMCA)</a>.</p>
+        <p class="pillar-lead pillar-lead--hea-mobile" style="color:#000">One in five young people now has a probable mental health condition, up 50% from 2017. Over half a million are on a waiting list <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/children-and-young-people-s-mental-health-services-in-england" target="_blank" style="text-decoration:underline; color:inherit">(BMA)</a>, and youth services funding has been cut 76% in real terms since 2010 <a href="https://ymca.org.uk/local-authority-funding-for-youth-services-sees-biggest-annual-cut-in-almost-a-decade-new-ymca-analysis-reveals/" target="_blank" style="text-decoration:underline; color:inherit">(YMCA)</a>.</p>
       </div>
       <div class="data-cards">
         <div style="margin-top: 0">
           <div class="chart-tabs-row">
-            <div class="chart-section-title" style="margin-bottom:0">Mental Health Condition</div>
+            <div class="chart-section-title" style="margin-bottom:0" data-no-share>Mental Health Condition</div>
           </div>
           <div class="chart-tab-desc"><b class="loc">In England</b>, 1 in 5 young people (aged 8 to 16) had a probable mental health condition, such as anxiety and depression, in 2023, <b>up 50%</b> from 2017.</div>
         </div>
@@ -3525,7 +3513,7 @@
           <div class="chart-tab-desc"><b class="loc">In England</b>, local authority spending on youth services (such as clubs, sports and playgrounds) per young person was £37.43 in 2024-25, <b>down 48%</b> from 2012-13.</div>
           <div class="edu-chart" id="chart-youth-funding"></div>
           <div id="youth-funding-local" style="display:none;">
-            <div class="chart-tab-desc" id="youth-funding-desc" style="min-height:3.2em;margin-bottom:0.4rem;margin-top:0;"></div>
+            <div class="chart-tab-desc" id="youth-funding-desc" style="min-height:3.2em;"></div>
             <div id="youth-funding-map" style="width:100%; height:400px; border-radius:3px; background:var(--cream);"></div>
             <div class="housing-map-legend">
               <span>Less per head</span>
@@ -3552,7 +3540,7 @@
             <input type="text" name="postcode" placeholder="Postcode" aria-label="Postcode" autocomplete="postal-code">
 
             <div class="petition-success-msg" id="petition-success-msg" style="display:none"><div>Thank you,<br class="petition-name-break"> <strong id="petition-success-name"></strong><br><span class="petition-success-sub">Share this campaign to help the next generation.</span></div></div>
-            <button type="submit" id="petition-submit"><span>Join</span></button>
+            <button type="submit" id="petition-submit"><span>Sign</span></button>
           </form>
         </div>
         <div class="petition-privacy" id="petition-privacy">Your name will be included in our open letter to the Government. We will not share your data with any other third parties.</div>
@@ -3578,7 +3566,7 @@
       <input type="text" name="fullName" placeholder="Name" required aria-label="Name" autocomplete="name">
       <input type="email" name="email" placeholder="Email" aria-label="Email address" autocomplete="email">
       <input type="text" name="postcode" id="floating-cta-postcode" placeholder="Postcode" aria-label="Postcode" autocomplete="postal-code" style="flex:0.7">
-      <button type="submit">Join</button>
+      <button type="submit">Sign</button>
     </form>
     <div class="floating-cta-success" id="floating-cta-success" style="display:none">
       <div class="floating-cta-success-row">
@@ -4291,6 +4279,7 @@
           lines: [{color:'#E04B2D', data:absData([4.5,4.6,4.6,4.7,4.8,4.7,null,4.6,7.5,7.4,7.2,6.8])}],
           yAxis: {min:0, max:10, step:2, format:function(v){return v+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:0,text:'4.5%'},{index:8,text:'7.5%'},{index:11,text:'6.8%'}],
           legend: [{color:'#E04B2D', label:'Overall absence rate'}],
@@ -4300,6 +4289,7 @@
           lines: [{color:'#E04B2D', data:absData([10.7,11.0,10.5,10.8,11.2,10.9,null,12.1,22.5,21.2,19.9,18.1])}],
           yAxis: {min:0, max:25, step:5, format:function(v){return v+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:2,text:'10.5%'},{index:8,text:'22.5%'},{index:11,text:'18.1%'}],
           legend: [{color:'#E04B2D', label:'Persistent absentees (10%+ sessions missed)'}],
@@ -4309,6 +4299,7 @@
           lines: [{color:'#E04B2D', data:absData([0.6,0.6,0.6,0.7,0.8,0.8,null,1.1,1.6,2.0,2.3,2.4])}],
           yAxis: {min:0, max:3, step:1, format:function(v){return v===0?'0%':v.toFixed(1)+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'COVID'}],
           highlights: [{index:0,text:'0.6%'},{index:11,text:'2.4%'}],
           legend: [{color:'#E04B2D', label:'Severe absentees (50%+ sessions missed)'}],
@@ -4318,6 +4309,7 @@
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7875,8272,8109,7651,7091,6858,6825,6829,6525,6205,5947,5773,6031,6268,6401,6518,6595])}],
           yAxis: {min:5000, max:9000, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
           xLabels: [{i:0,t:'2009-10'},{i:3.2,t:'2012-13'},{i:6.4,t:'2015-16'},{i:9.6,t:'2019-20'},{i:12.8,t:'2022-23'},{i:16,t:'2025-26'}],
+          xLabelsMobile: [{i:0,t:'2009-10'},{i:5.33,t:'2014-15'},{i:10.67,t:'2020-21'},{i:16,t:'2025-26'}],
           highlights: [{index:1,text:'\u00A38,272'},{index:11,text:'\u00A35,773',below:true},{index:16,text:'\u00A36,595'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Sixth Forms (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -4326,6 +4318,7 @@
           lines: [{color:'#E04B2D', dotRadius:3, data:yearData(2009,[7879,8532,8821,8185,7970,7783,7768,7601,7595,7542,7313,7163,7652,7649,7509,7519,7860])}],
           yAxis: {min:6500, max:9500, step:1000, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
           xLabels: [{i:0,t:'2009-10'},{i:3.2,t:'2012-13'},{i:6.4,t:'2015-16'},{i:9.6,t:'2019-20'},{i:12.8,t:'2022-23'},{i:16,t:'2025-26'}],
+          xLabelsMobile: [{i:0,t:'2009-10'},{i:5.33,t:'2014-15'},{i:10.67,t:'2020-21'},{i:16,t:'2025-26'}],
           highlights: [{index:2,text:'\u00A38,821'},{index:11,text:'\u00A37,163',below:true},{index:16,text:'\u00A37,860'}],
           legend: [{color:'#E04B2D', label:'Per student funding \u2014 Colleges (ages 16\u201318)'}],
           source: fundSrc, tooltipFormat: gbpFmt
@@ -4334,6 +4327,7 @@
           lines: [{color:'#E04B2D', data:yearData(1999,[2690,3380,4250,5440,6560,7330,7930,8680,10050,11620,14700,15700,16160,21430,24640,24550,29000,32220,35850,36000,38400,40280,44720,44940,48270,53010])}],
           yAxis: {min:0, max:60000, step:20000, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1000)+'k';}},
           xLabels: [{i:0,t:'1999-00'},{i:5,t:'2004-05'},{i:10,t:'2009-10'},{i:15,t:'2014-15'},{i:20,t:'2019-20'},{i:25,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'1999-00'},{i:8.33,t:'2007-08'},{i:16.67,t:'2015-16'},{i:25,t:'2024-25'}],
           annotations: [{atIndex:13,label:'\u00A39K Fees',sublabel:'Introduced'}],
           highlights: [{index:0,text:'\u00A32.7k',below:false},{index:25,text:'\u00A353k'}],
           legend: [{color:'#E04B2D', label:'Avg. debt on entering repayment'}],
@@ -4343,6 +4337,7 @@
           lines: [{color:'#E04B2D', data:(function(){var v=[7.8,10.2,12.5,14.9,17.6,20.3,23.1,26.5,30.5,35.5,43.6,54.4,64.7,76.3,89.3,104.5,121.8,140.1,160.6,182.2,205.6,236.2,266.6];return v.map(function(val,i){var y=2002+i,y2=(y+1)%100;return{label:y+'-'+(y2<10?'0'+y2:y2),value:val*1e9};});})()}],
           yAxis: {min:0, max:300e9, step:100e9, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1e9)+'bn';}},
           xLabels: [{i:0,t:'2002-03'},{i:4.4,t:'2006-07'},{i:8.8,t:'2011-12'},{i:13.2,t:'2015-16'},{i:17.6,t:'2020-21'},{i:22,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2002-03'},{i:7.33,t:'2009-10'},{i:14.67,t:'2016-17'},{i:22,t:'2024-25'}],
           highlights: [{index:0,text:'\u00A37.8bn',below:false},{index:22,text:'\u00A3267bn'}],
           legend: [{color:'#E04B2D', label:'Total outstanding balance'}],
           source: slcSrc, tooltipFormat:function(v){return '\u00A3'+(v/1e9).toFixed(1)+'bn';}, reserveLegendHeight: true
@@ -4354,6 +4349,7 @@
           ],
           yAxis: {min:0, max:250, step:50, format:function(v){return '\u00A3'+v;}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
           annotations: [{atGap:true, label:'HMRC', sublabel:'Data Change'}],
           highlights: [{index:11,series:0,text:'\u00A3222\nper month',anchor:'middle',below:true,color:'#E04B2D'},{index:11,series:1,text:'\u00A373\nper month',anchor:'middle',below:true,color:'#606060'}],
           legend: [{color:'#E04B2D',label:'Interest added per borrower'},{color:'#606060',label:'Repayment per borrower'}],
@@ -4434,6 +4430,7 @@
           ],
           yAxis: {min:0, max:320000, step:80000, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1000)+'k';}},
           xLabels: [{i:0,t:'1997'},{i:4,t:'2001'},{i:8,t:'2005'},{i:12,t:'2009'},{i:16,t:'2013'},{i:20,t:'2017'},{i:24,t:'2021'},{i:28,t:'2025'}],
+          xLabelsMobile: [{i:0,t:'1997'},{i:7,t:'2004'},{i:14,t:'2011'},{i:21,t:'2018'},{i:28,t:'2025'}],
           highlights: [{index:0, series:0, text:'\u00A360k', color:'#E04B2D'},{index:28, series:0, text:'\u00A3300k', color:'#E04B2D'},{index:28, series:1, text:'\u00A339k', color:'#777', below:true}],
           gapLabels: [{index:0, text:'3.5x'},{index:14, text:'6.8x'},{index:28, text:'7.6x'}],
           legend: [{color:'#E04B2D', label:'Median house price'},{color:'#777', label:'Median earnings'}],
@@ -4444,6 +4441,7 @@
             tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}}],
           yAxis: {min:300, max:700, step:100, format:function(v){return '\u00A3'+v;}},
           xLabels: [{i:0,t:'2010'},{i:3,t:'2013'},{i:6,t:'2016'},{i:9,t:'2019'},{i:12,t:'2022'},{i:15,t:'2025'}],
+          xLabelsMobile: [{i:0,t:'2010'},{i:5,t:'2015'},{i:10,t:'2020'},{i:15,t:'2025'}],
           highlights: [{index:0,text:'\u00A3378'},{index:15,text:'\u00A3610'}],
           legend: [{color:'#E04B2D', label:'Average monthly rent'}],
           source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing'},
@@ -4454,6 +4452,7 @@
             tooltipFormat: function(v){return '\u00A3'+Math.round(v).toLocaleString('en-GB')+'/month';}}],
           yAxis: {min:500, max:1200, step:100, format:function(v){return '\u00A3'+v.toLocaleString('en-GB');}},
           xLabels: [{i:0,t:'2010'},{i:3,t:'2013'},{i:6,t:'2016'},{i:9,t:'2019'},{i:12,t:'2022'},{i:15,t:'2025'}],
+          xLabelsMobile: [{i:0,t:'2010'},{i:5,t:'2015'},{i:10,t:'2020'},{i:15,t:'2025'}],
           highlights: [{index:0,text:'\u00A3664'},{index:15,text:'\u00A31,082'}],
           legend: [{color:'#E04B2D', label:'Average monthly rent (1 bed flat)'}],
           source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dddzOjf582RWybqvh8z7DSK53I_aqhH_Naa-FYnpAyM/edit?usp=sharing'},
@@ -4478,6 +4477,7 @@
             lines: [{color:'#E04B2D', data:simpleYears(2005,[2585,2644,2644,2703,2845,2855,2977,3136,3291,3303,3295,3288,3371,3352,3487,3568,3591,3424,3567,3631])}],
             yAxis: {min:2000, max:4000, step:500, format:function(v){return (v/1000).toFixed(1).replace(/\.0$/,'')+'M';}},
             xLabels: [{i:0,t:'2005'},{i:3.17,t:'2008'},{i:6.33,t:'2011'},{i:9.5,t:'2014'},{i:12.67,t:'2018'},{i:15.83,t:'2021'},{i:19,t:'2024'}],
+            xLabelsMobile: [{i:0,t:'2005'},{i:4.75,t:'2010'},{i:9.5,t:'2015'},{i:14.25,t:'2019'},{i:19,t:'2024'}],
             highlights: [{index:0,text:'2.6M'},{index:19,text:'3.6M'}],
             legend: [{color:'#E04B2D', label:'16\u201334 year olds living with parents (thousands)'}],
             source: {text:'Office for National Statistics', url:'https://docs.google.com/spreadsheets/d/1dNHo057y4fFjoz_pZxroYjXAXVObS_GvHevioqqx3C4/edit?usp=sharing'},
@@ -4505,6 +4505,7 @@
           ],
           yAxis: {min:0, max:2000000, step:500000, format:function(v){return v===0?'0':(v/1000000).toFixed(1).replace(/\.0$/,'')+'M';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
           highlights: [{index:0, series:0, text:'1.1M', color:'#E04B2D'},{index:11, series:0, text:'1.8M', color:'#E04B2D'},{index:0, series:1, text:'364K', color:'#777', below:true},{index:11, series:1, text:'670K', color:'#777', below:true}],
           gapLabels: [{index:0, text:'755K'},{index:5, text:'1.02M'},{index:11, text:'1.14M'}],
           legend: [{color:'#E04B2D', label:'Referrals received'},{color:'#777', label:'Finished course of treatment'}],
@@ -4524,6 +4525,7 @@
           ],
           yAxis: {min:0, max:80, step:20, format:function(v){return v===0?'£0':'£'+v;}},
           xLabels: [{i:0,t:'2012-13'},{i:2,t:'2014-15'},{i:4,t:'2016-17'},{i:6,t:'2018-19'},{i:8,t:'2020-21'},{i:10,t:'2022-23'},{i:12,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2012-13'},{i:4,t:'2016-17'},{i:8,t:'2020-21'},{i:12,t:'2024-25'}],
           highlights: [{index:0, series:0, text:'£71.55', color:'#E04B2D'},{index:12, series:0, text:'£37.43', color:'#E04B2D', below:true}],
           legend: [{color:'#E04B2D', label:'Expenditure per young person (0-17)'}],
           source: {text:'Department for Education', url:'https://docs.google.com/spreadsheets/d/103My4CJ_qQk-xRc44MIbUcLIVvx2PT7h4sohA-6By9w/edit?usp=sharing'}
@@ -5824,12 +5826,13 @@
         { text: 'More than ', tag: null },
         { text: 'seven in ten', tag: 'em' },
         { text: '\n', tag: 'br', mobileOnly: true },
-        { text: ' Britons believe the ', tag: null },
-        { text: '\n', tag: 'br' },
-        { text: 'next', tag: null },
+        { text: ' Britons believe the next', tag: null },
         { text: '\n', tag: 'br', mobileOnly: true },
+        { text: '\n', tag: 'br', desktopOnly: true },
         { text: ' generation will be ', tag: null },
-        { text: 'worse off', tag: 'em', underline: true },
+        { text: 'worse', tag: 'em' },
+        { text: '\n', tag: 'br', mobileOnly: true },
+        { text: ' off', tag: 'em' },
         { text: ' than their parents.', tag: null }
       ];
 
@@ -5838,7 +5841,7 @@
       segments.forEach(seg => {
         if (seg.tag === 'br') {
           const br = document.createElement('br');
-          br.className = 'typing-char ' + (seg.mobileOnly ? 'heading-break-mobile' : 'heading-break');
+          br.className = 'typing-char ' + (seg.mobileOnly ? 'heading-break-mobile' : seg.desktopOnly ? 'heading-break-desktop' : 'heading-break');
           heading.appendChild(br);
           charSpans.push({ el: br, pauseAfter: 0 });
           return;
@@ -6650,11 +6653,13 @@
 
       var data = trend.map(function(d) { return { label: d.year, value: d.value }; });
       var xLabels = evenXLabels(data.map(function(d) { return d.label; }), Math.min(n, Math.ceil(n / 2) + 1));
+      var xLabelsMobileFund = evenXLabels(data.map(function(d) { return d.label; }), Math.min(n, 5));
 
       createChart(chartId, {
         lines: [{ color: lineColor, data: data, dotRadius: 3, tooltipFormat: fmtCurrency }],
         yAxis: { min: yMin, max: yMax, step: 500, format: fmtCurrency },
         xLabels: xLabels,
+        xLabelsMobile: xLabelsMobileFund,
         highlights: [
           { index: 0, text: fmtCurrency(trend[0].value), series: 0 },
           { index: n - 1, text: fmtCurrency(trend[n - 1].value), series: 0 }
@@ -7684,10 +7689,26 @@
         yearIndices[yr].push(xi);
       }
       var yearKeys = Object.keys(yearIndices);
+      var yearCentersUnemp = [];
       for (var yk = 0; yk < yearKeys.length; yk++) {
         var idxs = yearIndices[yearKeys[yk]];
         var center = (idxs[0] + idxs[idxs.length - 1]) / 2;
+        yearCentersUnemp.push(center);
         xLabels.push({ i: center, t: yearKeys[yk] });
+      }
+      var xLabelsMobile = [];
+      var mobileCountUnemp = Math.min(yearKeys.length, 4);
+      if (yearCentersUnemp.length > 0) {
+        var firstCU = yearCentersUnemp[0], lastCU = yearCentersUnemp[yearCentersUnemp.length - 1];
+        for (var mk = 0; mk < mobileCountUnemp; mk++) {
+          var pos = mobileCountUnemp === 1 ? firstCU : firstCU + mk * (lastCU - firstCU) / (mobileCountUnemp - 1);
+          var nearest = 0, minD = Infinity;
+          for (var yj = 0; yj < yearCentersUnemp.length; yj++) {
+            var dd = Math.abs(yearCentersUnemp[yj] - pos);
+            if (dd < minD) { minD = dd; nearest = yj; }
+          }
+          xLabelsMobile.push({ i: pos, t: yearKeys[nearest] });
+        }
       }
 
       var data = tmpData;
@@ -7697,6 +7718,7 @@
         lines: [{ color: lineColor, data: data, dotRadius: 2.5, tooltipFormat: function(v) { return v.toFixed(1) + '%'; } }],
         yAxis: { min: yMin, max: yMax, step: tickStep, format: function(v) { return v % 1 === 0 ? v + '%' : v.toFixed(1) + '%'; } },
         xLabels: xLabels,
+        xLabelsMobile: xLabelsMobile,
         annotations: annotations,
         highlights: [
           { index: 0, text: Math.round(values[0]) + '%', series: 0, below: n > 1 && values[1] > values[0] },
@@ -9140,6 +9162,7 @@
     // Insert share buttons next to each .chart-section-title
     window.addEventListener('load', function() {
       document.querySelectorAll('.chart-section-title').forEach(function(title) {
+        if (title.hasAttribute('data-no-share')) return;
         // If the title is inside a .chart-tabs-row, insert the button into that row
         var tabsRow = title.closest('.chart-tabs-row');
         if (tabsRow) {
@@ -9167,7 +9190,7 @@
         mutations.forEach(function(m) {
           m.addedNodes.forEach(function(node) {
             if (node.nodeType !== 1) return;
-            var mapEl = node.querySelector ? node.querySelector('#institutions-map-leaflet, #housing-map, #mh-trust-map-leaflet') : null;
+            var mapEl = node.querySelector ? node.querySelector('#institutions-map-leaflet, #mh-trust-map-leaflet') : null;
             if (mapEl && !mapEl.querySelector('.map-share-btn')) {
               mapEl.style.position = 'relative';
               var btn = document.createElement('button');
@@ -9182,7 +9205,7 @@
       mapObserver.observe(document.body, { childList: true, subtree: true });
 
       // Also check if maps already exist
-      ['#institutions-map-leaflet', '#housing-map', '#mh-trust-map-leaflet'].forEach(function(sel) {
+      ['#institutions-map-leaflet', '#mh-trust-map-leaflet'].forEach(function(sel) {
         var mapEl = document.querySelector(sel);
         if (mapEl && !mapEl.querySelector('.map-share-btn')) {
           mapEl.style.position = 'relative';
