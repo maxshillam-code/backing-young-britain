@@ -1886,7 +1886,7 @@
     .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 3rem 2rem 4.8rem;
+      padding: 1.5rem 2rem 4.8rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -1907,19 +1907,14 @@
     .footer-links a {
       font-family: 'Open Sans', sans-serif;
       font-size: 0.9rem;
-      font-weight: 400;
+      font-weight: 300;
       color: var(--white);
       text-decoration: none;
       text-transform: none;
       letter-spacing: 0;
-      background-image: linear-gradient(var(--white), var(--white));
-      background-repeat: no-repeat;
-      background-position: left bottom;
-      background-size: 0% 1.2px;
-      padding-bottom: 2px;
-      transition: background-size 0.3s ease;
+      transition: color 0.3s ease;
     }
-    .footer-links a:hover { background-size: 100% 1.2px; }
+    .footer-links a:hover { color: var(--red); }
 
     /* ===== ANIMATIONS ===== */
     @keyframes fadeUp {
@@ -3595,6 +3590,10 @@
   <!-- FOOTER -->
   <footer role="contentinfo">
     <div class="footer-inner">
+      <div class="footer-links" style="flex-direction: column; align-items: flex-start; gap: 0.25rem;">
+        <a href="mailto:hello@backingyoungbritain.co.uk">hello@backingyoungbritain.co.uk</a>
+        <a href="https://www.instagram.com/backingyoungbritain/" target="_blank" rel="noopener">instagram.com/backingyoungbritain</a>
+      </div>
     </div>
   </footer>
 
