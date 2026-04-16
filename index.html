@@ -1656,6 +1656,9 @@
       position: sticky;
       top: 2rem;
     }
+    .petition-text p:first-child {
+      margin-bottom: 1.5rem;
+    }
     .petition h2 {
       font-family: 'Lora', serif;
       font-weight: 400;
@@ -1788,7 +1791,7 @@
     }
     .petition-privacy {
       margin-top: 1rem;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-family: 'Open Sans', sans-serif;
       color: var(--white);
     }
@@ -1797,7 +1800,7 @@
     .about-section {
       background: var(--black);
       color: var(--white);
-      padding: 5rem 0 4rem;
+      padding: 50px 0 4rem;
     }
     .about-inner {
       max-width: 1200px;
@@ -1816,11 +1819,11 @@
     .about-content {
       display: flex;
       gap: 2rem;
-      align-items: start;
+      align-items: center;
     }
     .about-photo {
-      width: 126px;
-      min-width: 126px;
+      width: 101px;
+      min-width: 101px;
       border-radius: 6px;
       object-fit: cover;
     }
@@ -1842,7 +1845,7 @@
       text-decoration: underline;
     }
     .about-bio a.about-cta-link {
-      font-weight: 600;
+      font-weight: 200;
       text-decoration: none;
       background-image: linear-gradient(var(--white), var(--white));
       background-repeat: no-repeat;
@@ -2096,7 +2099,7 @@
       .petition-text p:first-child strong { font-size: 1.1rem; }
       .about-section { padding: 3rem 0 2.5rem; }
       .about-content { flex-direction: column; gap: 1.5rem; }
-      .about-photo { width: 100px; min-width: 100px; }
+      .about-photo { width: 80px; min-width: 80px; }
       .about-bio { font-size: 1rem; }
       .footer-inner { flex-direction: column; gap: 1rem; text-align: left; padding-top: 2rem; }
       .footer-logo { font-size: 1rem; }
@@ -3524,7 +3527,7 @@
             <input type="email" name="email" placeholder="Email address" class="full-width" aria-label="Email address" autocomplete="email">
             <input type="text" name="postcode" placeholder="Postcode" aria-label="Postcode" autocomplete="postal-code">
 
-            <div class="petition-success-msg" id="petition-success-msg" style="display:none"><div>Thank you,&nbsp;<strong id="petition-success-name"></strong><br><span class="petition-success-sub">Share this campaign with at least one other person to help the next generation.</span></div></div>
+            <div class="petition-success-msg" id="petition-success-msg" style="display:none"><div>Thank you,&nbsp;<strong id="petition-success-name"></strong><br><span class="petition-success-sub">Share this campaign to help the next generation.</span></div></div>
             <button type="submit" id="petition-submit"><span>Join</span></button>
           </form>
           <div class="petition-privacy" id="petition-privacy">Your name will be included in our open letter to the Government. We will not share your data with any other third parties.</div>
@@ -3578,12 +3581,12 @@
   <!-- WHO'S BEHIND THIS -->
   <section class="about-section">
     <div class="about-inner">
-      <h3 class="about-heading">Who's behind <em style="font-style:italic">this?</em></h3>
+      <h3 class="about-heading">Who's behind <em style="font-style:italic">Backing Young Britain?</em></h3>
       <div class="about-content">
         <img class="about-photo" src="max-photo.jpeg" alt="Photo of Max" loading="lazy">
         <div class="about-bio">
-          <p>I'm Max, 29, and I'm building this on evenings and weekends. The data on what's happening to my generation is all there in ONS releases, IFS reports and media articles. It just isn't in one place, so I'm pulling it together. No funders, no board, no political endorsements. Just a laptop and the view that young people deserve better. <a href="mailto:hello@backingyoungbritain.co.uk" class="about-cta-link">Get in touch &gt;</a></p>
-          <p style="margin-top:0.6rem; font-style:italic"><a class="about-max-link" href="https://www.linkedin.com/in/maxshillam/" target="_blank" rel="noopener">— Max</a></p>
+          <p>I'm Max, 29, and I'm building Backing Young Britain in my spare time. The data on what's happening to my generation is all there in ONS releases, IFS reports and media articles. It just isn't in one place, so I'm pulling it together. No funders, no board, no political endorsements. Just a laptop and the view that young people deserve better. <a href="about.html" class="about-cta-link">Learn More &gt;</a></p>
+          <p style="margin-top:0.6rem;font-style:italic">&mdash; Max</p>
         </div>
       </div>
     </div>

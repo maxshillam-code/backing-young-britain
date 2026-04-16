@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="shortcut icon" href="favicon-192.png">
+  <meta name="theme-color" content="#E04B2D">
+  <title>About | Backing Young Britain</title>
+  <meta name="description" content="About Backing Young Britain — who's behind the campaign, what it is, and how you can help.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Backing Young Britain">
+  <meta name="geo.region" content="GB">
+  <link rel="canonical" href="https://backingyoungbritain.co.uk/about.html">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #000000;
+      --white: #FFFFFF;
+      --cream: #EDE9E0;
+      --red: #E04B2D;
+      --red-dark: #C23A20;
+      --grey: #5C6670;
+      --grey-light: #CDD2D8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: #000000;
+      border-bottom: none;
+      transition: transform 0.3s ease;
+    }
+    nav.hidden { transform: translateY(-100%); }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: nowrap;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-logo {
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--white);
+      text-decoration: none;
+      background-image: linear-gradient(var(--white), var(--white));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.2px;
+      padding-bottom: 2px;
+      transition: background-size 0.3s ease;
+    }
+    .nav-links a:hover { background-size: 100% 1.2px; }
+    .nav-cta {
+      font-size: 0.85rem;
+      background: var(--red) !important;
+      background-image: none !important;
+      color: var(--white) !important;
+      padding: 0.68rem 1.2rem !important;
+      border-radius: 5px;
+      font-weight: 700 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-cta::after {
+      content: '';
+      position: absolute;
+      bottom: 0.5rem;
+      left: 1.2rem;
+      right: 1.2rem;
+      height: 1.4px;
+      background: var(--white);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .nav-cta:hover::after { transform: scaleX(1); }
+    .nav-cta:hover { background-size: 0% 0 !important; }
+    .nav-share {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: -1.2rem;
+      padding: 0.45rem 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-share svg { transition: stroke 0.2s; }
+    .nav-share .share-arrow { transition: transform 0.2s ease; }
+    .nav-share:hover svg { stroke: var(--red); }
+    .nav-share:hover .share-arrow { transform: translateY(-2px); }
+    .nav-share-mobile {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-share-mobile svg { transition: stroke 0.2s; }
+    .nav-share-mobile .share-arrow { transition: transform 0.2s ease; }
+    .nav-share-mobile:hover svg { stroke: var(--red); }
+    .nav-share-mobile:hover .share-arrow { transform: translateY(-2px); }
+    .nav-join-mobile {
+      display: none;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-left: auto;
+      margin-right: 0.75rem;
+    }
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--black);
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .section {
+      padding: 2rem 2rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .pillar {
+      display: grid;
+      grid-template-columns: 30fr 70fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .pillar-left {
+      position: sticky;
+      top: 6rem;
+    }
+    .pillar-left h2 {
+      font-family: 'Lora', serif;
+      font-weight: 400;
+      font-size: 2.4rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .pillar-left h2 em {
+      font-style: italic;
+    }
+    .pillar-left-links {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .pillar-left-links a {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--red);
+      text-decoration: underline;
+    }
+    .pillar-left img {
+      width: 100%;
+      max-width: 137px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    .pillar-right {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      line-height: 1.7;
+      letter-spacing: -0.01em;
+      color: var(--black);
+    }
+    .pillar-right h2 {
+      font-family: 'Lora', serif;
+      font-weight: 400;
+      font-size: 1.7rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .pillar-right h2 em {
+      font-style: italic;
+    }
+    .pillar-right h3 {
+      font-family: 'Lora', serif;
+      font-weight: 400;
+      font-size: 1.7rem;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+    }
+    .pillar-right h3 em {
+      font-style: italic;
+    }
+    .pillar-right p {
+      margin-bottom: 1rem;
+    }
+    .pillar-right strong {
+      font-weight: 600;
+    }
+    .pillar-right a {
+      color: var(--black);
+      text-decoration: underline;
+    }
+    .pillar-right a:hover {
+      color: var(--red);
+    }
+
+    .about-cta {
+      display: inline-block;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--red);
+      color: var(--white) !important;
+      text-decoration: none !important;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.75rem 1.8rem;
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s ease;
+    }
+    .about-cta:hover {
+      background: var(--red-dark);
+      color: var(--white) !important;
+    }
+
+    .about-sign-off {
+      margin-top: 1rem;
+      font-style: normal;
+      font-weight: 300;
+    }
+    .about-links {
+      margin-top: 0.3rem;
+      font-size: 0.95rem;
+    }
+    .about-links a {
+      text-decoration: none;
+      background-image: linear-gradient(var(--black), var(--black));
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 0% 1.2px;
+      padding-bottom: 2px;
+      transition: background-size 0.3s ease;
+    }
+    .about-links a:hover {
+      background-size: 100% 1.2px;
+      color: var(--black);
+    }
+    .about-updated {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--grey);
+      font-weight: 400;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--black);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 950px) {
+      .nav-section-link { display: none; }
+    }
+    @media (max-width: 900px) {
+      .pillar { grid-template-columns: 1fr; gap: 2.5rem; }
+      .pillar-left { position: static; }
+    }
+    @media (max-width: 600px) {
+      .nav-logo { font-size: 1.2rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: none !important; }
+      .nav-join-mobile { display: block; }
+      .nav-share-mobile { display: flex; }
+      .nav-links .nav-cta { display: none; }
+      .nav-links .nav-share { display: none; }
+      .section { padding: 1.5rem 1.5rem 4rem; }
+      .pillar-left img { max-width: 88px; }
+      .pillar-right h2 { font-size: 1.4rem; }
+      .pillar-right h3 { font-size: 1.4rem; margin-top: 2rem; }
+      .pillar-right { font-size: 1rem; }
+      .footer-inner { padding-top: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Backing Young Britain</a>
+      <a href="index.html#petition" class="nav-join-mobile">Join</a>
+      <button class="nav-share-mobile" aria-label="Share" id="nav-share-btn-mobile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline class="share-arrow" points="8 8 12 4 16 8"/><line class="share-arrow" x1="12" y1="4" x2="12" y2="14"/></svg>
+      </button>
+      <button class="nav-hamburger" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="index.html#education" class="nav-section-link">Education</a>
+        <a href="index.html#employment" class="nav-section-link">Employment</a>
+        <a href="index.html#housing" class="nav-section-link">Housing</a>
+        <a href="index.html#health" class="nav-section-link">Health</a>
+        <a href="index.html#petition" class="nav-cta">Sign the Petition</a>
+        <button class="nav-share" aria-label="Share" id="nav-share-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline class="share-arrow" points="8 8 12 4 16 8"/><line class="share-arrow" x1="12" y1="4" x2="12" y2="14"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main style="padding-top: clamp(8rem, 12vh, 10rem);">
+    <section class="section">
+      <div class="pillar">
+        <div class="pillar-left">
+          <h2>About</h2>
+          <img src="max-photo.jpeg" alt="Photo of Max" loading="lazy">
+          <div class="pillar-left-links">
+            <a href="https://www.instagram.com/backingyoungbritain/" target="_blank" rel="noopener">instagram.com/backingyoungbritain</a>
+            <a href="mailto:hello@backingyoungbritain.co.uk">hello@backingyoungbritain.co.uk</a>
+            <a href="https://www.linkedin.com/in/maxshillam/" target="_blank" rel="noopener">linkedin.com/in/maxshillam</a>
+          </div>
+        </div>
+        <div class="pillar-right">
+
+          <h2>Why I'm building this</h2>
+
+          <p>I'm Max, 29, and I'm building Backing Young Britain in my spare time.</p>
+
+          <p>The data on what's happening to my generation is all there in ONS releases, IFS reports and Commons Library briefings. It just isn't in one place. So I'm pulling it together.</p>
+
+          <p>Lined up, the story is hard to argue with. &pound;53,000 of graduate debt, up from &pound;9,000 twenty years ago. 140 applications now chase every graduate vacancy, up from 86 two years ago. A house-price-to-earnings ratio that has more than doubled since 2000. 3.6 million young adults living with their parents, over a million more than in 2005. One in five under-25s with a mental health condition. Three in four people leaving Britain are under 35. Individually, each data point is a news story that we quickly move on from. Together, they explain why a generation feels the odds are stacked against them.</p>
+
+          <p>The open letter is available to sign if you think the Government should be doing more for young people.</p>
+
+          <h3>What this is, and isn't</h3>
+
+          <p>A grassroots campaign, built by one person, on a laptop. No funders, no board and no political endorsements. Growing into the national movement young Britain deserves.</p>
+
+          <p>For transparency: I'm a Liberal Democrat member and a paper candidate in Champion Hill this May. Backing Young Britain isn't a Lib Dem campaign. It isn't funded, endorsed or coordinated with any party. The asks here are mine, and I'd welcome support from every party, and none.</p>
+
+          <h3>How you can help</h3>
+
+          <p><strong>Young Britons</strong> - Sign the open letter and share the campaign with your friends, family and networks.</p>
+
+          <p><strong>Journalists and Producers</strong> - Everything here is sourced and the data is linked. I can share national and local media packs with charts, underlying data and draft copy. Please get in touch to collaborate.</p>
+
+          <p><strong>Employers</strong> - If you employ or train young people, this campaign is a natural fit. I'm beginning conversations with employers about something bigger: a public commitment to protect and grow graduate schemes, apprenticeships and entry-level roles, at a moment when those opportunities are under pressure. If your organisation would back that, or wants to talk about what it could look like, please get in touch.</p>
+
+          <p><strong>MPs, Councillors and Political Staff</strong> - Enter your post-code to generate a local picture for your area. For speeches, written questions, local press and social posts, get in touch and I'll send a tailored pack (constituency-level numbers, ready-to-use charts and graphics, source links).</p>
+
+          <p style="font-weight:600; margin-top:2rem">Join us in Backing Young Britain, and help build the country the next generation deserves.</p>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Nav hide/show on scroll (same behaviour as main page)
+    (function () {
+      var nav = document.getElementById('nav');
+      var lastY = 0;
+      window.addEventListener('scroll', function () {
+        var y = window.scrollY;
+        if (y > 80 && y > lastY) {
+          nav.classList.add('hidden');
+        } else {
+          nav.classList.remove('hidden');
+        }
+        lastY = y;
+      });
+    })();
+
+    // Share button
+    (function () {
+      function doShare() {
+        if (navigator.share) {
+          navigator.share({ title: 'Backing Young Britain', url: window.location.href });
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+        }
+      }
+      var btn = document.getElementById('nav-share-btn');
+      var btnMobile = document.getElementById('nav-share-btn-mobile');
+      if (btn) btn.addEventListener('click', doShare);
+      if (btnMobile) btnMobile.addEventListener('click', doShare);
+    })();
+  </script>
+
+</body>
+</html>
