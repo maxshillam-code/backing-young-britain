@@ -366,6 +366,7 @@
       background-size: 100% 3px;
       transition: background-size 0.6s ease;
     }
+    .hero h1 .heading-break-mobile { display: none; }
     .hero h1 .typing-char {
       visibility: hidden;
     }
@@ -419,7 +420,7 @@
       line-height: 1.7;
       letter-spacing: -0.02em;
       text-align: left;
-      max-width: 90%;
+      max-width: 80%;
       margin: 0 auto;
     }
     .campaign-link {
@@ -1132,9 +1133,9 @@
         position: fixed;
         left: 0; right: 0; bottom: 0;
         max-height: 75vh;
-        background: linear-gradient(to top, rgba(245,245,245,0.97) 60%, rgba(245,245,245,0) 100%);
+        background: rgb(245,245,245);
         border-radius: 5px 5px 0 0;
-        padding: 60px 20px calc(5px + env(safe-area-inset-bottom));
+        padding: 25px 20px calc(5px + env(safe-area-inset-bottom));
         z-index: 10000;
         opacity: 0;
         pointer-events: none;
@@ -1158,10 +1159,20 @@
       .share-sheet-actions {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 12px;
         flex-shrink: 0;
+        padding: 0;
       }
+      .share-sheet-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .share-sheet-close:active { opacity: 0.7; }
       .share-sheet-btn {
         flex: 1;
         display: flex;
@@ -1960,6 +1971,7 @@
       .hero-stats { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
+      .hero h1 .heading-break-mobile { display: inline; }
       .nav-logo { font-size: 1.2rem; }
       .hero-label { font-size: 0.8rem; margin-bottom: 1.93rem; }
       .hero-columns { margin-top: 3rem; }
@@ -2026,7 +2038,7 @@
         padding: 0.35rem 0.4rem;
       }
       .hero-right .hero-stat-number {
-        font-size: 1.1rem !important;
+        font-size: 1.3rem !important;
       }
       .hero-right .hero-stat-label {
         font-size: 0.65rem !important;
@@ -2088,7 +2100,7 @@
       .petition-text p span[style*="font-weight:700"] { font-weight: 700 !important; }
       .petition-point-desc { display: inline !important; }
       .petition-colon { display: inline !important; }
-      .petition-privacy { order: 5; margin-top: 0.5rem; }
+      .petition-privacy { order: 5; margin-top: 0.5rem; font-size: 1rem; font-weight: 200; }
       .petition-success { order: 6; }
       .petition-form { grid-template-columns: 1fr 1fr; }
       .petition-form input { font-size: 16px; padding: 0.5rem 0.91rem; }
@@ -2107,9 +2119,9 @@
       .about-heading-desktop { display: none; }
       .about-heading-mobile { display: inline; }
       .about-section { padding: 3rem 0 2.5rem; }
-      .about-inner { padding-left: 2.5rem; padding-right: 2.5rem; }
+      .about-inner { padding-left: 2rem; padding-right: 2rem; }
       .about-content { display: block; }
-      .about-bio-rest { display: block; clear: both; margin-top: 0.5rem; }
+      .about-bio-rest { display: block; clear: both; margin-top: 0.75rem; }
       .about-photo { width: 58px; min-width: 58px; float: right; margin: 0 0 0.75rem 1rem; }
       .about-bio { font-size: 1rem; }
       .footer-inner { flex-direction: column; gap: 1rem; text-align: left; padding-top: 2rem; padding-left: 2.5rem; padding-right: 2.5rem; align-items: flex-start; }
@@ -3597,7 +3609,7 @@
       <div class="about-content">
         <img class="about-photo" src="max-photo.jpeg" alt="Photo of Max" loading="lazy">
         <div class="about-bio">
-          <p><span class="about-bio-intro">I'm Max, 29, and I'm building Backing Young Britain.</span> <span class="about-bio-rest">The data on what's happening to my generation is all there in ONS releases, IFS reports and media articles. It just isn't in one place, so I'm pulling it together. No funders, no board, no political endorsements. Just a laptop and the view that young people deserve better. <a href="about.html" class="about-cta-link">Learn More &gt;</a></span></p>
+          <p><span class="about-bio-intro">I'm Max, a 29-year-old building Backing Young Britain.</span> <span class="about-bio-rest">The data on what's happening to my generation is all there in ONS releases, IFS reports and media articles. It just isn't in one place, so I'm pulling it together. No funders, no board, no political endorsements. Just a laptop and the view that young people deserve better. <a href="about.html" class="about-cta-link">Learn More &gt;</a></span></p>
           <p style="margin-top:0.6rem;font-style:italic">&mdash; Max</p>
         </div>
       </div>
@@ -3691,6 +3703,10 @@
         // Dual Y-axis support
         var dualAxis = !!cfg.yAxisRight;
         var padRight = dualAxis ? 55 : cPAD.right;
+
+        // Store internal padding for export centering
+        svg.setAttribute('data-pad-left', cPAD.left);
+        svg.setAttribute('data-pad-right', padRight);
         var localPW = cW - cPAD.left - padRight;
         function xPos(i) { return n <= 1 ? cPAD.left : cPAD.left + (i / (n - 1)) * localPW; }
         // For iconBar, distribute columns evenly so houses fit within left/right bounds
@@ -4088,9 +4104,15 @@
 
           // Auto-detect anchor: 'start' at left edge, 'end' at right edge, 'middle' otherwise
           var anchor = h.anchor;
-          if (isBar) {
-            // Bar charts: always center above the bar, allow overflow
-            anchor = 'middle';
+          var hlX = hlXPos(h.index);
+          if (isBar && !anchor) {
+            // Align label edges with bar edges: left-align to first bar, right-align to last bar
+            var halfBar = barW0 / 2;
+            var barLeft = hlX - halfBar;
+            var barRight = hlX + halfBar;
+            if (barLeft <= cPAD.left + 1) { anchor = 'start'; hlX = barLeft; }
+            else if (barRight >= cW - padRight - 1) { anchor = 'end'; hlX = barRight; }
+            else anchor = 'middle';
           } else if (!anchor) {
             var dotX = xPos(h.index);
             if (dotX <= cPAD.left + 5) anchor = 'start';
@@ -4102,7 +4124,7 @@
           var hlParts = h.text.split('\n');
           var hlEl = svgEl('text', {
             'class':'axis-label chart-value-label',
-            x:hlXPos(h.index), y:dotY+(placeBelow?(isMobile?22:15):(isMobile?-16:-10)),
+            x:hlX, y:dotY+(placeBelow?(isMobile?22:15):(isMobile?-16:-10)),
             'text-anchor': anchor,
             style:'font-weight:600; fill:'+hlColor
           });
@@ -4110,7 +4132,7 @@
             hlEl.textContent = h.text;
           } else {
             hlParts.forEach(function(part, pi) {
-              var ts = svgEl('tspan', { x: hlXPos(h.index) });
+              var ts = svgEl('tspan', { x: hlX });
               if (pi > 0) ts.setAttribute('dy', '12');
               ts.textContent = part;
               hlEl.appendChild(ts);
@@ -5801,9 +5823,12 @@
       const segments = [
         { text: 'More than ', tag: null },
         { text: 'seven in ten', tag: 'em' },
+        { text: '\n', tag: 'br', mobileOnly: true },
         { text: ' Britons believe the ', tag: null },
         { text: '\n', tag: 'br' },
-        { text: 'next generation will be ', tag: null },
+        { text: 'next', tag: null },
+        { text: '\n', tag: 'br', mobileOnly: true },
+        { text: ' generation will be ', tag: null },
         { text: 'worse off', tag: 'em', underline: true },
         { text: ' than their parents.', tag: null }
       ];
@@ -5813,7 +5838,7 @@
       segments.forEach(seg => {
         if (seg.tag === 'br') {
           const br = document.createElement('br');
-          br.className = 'typing-char heading-break';
+          br.className = 'typing-char ' + (seg.mobileOnly ? 'heading-break-mobile' : 'heading-break');
           heading.appendChild(br);
           charSpans.push({ el: br, pauseAfter: 0 });
           return;
@@ -7674,8 +7699,8 @@
         xLabels: xLabels,
         annotations: annotations,
         highlights: [
-          { index: 0, text: Math.round(values[0]) + '%', series: 0, anchor: 'start', below: n > 1 && values[1] > values[0] },
-          { index: n - 1, text: Math.round(values[n - 1]) + '%', series: 0, anchor: 'end' }
+          { index: 0, text: Math.round(values[0]) + '%', series: 0, below: n > 1 && values[1] > values[0] },
+          { index: n - 1, text: Math.round(values[n - 1]) + '%', series: 0 }
         ],
         legend: [{ color: lineColor, label: '16\u201324 unemployment rate \u2014 ' + theRegion(regionName) }],
         source: { text: 'Office for National Statistics', url: 'https://docs.google.com/spreadsheets/d/1NOSn0Z9zv8p7jb3jX1jed1jXHpzCuoNo1Ij3Yy6UunY/edit?usp=sharing' }
@@ -7775,8 +7800,8 @@
         xLabelsMobile: xLabelsMobile,
         annotations: annotations,
         highlights: [
-          { index: 0, text: values[0].toLocaleString('en-GB'), series: 0, anchor: 'start', below: n > 1 && values[1] > values[0] },
-          { index: n - 1, text: values[n - 1].toLocaleString('en-GB'), series: 0, anchor: 'end' }
+          { index: 0, text: values[0].toLocaleString('en-GB'), series: 0, below: n > 1 && values[1] > values[0] },
+          { index: n - 1, text: values[n - 1].toLocaleString('en-GB'), series: 0 }
         ],
         legend: [{ color: lineColor, label: '18\u201324 claimant count \u2014 ' + constituencyName }],
         source: { text: 'Office for National Statistics', url: 'https://docs.google.com/spreadsheets/d/1mI8yBU8JxdGfy-j8ECp7QIZbOT1ktmdeAg0xJuW_qgM/edit?usp=sharing' }
@@ -9327,9 +9352,12 @@
         // Set explicit size — render at 2x for crisp output
         var scale = 2;
         var vb = svg.viewBox.baseVal;
+        // Read internal chart padding for export centering
+        var chartPadLeft = parseFloat(svg.getAttribute('data-pad-left')) || 0;
+        var chartPadRight = parseFloat(svg.getAttribute('data-pad-right')) || 0;
         // Add extra space for text that overflows the viewBox
         var extraLeft = 25;
-        var extraRight = 25;
+        var extraRight = 65;
         var extraTop = 5;
         var extraBottom = 25;
         var newVBX = vb.x - extraLeft;
@@ -9354,7 +9382,7 @@
           var img = new Image();
           img.onload = function() {
             URL.revokeObjectURL(url);
-            resolve({ img: img, w: svgW, h: svgH });
+            resolve({ img: img, w: svgW, h: svgH, extraLeft: extraLeft * scale, extraRight: extraRight * scale, chartPadLeft: chartPadLeft * scale, chartPadRight: chartPadRight * scale });
           };
           img.onerror = function() {
             URL.revokeObjectURL(url);
@@ -9412,10 +9440,22 @@
         var naturalW = chart.w + pad * 2;
         var contentW = Math.max(naturalW, minContentW);
         var maxTextW = contentW - pad * 2;
-        var chartW, chartH;
+        var chartW, chartH, chartOffsetX = 0;
         if (ctx._isMap) {
           chartW = chart.w;
           chartH = chart.h;
+        } else if (chart.extraLeft != null) {
+          // Scale so the visible content area (minus extra viewBox whitespace) fills maxTextW
+          var contentAreaW = chart.w - chart.extraLeft - chart.extraRight;
+          var chartScale = maxTextW / contentAreaW;
+          chartW = chart.w * chartScale;
+          chartH = chart.h * chartScale;
+          chartOffsetX = -chart.extraLeft * chartScale;
+          // Nudge to visually centre: internal padding is asymmetric (large left for y-axis, small right)
+          if (chart.chartPadLeft != null) {
+            var nudge = (chart.chartPadLeft - chart.chartPadRight) * 0.3 * chartScale;
+            chartOffsetX -= nudge;
+          }
         } else {
           chartW = contentW - pad * 2;
           var chartScale = chartW / chart.w;
@@ -9521,8 +9561,8 @@
           y += gap;
         }
 
-        // Chart/map image
-        var imgX = (contentW - chartW) / 2;
+        // Chart/map image — maps are centred; charts align visible content with text
+        var imgX = ctx._isMap ? (contentW - chartW) / 2 : pad + chartOffsetX;
         c.drawImage(chart.img, imgX, y, chartW, chartH);
         y += chartH;
 
@@ -9699,6 +9739,9 @@
           '<button class="share-sheet-btn" id="share-sheet-share" style="flex:none;background:none;border:none;padding:8px;cursor:pointer;">' +
             '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/><polyline points="8 8 12 4 16 8"/><line x1="12" y1="4" x2="12" y2="14"/></svg>' +
           '</button>' +
+          '<button class="share-sheet-close" id="share-sheet-close">' +
+            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+          '</button>' +
         '</div>' +
         '<div class="share-sheet-toast" id="share-sheet-toast"></div>';
 
@@ -9726,6 +9769,9 @@
         window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
         closeShareSheet();
       });
+
+      // Close button
+      document.getElementById('share-sheet-close').addEventListener('click', closeShareSheet);
 
       // Default share button — opens system share sheet
       document.getElementById('share-sheet-share').addEventListener('click', function() {
