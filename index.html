@@ -2187,7 +2187,7 @@
       width: auto;
       max-width: 720px;
       margin-left: auto;
-      background: var(--white);
+      background: var(--red);
       border-radius: 4px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.25);
       padding: 0.7rem 1.5rem;
@@ -2197,7 +2197,7 @@
       opacity: 0;
       transform: translateY(20px);
       pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease, background-color 0.5s ease;
       overflow: visible;
     }
     .floating-cta.visible {
@@ -2205,13 +2205,20 @@
       transform: translateY(0);
       pointer-events: auto;
     }
+    .floating-cta:has(.floating-cta-success.visible) {
+      background: var(--white);
+    }
+    .floating-cta:has(.floating-cta-success.visible) h3 {
+      color: var(--black);
+    }
     .floating-cta h3 {
       font-family: 'Lora', serif;
       font-weight: 500;
       font-size: 1.05rem;
       margin: 0;
       white-space: nowrap;
-      color: var(--black);
+      color: var(--white);
+      transition: color 0.5s ease;
     }
     .floating-cta-form {
       display: flex;
@@ -2249,8 +2256,8 @@
     }
     .floating-cta-form button {
       padding: 0.45rem 0.75rem;
-      background: var(--red);
-      color: var(--white);
+      background: var(--white);
+      color: var(--black);
       border: none;
       border-radius: 2px;
       font-family: 'Open Sans', sans-serif !important;
@@ -2263,7 +2270,7 @@
       position: relative;
       overflow: hidden;
     }
-    .floating-cta-form button:hover { background: var(--red); }
+    .floating-cta-form button:hover { background: var(--white); }
     .floating-cta-form button:active { transform: scale(0.99); }
     .floating-cta-close {
       position: absolute;
@@ -3913,7 +3920,12 @@
         (cfg.annotations || []).forEach(function(ann) {
           var ax;
           if (ann.atGap) {
-            for (var i = 0; i < lines[0].data.length; i++) { if (lines[0].data[i] === null) { ax = annXPos(i); break; } }
+            var gapStart = -1, gapEnd = -1;
+            for (var i = 0; i < lines[0].data.length; i++) {
+              if (lines[0].data[i] === null) { if (gapStart < 0) gapStart = i; gapEnd = i; }
+              else if (gapStart >= 0) break;
+            }
+            if (gapStart >= 0) ax = annXPos((gapStart + gapEnd) / 2);
           } else if (ann.atIndex !== undefined) {
             ax = annXPos(ann.atIndex);
           }
@@ -4053,7 +4065,8 @@
           if (!d || d === null) return;
 
           var dotY = yPos(d.value, lines[si]);
-          var placeBelow = isBar ? false : (h.below || (isMobile && h.belowMobile));
+          var explicit = (isMobile && h.belowMobile !== undefined) ? h.belowMobile : h.below;
+          var placeBelow = isBar ? false : explicit;
           if (placeBelow === undefined) {
             // Auto-detect placement based on local shape and grid bounds
             var val = d.value;
@@ -4232,7 +4245,7 @@
       // ---- Helper factories for data arrays ----
       function absData(vals) {
         var labels = ['2013-14','2014-15','2015-16','2016-17','2017-18','2018-19',null,'2020-21','2021-22','2022-23','2023-24','2024-25'];
-        return labels.map(function(l,i) { return l === null ? null : {label:l, value:vals[i]}; });
+        return labels.map(function(l,i) { return (l === null || vals[i] === null) ? null : {label:l, value:vals[i]}; });
       }
       function fundData(vals) {
         var labels = ['2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23','2023-24','2024-25','2025-26'];
@@ -4276,7 +4289,7 @@
       // ============================================================
       var CHART_DATA = {
         'chart-absence-overall': {
-          lines: [{color:'#E04B2D', data:absData([4.5,4.6,4.6,4.7,4.8,4.7,null,4.6,7.5,7.4,7.2,6.8])}],
+          lines: [{color:'#E04B2D', data:absData([4.5,4.6,4.6,4.7,4.8,4.7,null,null,7.5,7.4,7.2,6.8])}],
           yAxis: {min:0, max:10, step:2, format:function(v){return v+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
@@ -4286,7 +4299,7 @@
           source: absSrc, tooltipFormat: pctFmt
         },
         'chart-absence-persistent': {
-          lines: [{color:'#E04B2D', data:absData([10.7,11.0,10.5,10.8,11.2,10.9,null,12.1,22.5,21.2,19.9,18.1])}],
+          lines: [{color:'#E04B2D', data:absData([10.7,11.0,10.5,10.8,11.2,10.9,null,null,22.5,21.2,19.9,18.1])}],
           yAxis: {min:0, max:25, step:5, format:function(v){return v+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
@@ -4296,7 +4309,7 @@
           source: absSrc, tooltipFormat: pctFmt
         },
         'chart-absence-severe': {
-          lines: [{color:'#E04B2D', data:absData([0.6,0.6,0.6,0.7,0.8,0.8,null,1.1,1.6,2.0,2.3,2.4])}],
+          lines: [{color:'#E04B2D', data:absData([0.6,0.6,0.6,0.7,0.8,0.8,null,null,1.6,2.0,2.3,2.4])}],
           yAxis: {min:0, max:3, step:1, format:function(v){return v===0?'0%':v.toFixed(1)+'%';}},
           xLabels: [{i:0,t:'2013-14'},{i:2.2,t:'2015-16'},{i:4.4,t:'2017-18'},{i:6.6,t:'2020-21'},{i:8.8,t:'2022-23'},{i:11,t:'2024-25'}],
           xLabelsMobile: [{i:0,t:'2013-14'},{i:3.67,t:'2017-18'},{i:7.33,t:'2021-22'},{i:11,t:'2024-25'}],
@@ -7123,12 +7136,13 @@
         ? function(v) { return v.toFixed(1) + '%'; }
         : function(v) { return v + '%'; };
 
-      // Build data array with null for COVID gap (index 6 in the 12-element array)
-      var absLabels = ['2013-14','2014-15','2015-16','2016-17','2017-18','2018-19',null,'2020-21','2021-22','2022-23','2023-24','2024-25'];
+      // Build data array with nulls for COVID gap (2019-20) and 2020-21 (omitted)
+      var absLabels = ['2013-14','2014-15','2015-16','2016-17','2017-18','2018-19',null,null,'2021-22','2022-23','2023-24','2024-25'];
       var vi = 0;
       var data = absLabels.map(function(l, i) {
         if (l === null) return null;
         var idx = vi++;
+        if (idx >= 6) idx++; // skip the 2020-21 slot in the JSON values array
         return (idx >= values.length || values[idx] === null) ? null : { label: years[idx] || l, value: values[idx] };
       });
 
