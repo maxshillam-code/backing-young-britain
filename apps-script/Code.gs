@@ -135,7 +135,7 @@ function sendWelcomeEmail(email, fullName, unsubToken) {
   var unsubUrl = SCRIPT_URL + '?action=unsubscribe&token=' + unsubToken;
   var firstName = fullName.split(' ')[0];
 
-  var body = '<p style="font-family:Lora,Georgia,Times,serif;font-size:30px;text-align:left;margin:8px 0 24px">Thank you, <span style="font-family:Lora,Georgia,Times,serif;font-weight:600;color:#E04B2D">' + firstName + '</span></p>'
+  var body = '<p style="font-family:Lora,Georgia,Times,serif;font-size:30px;text-align:left;margin:8px 0 24px">Thank you, <span style="font-family:Lora,Georgia,Times,serif;font-weight:600;color:#fd4822">' + firstName + '</span></p>'
     + '<p>Thank you for adding your name to <strong>Backing Young Britain</strong>.</p>'
     + '<p>We\'ll keep you updated on the campaign\'s progress, including when we deliver our open letter to Number 10. By signing, you\'ve joined others across the country calling for:</p>'
     + '<ul>'
@@ -143,7 +143,7 @@ function sendWelcomeEmail(email, fullName, unsubToken) {
     + '<li><strong>A Commissioner for Young People:</strong> An independent voice to hold government accountable on the issues shaping the lives of those under 30.</li>'
     + '<li><strong>A Generational Impact Assessment on all major legislation:</strong> So no law passes without asking: what does this mean for the next generation?</li>'
     + '</ul>'
-    + '<p>In the meantime, the single most powerful thing you can do is <strong>share the campaign</strong> with at least one other person - <a href="' + SITE_URL + '" style="color:#E04B2D;font-weight:bold">backingyoungbritain.co.uk</a></p>'
+    + '<p>In the meantime, the single most powerful thing you can do is <strong>share the campaign</strong> with at least one other person - <a href="' + SITE_URL + '" style="color:#fd4822;font-weight:bold">backingyoungbritain.co.uk</a></p>'
     + '<p style="margin-top:24px">Thank you,<br><span style="font-family:Lora,Georgia,Times,serif;font-style:italic;display:inline-block;margin-top:6px">Max from Backing Young Britain</span></p>';
 
   var htmlBody = getEmailHtml(body, unsubUrl);
