@@ -4337,12 +4337,12 @@
           source: fundSrc, tooltipFormat: gbpFmt
         },
         'chart-debt': {
-          lines: [{color:'#fd4822', data:yearData(1999,[2690,3380,4250,5440,6560,7330,7930,8680,10050,11620,14700,15700,16160,21430,24640,24550,29000,32220,35850,36000,38400,40280,44720,44940,48270,53010])}],
+          lines: [{color:'#fd4822', data:yearData(2006,[10050,10870,11770,14670,16160,16990,18620,20040,21160,24390,32330,34450,35670,39990,44720,44640,44390,48270,53010])}],
           yAxis: {min:0, max:60000, step:20000, format:function(v){return v===0?'\u00A30':'\u00A3'+(v/1000)+'k';}},
-          xLabels: [{i:0,t:'1999-00'},{i:5,t:'2004-05'},{i:10,t:'2009-10'},{i:15,t:'2014-15'},{i:20,t:'2019-20'},{i:25,t:'2024-25'}],
-          xLabelsMobile: [{i:0,t:'1999-00'},{i:8.33,t:'2007-08'},{i:16.67,t:'2015-16'},{i:25,t:'2024-25'}],
-          annotations: [{atIndex:13,label:'\u00A39K Fees',sublabel:'Introduced'}],
-          highlights: [{index:0,text:'\u00A32.7k',below:false},{index:25,text:'\u00A353k'}],
+          xLabels: [{i:0,t:'2006-07'},{i:3,t:'2009-10'},{i:6,t:'2012-13'},{i:9,t:'2015-16'},{i:12,t:'2018-19'},{i:15,t:'2021-22'},{i:18,t:'2024-25'}],
+          xLabelsMobile: [{i:0,t:'2006-07'},{i:6,t:'2012-13'},{i:12,t:'2018-19'},{i:18,t:'2024-25'}],
+          annotations: [{atIndex:6,label:'\u00A39K Fees',sublabel:'Introduced'}],
+          highlights: [{index:0,text:'\u00A310k',below:false},{index:18,text:'\u00A353k'}],
           legend: [{color:'#fd4822', label:'Avg. debt on entering repayment'}],
           source: slcSrc, tooltipFormat: gbpFmt, reserveLegendHeight: true
         },
